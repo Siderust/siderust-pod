@@ -15,6 +15,6 @@ pub mod gravity_field;
 
 pub use atmosphere_density::{ConstantDensity, DensityProvider, ExponentialAtmosphere};
 pub use earth_orientation::{EopError, EopProvider, EopValues};
-pub use ephemeris::EphemerisProvider;
+pub use ephemeris::{BoxEphemeris, DynEphemeris, Vsop87Provider};
 pub use frame_transform::FrameTransformProvider;
 pub use gravity_field::{GravityConstants, GravityFieldProvider, TwoBodyEarth};

@@ -16,18 +16,17 @@
 //! * `A/m` is the area-to-mass ratio in m² / kg;
 //! * `Cr` is the radiation-pressure coefficient (typically 1.0–1.5).
 //!
-//! The Sun position is obtained from the supplied
-//! [`EphemerisProvider`] in the same convention as
-//! [`super::ThirdBodySunMoon`] (mean equator of J2000, treated as GCRF
-//! for MVP-grade modelling).
+//! The Sun position is obtained from the supplied [`DynEphemeris`] provider in
+//! the same convention as [`super::ThirdBodySunMoon`] (mean equator of J2000,
+//! treated as GCRF for MVP-grade modelling).
 //!
 //! Eclipse modelling is *not* yet included — the Sun is always treated
 //! as visible. A conical Earth-shadow model belongs in a follow-up.
 
 use crate::forces::ForceModel;
 use siderust::astro::precession::ecliptic_of_date_to_mean_equatorial_matrix;
+use siderust::calculus::ephemeris::DynEphemeris;
 use siderust::time::JulianDate;
-use siderust_pod_core::providers::EphemerisProvider;
 use siderust_pod_core::OrbitState;
 use std::sync::Arc;
 
@@ -39,7 +38,7 @@ const AU_KM: f64 = 149_597_870.7;
 
 /// Cannonball SRP force model.
 pub struct CannonballSrp {
-    provider: Arc<dyn EphemerisProvider>,
+    provider: Arc<dyn DynEphemeris + Send + Sync>,
     /// Radiation-pressure coefficient (dimensionless).
     pub cr: f64,
     /// Area-to-mass ratio in m² / kg.
@@ -48,7 +47,7 @@ pub struct CannonballSrp {
 
 impl CannonballSrp {
     /// Build a cannonball SRP model.
-    pub fn new(provider: Arc<dyn EphemerisProvider>, cr: f64, area_to_mass_m2_kg: f64) -> Self {
+    pub fn new(provider: Arc<dyn DynEphemeris + Send + Sync>, cr: f64, area_to_mass_m2_kg: f64) -> Self {
         Self {
             provider,
             cr,
@@ -57,8 +56,8 @@ impl CannonballSrp {
     }
 
     fn sun_geocentric_km(&self, jd: JulianDate) -> Option<[f64; 3]> {
-        let sun_b = self.provider.sun_barycentric(jd).ok()?;
-        let earth_b = self.provider.earth_barycentric(jd).ok()?;
+        let sun_b = self.provider.try_sun_barycentric(jd).ok()?;
+        let earth_b = self.provider.try_earth_barycentric(jd).ok()?;
         let s = [sun_b.x().value(), sun_b.y().value(), sun_b.z().value()];
         let e = [
             earth_b.x().value(),

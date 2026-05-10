@@ -8,17 +8,14 @@
 //! a = μ_b · ( (d − r) / |d − r|³ − d / |d|³ )
 //! ```
 //!
-//! The geocentric body positions are fetched from an
-//! [`EphemerisProvider`]; ecliptic-of-J2000 positions are rotated by the
-//! mean obliquity into the (mean equator of) J2000 frame, which we treat
-//! as GCRF for MVP-1 modelling. A future revision will route through
-//! [`siderust_pod_core::providers::FrameTransformProvider`] for the full
-//! IAU-2006/2000A chain.
+//! The geocentric body positions are fetched from a [`DynEphemeris`] provider;
+//! ecliptic-of-J2000 positions are rotated by the mean obliquity into the
+//! (mean equator of) J2000 frame, which we treat as GCRF for MVP-1 modelling.
 
 use crate::forces::ForceModel;
 use siderust::astro::precession::ecliptic_of_date_to_mean_equatorial_matrix;
+use siderust::calculus::ephemeris::DynEphemeris;
 use siderust::time::JulianDate;
-use siderust_pod_core::providers::EphemerisProvider;
 use siderust_pod_core::OrbitState;
 use std::sync::Arc;
 
@@ -30,21 +27,21 @@ pub const MU_MOON_KM3_S2: f64 = 4.902_800_066e3;
 /// Astronomical unit, km.
 const AU_KM: f64 = 149_597_870.7;
 
-/// Third-body force from Sun + Moon, sourced from an [`EphemerisProvider`].
+/// Third-body force from Sun + Moon, sourced from a [`DynEphemeris`] provider.
 pub struct ThirdBodySunMoon {
-    provider: Arc<dyn EphemerisProvider>,
+    provider: Arc<dyn DynEphemeris + Send + Sync>,
 }
 
 impl ThirdBodySunMoon {
-    /// Build from any boxed/arc provider implementation.
-    pub fn new(provider: Arc<dyn EphemerisProvider>) -> Self {
+    /// Build from any arc-wrapped [`DynEphemeris`] implementation.
+    pub fn new(provider: Arc<dyn DynEphemeris + Send + Sync>) -> Self {
         Self { provider }
     }
 
     fn sun_geocentric_km(&self, jd: JulianDate) -> [f64; 3] {
         // Sun position relative to Earth, expressed in ecliptic mean J2000, AU.
-        let sun_b = self.provider.sun_barycentric(jd);
-        let earth_b = self.provider.earth_barycentric(jd);
+        let sun_b = self.provider.try_sun_barycentric(jd);
+        let earth_b = self.provider.try_earth_barycentric(jd);
         let (sun_b, earth_b) = match (sun_b, earth_b) {
             (Ok(a), Ok(b)) => (a, b),
             _ => return [0.0; 3],
@@ -58,7 +55,7 @@ impl ThirdBodySunMoon {
     }
 
     fn moon_geocentric_km(&self, jd: JulianDate) -> [f64; 3] {
-        let m_geo = match self.provider.moon_geocentric(jd) {
+        let m_geo = match self.provider.try_moon_geocentric(jd) {
             Ok(p) => p,
             Err(_) => return [0.0; 3],
         };
