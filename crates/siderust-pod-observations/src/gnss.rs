@@ -18,7 +18,8 @@
 //! the [`siderust_pod_core::providers::FrameTransformProvider`].
 
 use crate::model::{MeasurementModel, Partials, Prediction};
-use siderust_pod_core::OrbitState;
+use siderust_pod_core::{Position, Velocity, VelocityUnit, OrbitState};
+use siderust::coordinates::frames::GCRS;
 
 /// Speed of light, m/s.
 pub const C_M_S: f64 = 299_792_458.0;
@@ -31,9 +32,9 @@ pub const OMEGA_EARTH_RAD_S: f64 = 7.292_115_146_706_979e-5;
 #[derive(Debug, Clone, Copy)]
 pub struct PseudorangeObs {
     /// GPS satellite GCRF position at signal-emission instant, km.
-    pub gps_pos_km: [f64; 3],
+    pub gps_pos_km: Position<GCRS>,
     /// GPS satellite GCRF velocity, km/s. Used for the relativistic correction.
-    pub gps_vel_km_s: [f64; 3],
+    pub gps_vel_km_s: Velocity<GCRS, VelocityUnit>,
     /// Measured pseudorange, metres.
     pub measured_m: f64,
     /// Measurement standard deviation, metres.
@@ -44,9 +45,9 @@ pub struct PseudorangeObs {
 #[derive(Debug, Clone, Copy)]
 pub struct CarrierPhaseObs {
     /// GPS satellite GCRF position, km.
-    pub gps_pos_km: [f64; 3],
+    pub gps_pos_km: Position<GCRS>,
     /// GPS satellite GCRF velocity, km/s.
-    pub gps_vel_km_s: [f64; 3],
+    pub gps_vel_km_s: Velocity<GCRS, VelocityUnit>,
     /// Measured carrier-phase range, metres.
     pub measured_m: f64,
     /// Measurement standard deviation, metres.
@@ -90,28 +91,32 @@ fn norm(a: [f64; 3]) -> f64 {
     dot(a, a).sqrt()
 }
 
-fn sagnac_km(gps_pos_km: [f64; 3], rx_pos_km: [f64; 3]) -> f64 {
-    // Standard one-step Sagnac correction along the line-of-sight.
-    OMEGA_EARTH_RAD_S * (gps_pos_km[0] * rx_pos_km[1] - gps_pos_km[1] * rx_pos_km[0]) / C_KM_S
+fn sagnac_km(gps_pos_km: Position<GCRS>, rx_pos_km: [f64; 3]) -> f64 {
+    OMEGA_EARTH_RAD_S
+        * (gps_pos_km.x().value() * rx_pos_km[1] - gps_pos_km.y().value() * rx_pos_km[0])
+        / C_KM_S
 }
 
-fn relativistic_gps_clock_m(pos_km: [f64; 3], vel_km_s: [f64; 3]) -> f64 {
-    -2.0 * dot(pos_km, vel_km_s) * 1_000.0 / C_M_S
+fn relativistic_gps_clock_m(pos_km: Position<GCRS>, vel_km_s: Velocity<GCRS, VelocityUnit>) -> f64 {
+    let dot = pos_km.x().value() * vel_km_s.x().value()
+        + pos_km.y().value() * vel_km_s.y().value()
+        + pos_km.z().value() * vel_km_s.z().value();
+    -2.0 * dot * 1_000.0 / C_M_S
 }
 
 /// Predict a pseudorange in metres given the current LEO state and clock bias.
 fn predict_range_m(
     state: &OrbitState,
-    gps_pos_km: [f64; 3],
-    gps_vel_km_s: [f64; 3],
+    gps_pos_km: Position<GCRS>,
+    gps_vel_km_s: Velocity<GCRS, VelocityUnit>,
 ) -> (f64, [f64; 3]) {
     let rx_km = [state.position.x().value(), state.position.y().value(), state.position.z().value()];
-    let los = diff(rx_km, gps_pos_km);
+    let gps = [gps_pos_km.x().value(), gps_pos_km.y().value(), gps_pos_km.z().value()];
+    let los = diff(rx_km, gps);
     let geom_km = norm(los);
     let geom_m = geom_km * 1_000.0;
     let sagnac_m = sagnac_km(gps_pos_km, rx_km) * 1_000.0;
     let rel_m = relativistic_gps_clock_m(gps_pos_km, gps_vel_km_s);
-    // Unit line-of-sight in km, used later for partials.
     let u = if geom_km > 0.0 {
         [los[0] / geom_km, los[1] / geom_km, los[2] / geom_km]
     } else {
@@ -181,11 +186,12 @@ mod tests {
             Position::new(7000.0, 0.0, 0.0),
             Velocity::new(0.0, 7.5, 0.0),
         );
-        let gps = [26_000.0, 1_000.0, 5_000.0];
+        let gps_pos = Position::<GCRS>::new(26_000.0, 1_000.0, 5_000.0);
+        let gps_vel = Velocity::<GCRS, VelocityUnit>::new(0.0, 3.0, 0.0);
         let model = GnssCodeModel {
             obs: PseudorangeObs {
-                gps_pos_km: gps,
-                gps_vel_km_s: [0.0, 3.0, 0.0],
+                gps_pos_km: gps_pos,
+                gps_vel_km_s: gps_vel,
                 measured_m: 0.0,
                 sigma_m: 1.0,
             },
@@ -194,7 +200,6 @@ mod tests {
         let extra = [0.0];
         let p0 = model.predict(&state, &extra);
         let h = 1e-3;
-        // Perturb each position component individually.
         for i in 0..3 {
             let rx = state.position.x().value() + if i == 0 { h } else { 0.0 };
             let ry = state.position.y().value() + if i == 1 { h } else { 0.0 };

@@ -16,7 +16,8 @@
 //! ITRF→GCRF rotation using a `siderust` frame transform provider.
 
 use crate::model::{MeasurementModel, Partials, Prediction};
-use siderust_pod_core::OrbitState;
+use siderust_pod_core::{Position, OrbitState};
+use siderust::coordinates::frames::GCRS;
 
 /// One SLR range observation (two-way time-of-flight converted to metres).
 #[derive(Debug, Clone)]
@@ -31,7 +32,7 @@ pub struct SlrRangeObs {
 #[derive(Debug, Clone)]
 pub struct SlrRangeModel {
     /// Station position in the same inertial frame as the satellite state, km.
-    pub station_inertial_km: [f64; 3],
+    pub station_inertial_km: Position<GCRS>,
     /// Constant tropospheric range delay (metres, applied symmetrically).
     pub trop_bias_m: f64,
     /// Assumed measurement standard deviation (metres).
@@ -43,7 +44,7 @@ pub struct SlrRangeModel {
 
 impl SlrRangeModel {
     /// New model with no bias estimation.
-    pub fn new(station_inertial_km: [f64; 3], trop_bias_m: f64, sigma_m: f64) -> Self {
+    pub fn new(station_inertial_km: Position<GCRS>, trop_bias_m: f64, sigma_m: f64) -> Self {
         Self {
             station_inertial_km,
             trop_bias_m,
@@ -68,9 +69,9 @@ impl MeasurementModel for SlrRangeModel {
             state.velocity.z().value() * 1000.0,
         ];
         let r_sta_m = [
-            self.station_inertial_km[0] * 1000.0,
-            self.station_inertial_km[1] * 1000.0,
-            self.station_inertial_km[2] * 1000.0,
+            self.station_inertial_km.x().value() * 1000.0,
+            self.station_inertial_km.y().value() * 1000.0,
+            self.station_inertial_km.z().value() * 1000.0,
         ];
 
         let mut down_dt = 0.0_f64;
@@ -164,20 +165,16 @@ fn unit(v: &[f64; 3]) -> [f64; 3] {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
-    use siderust::coordinates::frames::GCRS;
-    use siderust_pod_core::Position;
-    use siderust_pod_core::Velocity;
+    use siderust_pod_core::{Position, Velocity};
 
     #[test]
     fn predicts_two_way_range_at_rest() {
-        // Stationary satellite 1000 km above the station along +z;
-        // expected two-way range ≈ 2 000 000 m.
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
             Position::new(0.0, 0.0, 7378.137),
             Velocity::new(0.0, 0.0, 0.0),
         );
-        let m = SlrRangeModel::new([0.0, 0.0, 6378.137], 0.0, 0.01);
+        let m = SlrRangeModel::new(Position::<GCRS>::new(0.0, 0.0, 6378.137), 0.0, 0.01);
         let p = m.predict(&s, &[]);
         assert!((p.value - 2_000_000.0).abs() < 1e-3);
         assert_eq!(p.partials.entries.len(), 3);
@@ -190,9 +187,9 @@ mod tests {
             Position::new(7100.0, 200.0, 50.0),
             Velocity::new(0.5, 7.5, 0.1),
         );
-        let m = SlrRangeModel::new([6378.0, 100.0, 0.0], 0.0, 0.01);
+        let m = SlrRangeModel::new(Position::<GCRS>::new(6378.0, 100.0, 0.0), 0.0, 0.01);
         let pred = m.predict(&s, &[]);
-        let h = 1e-3; // 1 m perturbation in km-units
+        let h = 1e-3;
         for (axis, idx) in [(0, 0), (1, 1), (2, 2)] {
             let mut up = s;
             let mut dn = s;

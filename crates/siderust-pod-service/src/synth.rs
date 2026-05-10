@@ -7,9 +7,10 @@
 //! truth state on a synthetic arc.
 
 use crate::pipeline::{ArcEpoch, GpsSatellite};
+use siderust::coordinates::frames::GCRS;
 use siderust::time::JulianDate;
 use siderust_pod_core::OrbitState;
-use siderust_pod_core::{Position, Velocity};
+use siderust_pod_core::{Position, Velocity, VelocityUnit};
 use siderust_pod_dynamics::forces::TwoBody;
 use siderust_pod_dynamics::integrators::rk4_propagate_series;
 use siderust_pod_observations::gnss::{CarrierPhaseObs, GnssCodeModel, PseudorangeObs};
@@ -73,7 +74,7 @@ pub struct SyntheticArc {
     pub truth_clock_bias_m: f64,
 }
 
-fn gps_state_at(jd: JulianDate, slot: usize, n: usize) -> ([f64; 3], [f64; 3]) {
+fn gps_state_at(jd: JulianDate, slot: usize, n: usize) -> (Position<GCRS>, Velocity<GCRS, VelocityUnit>) {
     // Simple circular orbits at GPS altitude (~26 600 km), evenly spaced
     // in argument of latitude across two planes.
     let r = 26_600.0_f64;
@@ -86,10 +87,11 @@ fn gps_state_at(jd: JulianDate, slot: usize, n: usize) -> ([f64; 3], [f64; 3]) {
     let cos_t = theta.cos();
     let sin_t = theta.sin();
     let (cos_i, sin_i) = (inc.cos(), inc.sin());
-    let pos = [r * cos_t, r * sin_t * cos_i, r * sin_t * sin_i];
     let vmag = (mu / r).sqrt();
-    let vel = [-vmag * sin_t, vmag * cos_t * cos_i, vmag * cos_t * sin_i];
-    (pos, vel)
+    (
+        Position::<GCRS>::new(r * cos_t, r * sin_t * cos_i, r * sin_t * sin_i),
+        Velocity::<GCRS, VelocityUnit>::new(-vmag * sin_t, vmag * cos_t * cos_i, vmag * cos_t * sin_i),
+    )
 }
 
 /// Tiny linear-congruential PRNG (deterministic, no external dep).
@@ -168,8 +170,7 @@ pub fn generate(cfg: &SyntheticArcConfig) -> SyntheticArc {
     }
 }
 
-fn code_truth_m(state: &OrbitState, gps_pos: [f64; 3], gps_vel: [f64; 3]) -> f64 {
-    // Mirror the structure of GnssCodeModel::predict but with no clock bias.
+fn code_truth_m(state: &OrbitState, gps_pos: Position<GCRS>, gps_vel: Velocity<GCRS, VelocityUnit>) -> f64 {
     let model = GnssCodeModel {
         obs: PseudorangeObs {
             gps_pos_km: gps_pos,

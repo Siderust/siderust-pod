@@ -5,17 +5,18 @@
 //! against the same orbit and confirms residuals are zero (the model is
 //! consistent with itself) and the QC summary reports zero RMS.
 
+use siderust_pod_core::Position;
 use siderust_pod_observations::model::MeasurementModel;
 use siderust_pod_observations::SlrRangeModel;
 use siderust_pod_qc::SlrValidationReport;
 use siderust_pod_service::{generate, SyntheticArcConfig};
+use siderust::coordinates::frames::GCRS;
 
 #[test]
 fn slr_validation_self_consistent() {
     let cfg = SyntheticArcConfig::default();
     let arc = generate(&cfg);
-    let station_km = [6378.137_f64, 0.0, 0.0];
-    let model = SlrRangeModel::new(station_km, 0.0, 0.01);
+    let model = SlrRangeModel::new(Position::<GCRS>::new(6378.137, 0.0, 0.0), 0.0, 0.01);
 
     let mut residuals = Vec::with_capacity(arc.truth_states.len());
     for s in &arc.truth_states {
