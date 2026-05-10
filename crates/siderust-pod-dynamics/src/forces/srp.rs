@@ -108,6 +108,7 @@ impl ForceModel for CannonballSrp {
 mod tests {
     use super::*;
     use siderust_pod_core::providers::ephemeris::Vsop87Provider;
+    use siderust_pod_core::{Position, Velocity};
 
     #[test]
     fn srp_acceleration_has_expected_order_of_magnitude_at_leo() {
@@ -117,8 +118,8 @@ mod tests {
         let srp = CannonballSrp::new(p, 1.5, 0.02);
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.0, 0.0, 0.0],
-            [0.0, 7.5, 0.0],
+            Position::new(7000.0, 0.0, 0.0),
+            Velocity::new(0.0, 7.5, 0.0),
         );
         let a = srp.acceleration(&s);
         let mag = (a[0] * a[0] + a[1] * a[1] + a[2] * a[2]).sqrt();
@@ -134,8 +135,8 @@ mod tests {
         let srp = CannonballSrp::new(p, 1.5, 0.0);
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.0, 0.0, 0.0],
-            [0.0, 7.5, 0.0],
+            Position::new(7000.0, 0.0, 0.0),
+            Velocity::new(0.0, 7.5, 0.0),
         );
         let a = srp.acceleration(&s);
         assert!(a.iter().all(|x| *x == 0.0));

@@ -94,13 +94,14 @@ pub fn rtn_to_cartesian(state: &OrbitState, p_rtn: &Covariance6) -> Covariance6 
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
+    use crate::state::{Position, Velocity};
 
     #[test]
     fn identity_round_trip() {
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.0, 100.0, -200.0],
-            [0.5, 7.5, 0.1],
+            Position::new(7000.0, 100.0, -200.0),
+            Velocity::new(0.5, 7.5, 0.1),
         );
         let p = identity6();
         let p_rtn = cartesian_to_rtn(&s, &p);

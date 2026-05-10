@@ -20,7 +20,7 @@
 use crate::config::RunConfig;
 use crate::pipeline::run_synth;
 use crate::synth::{generate, SyntheticArcConfig};
-use siderust_pod_core::{OrbitState, PodError};
+use siderust_pod_core::{OrbitState, PodError, Position, Velocity};
 use std::path::PathBuf;
 
 /// Outcome of a run.
@@ -63,8 +63,8 @@ pub fn run(cfg: &RunConfig, _config_path: &str) -> std::io::Result<RunReport> {
     let [v0x, v0y, v0z] = t0.velocity_km_s();
     let init = OrbitState::new(
         t0.epoch_tt,
-        [r0x + 0.05, r0y - 0.05, r0z + 0.05],
-        [v0x + 5e-5, v0y - 5e-5, v0z + 5e-5],
+        Position::new(r0x + 0.05, r0y - 0.05, r0z + 0.05),
+        Velocity::new(v0x + 5e-5, v0y - 5e-5, v0z + 5e-5),
     );
     let report = run_synth(&arc, init, 0.0, &output_dir, &cfg.run_id, cfg.forces.j2)
         .map_err(std::io::Error::other)?;

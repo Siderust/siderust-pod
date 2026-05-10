@@ -125,13 +125,14 @@ fn unit(v: &[f64; 3]) -> [f64; 3] {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
+    use siderust_pod_core::{Position, Velocity};
 
     #[test]
     fn rtn_zero_for_identical_orbits() {
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.0, 0.0, 0.0],
-            [0.0, 7.5, 0.0],
+            Position::new(7000.0, 0.0, 0.0),
+            Velocity::new(0.0, 7.5, 0.0),
         );
         let d = rtn_diff(&[s], &[s]);
         assert_eq!(d.len(), 1);
@@ -145,13 +146,13 @@ mod tests {
     fn radial_offset_only_appears_in_r_component() {
         let r = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.0, 0.0, 0.0],
-            [0.0, 7.5, 0.0],
+            Position::new(7000.0, 0.0, 0.0),
+            Velocity::new(0.0, 7.5, 0.0),
         );
         let e = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.001, 0.0, 0.0],
-            [0.0, 7.5, 0.0],
+            Position::new(7000.001, 0.0, 0.0),
+            Velocity::new(0.0, 7.5, 0.0),
         );
         let d = rtn_diff(&[e], &[r]);
         assert!((d[0].r_m - 1.0).abs() < 1e-9);

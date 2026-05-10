@@ -98,14 +98,15 @@ pub fn write_oem_from_states<W: Write>(
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
+    use siderust_pod_core::{Position, Velocity};
 
     fn fake_states() -> Vec<OrbitState> {
         (0..5)
             .map(|i| {
                 OrbitState::new(
                     JulianDate::new(2_451_545.0 + i as f64 * 30.0 / 86_400.0),
-                    [7000.0 + i as f64, 0.0, 0.0],
-                    [0.0, 7.5, 0.0],
+                    Position::new(7000.0 + i as f64, 0.0, 0.0),
+                    Velocity::new(0.0, 7.5, 0.0),
                 )
             })
             .collect()

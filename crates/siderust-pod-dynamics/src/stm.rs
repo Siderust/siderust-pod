@@ -92,13 +92,14 @@ mod tests {
     use super::*;
     use crate::forces::TwoBody;
     use siderust::time::JulianDate;
+    use siderust_pod_core::{Position, Velocity};
 
     #[test]
     fn two_body_stm_is_close_to_identity_for_zero_dt() {
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.0, 0.0, 0.0],
-            [0.0, 7.5, 0.0],
+            Position::new(7000.0, 0.0, 0.0),
+            Velocity::new(0.0, 7.5, 0.0),
         );
         let f = TwoBody::earth();
         let phi = finite_diff_stm(&f, s, 1.0, 0);

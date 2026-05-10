@@ -13,6 +13,7 @@ use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
+use siderust_pod_core::{Position, Velocity};
 use siderust_pod_service::{generate, run_synth, OrbitState, SyntheticArcConfig};
 use uuid::Uuid;
 
@@ -110,8 +111,8 @@ fn run_job(state: AppState, id: String, enable_j2: bool) {
     let [v0x, v0y, v0z] = t0.velocity_km_s();
     let init = OrbitState::new(
         t0.epoch_tt,
-        [r0x + 0.05, r0y - 0.05, r0z + 0.05],
-        [v0x + 5e-5, v0y - 5e-5, v0z + 5e-5],
+        Position::new(r0x + 0.05, r0y - 0.05, r0z + 0.05),
+        Velocity::new(v0x + 5e-5, v0y - 5e-5, v0z + 5e-5),
     );
     let out = state.output_root.join(&id);
     let result = run_synth(&arc, init, 0.0, &out, &id, enable_j2);

@@ -1,5 +1,6 @@
 use siderust::time::JulianDate;
 use siderust_pod_core::OrbitState;
+use siderust_pod_core::{Position, Velocity};
 use siderust_pod_dynamics::prelude::{rk4_propagate, TwoBody};
 
 /// Specific orbital energy: ½v² - μ/r.
@@ -15,7 +16,7 @@ fn two_body_energy_conservation_one_orbit() {
     let mu: f64 = 398_600.441_8;
     let r: f64 = 6378.137 + 500.0;
     let v: f64 = (mu / r).sqrt();
-    let s0 = OrbitState::new(JulianDate::new(2_451_545.0), [r, 0.0, 0.0], [0.0, v, 0.0]);
+    let s0 = OrbitState::new(JulianDate::new(2_451_545.0), Position::new(r, 0.0, 0.0), Velocity::new(0.0, v, 0.0));
 
     let force = TwoBody::earth();
     // One orbital period
@@ -39,7 +40,7 @@ fn two_body_returns_to_origin_one_period() {
     let mu: f64 = 398_600.441_8;
     let r: f64 = 6378.137 + 500.0;
     let v: f64 = (mu / r).sqrt();
-    let s0 = OrbitState::new(JulianDate::new(2_451_545.0), [r, 0.0, 0.0], [0.0, v, 0.0]);
+    let s0 = OrbitState::new(JulianDate::new(2_451_545.0), Position::new(r, 0.0, 0.0), Velocity::new(0.0, v, 0.0));
 
     let force = TwoBody::earth();
     let period = 2.0 * std::f64::consts::PI * (r.powi(3) / mu).sqrt();

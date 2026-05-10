@@ -5,6 +5,7 @@
 
 use siderust::time::JulianDate;
 use siderust_pod_core::OrbitState;
+use siderust_pod_core::{Position, Velocity};
 use siderust_pod_service::{generate, run_synth, SyntheticArcConfig};
 use std::path::PathBuf;
 
@@ -19,8 +20,8 @@ fn mvp1_synth_pipeline_recovers_truth() {
     let [v0x, v0y, v0z] = t0.velocity_km_s();
     let init = OrbitState::new(
         t0.epoch_tt,
-        [r0x + 0.05, r0y - 0.05, r0z + 0.05],
-        [v0x + 5e-5, v0y - 5e-5, v0z + 5e-5],
+        Position::new(r0x + 0.05, r0y - 0.05, r0z + 0.05),
+        Velocity::new(v0x + 5e-5, v0y - 5e-5, v0z + 5e-5),
     );
     let _ = init.epoch_tt; // silence unused variant
     let _ = JulianDate::new(2_451_545.0);

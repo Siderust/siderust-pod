@@ -112,6 +112,7 @@ mod tests {
     use crate::forces::CompositeForce;
     use crate::integrators::rk4_propagate;
     use siderust::time::JulianDate;
+    use siderust_pod_core::{Position, Velocity};
 
     #[test]
     fn density_decreases_with_altitude() {
@@ -128,7 +129,7 @@ mod tests {
         let mu: f64 = 398_600.441_8;
         let r0: f64 = R_EARTH_KM + 350.0; // very-low LEO
         let v0: f64 = (mu / r0).sqrt();
-        let s0 = OrbitState::new(JulianDate::new(2_451_545.0), [r0, 0.0, 0.0], [0.0, v0, 0.0]);
+        let s0 = OrbitState::new(JulianDate::new(2_451_545.0), Position::new(r0, 0.0, 0.0), Velocity::new(0.0, v0, 0.0));
         // Exaggerated A/m to make decay visible in a short integration.
         let force = CompositeForce::empty()
             .push(Box::new(TwoBody::earth()))

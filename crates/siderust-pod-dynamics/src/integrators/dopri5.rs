@@ -182,13 +182,14 @@ pub fn dopri5_propagate<F: ForceModel>(
 mod tests {
     use super::*;
     use crate::forces::TwoBody;
+    use siderust_pod_core::{Position, Velocity};
 
     #[test]
     fn dopri5_one_orbit_closes() {
         let mu: f64 = 398_600.4418;
         let r: f64 = 7_000.0;
         let v: f64 = (mu / r).sqrt();
-        let s0 = OrbitState::new(JulianDate::new(2_451_545.0), [r, 0.0, 0.0], [0.0, v, 0.0]);
+        let s0 = OrbitState::new(JulianDate::new(2_451_545.0), Position::new(r, 0.0, 0.0), Velocity::new(0.0, v, 0.0));
         let period = 2.0 * std::f64::consts::PI * (r.powi(3) / mu).sqrt();
         let s = dopri5_propagate(&TwoBody::earth(), s0, period, Tolerance::default());
         let [rx, ry, rz] = s.position_km();

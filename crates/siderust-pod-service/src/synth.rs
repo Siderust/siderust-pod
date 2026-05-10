@@ -9,6 +9,7 @@
 use crate::pipeline::{ArcEpoch, GpsSatellite};
 use siderust::time::JulianDate;
 use siderust_pod_core::OrbitState;
+use siderust_pod_core::{Position, Velocity};
 use siderust_pod_dynamics::forces::TwoBody;
 use siderust_pod_dynamics::integrators::rk4_propagate_series;
 use siderust_pod_observations::gnss::{CarrierPhaseObs, GnssCodeModel, PseudorangeObs};
@@ -44,8 +45,8 @@ impl Default for SyntheticArcConfig {
         Self {
             truth_initial: OrbitState::new(
                 JulianDate::new(2_451_545.0),
-                [r0, 0.0, 0.0],
-                [0.0, v0, 0.0],
+                Position::new(r0, 0.0, 0.0),
+                Velocity::new(0.0, v0, 0.0),
             ),
             dt_s: 30.0,
             n_steps: 120,

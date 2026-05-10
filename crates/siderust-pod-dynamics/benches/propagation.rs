@@ -13,13 +13,14 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use siderust::time::JulianDate;
 use siderust_pod_core::OrbitState;
+use siderust_pod_core::{Position, Velocity};
 use siderust_pod_dynamics::prelude::{rk4_propagate, CompositeForce, TwoBody, J2};
 
 fn make_initial() -> OrbitState {
     let mu: f64 = 398_600.441_8;
     let r: f64 = 6_378.137 + 500.0;
     let v: f64 = (mu / r).sqrt();
-    OrbitState::new(JulianDate::new(2_451_545.0), [r, 0.0, 0.0], [0.0, v, 0.0])
+    OrbitState::new(JulianDate::new(2_451_545.0), Position::new(r, 0.0, 0.0), Velocity::new(0.0, v, 0.0))
 }
 
 fn bench_rk4_two_body(c: &mut Criterion) {

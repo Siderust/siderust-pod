@@ -17,7 +17,7 @@
 //!
 //! let pos = Position::<GCRS>::new(7000.0, 0.0, 0.0);
 //! let vel = Velocity::<GCRS>::new(0.0, 7.5, 0.0);
-//! let s = OrbitState::from_typed(JulianDate::new(2_451_545.0), pos, vel);
+//! let s = OrbitState::new(JulianDate::new(2_451_545.0), pos, vel);
 //! assert!((s.position.x().value() - 7000.0).abs() < 1e-12);
 //! ```
 //!
@@ -59,19 +59,17 @@ impl PartialEq for OrbitState {
 }
 
 impl OrbitState {
-    /// Construct from raw component arrays.
-    #[inline]
-    pub fn new(epoch_tt: JulianDate, r_km: [f64; 3], v_km_s: [f64; 3]) -> Self {
-        Self {
-            epoch_tt,
-            position: Position::<GCRS>::new(r_km[0], r_km[1], r_km[2]),
-            velocity: Velocity::<GCRS>::new(v_km_s[0], v_km_s[1], v_km_s[2]),
-        }
-    }
-
     /// Construct from typed GCRS position and velocity.
+    ///
+    /// Call sites that only have raw `f64` components should wrap them first:
+    /// ```
+    /// use siderust_pod_core::state::{Position, Velocity};
+    /// use siderust::coordinates::frames::GCRS;
+    /// let pos = Position::<GCRS>::new(7000.0, 0.0, 0.0);
+    /// let vel = Velocity::<GCRS>::new(0.0, 7.5, 0.0);
+    /// ```
     #[inline]
-    pub fn from_typed(epoch_tt: JulianDate, position: Position<GCRS>, velocity: Velocity<GCRS>) -> Self {
+    pub fn new(epoch_tt: JulianDate, position: Position<GCRS>, velocity: Velocity<GCRS>) -> Self {
         Self { epoch_tt, position, velocity }
     }
 
@@ -106,7 +104,11 @@ impl OrbitState {
     /// Construct from a 6-vector `[r, v]` at a given epoch.
     #[inline]
     pub fn from_array6(epoch_tt: JulianDate, x: [f64; 6]) -> Self {
-        Self::new(epoch_tt, [x[0], x[1], x[2]], [x[3], x[4], x[5]])
+        Self {
+            epoch_tt,
+            position: Position::<GCRS>::new(x[0], x[1], x[2]),
+            velocity: Velocity::<GCRS>::new(x[3], x[4], x[5]),
+        }
     }
 
     /// Position magnitude squared (km²).
@@ -164,7 +166,7 @@ mod tests {
         let pos = Position::<GCRS>::new(7000.0, 100.0, -200.0);
         let vel = Velocity::<GCRS>::new(0.5, 7.4, -0.1);
 
-        let s = OrbitState::from_typed(epoch, pos, vel);
+        let s = OrbitState::new(epoch, pos, vel);
 
         // Typed position fields must match input values exactly.
         assert!((s.position.x().value() - 7000.0).abs() < f64::EPSILON);
@@ -187,18 +189,18 @@ mod tests {
     }
 
     #[test]
-    fn typed_facade_consistent_with_array_constructors() {
+    fn from_array6_consistent_with_new() {
         let epoch = JulianDate::new(2_451_545.0);
         let r = [6378.0, 0.0, 1000.0];
         let v = [0.0, 7.8, 0.0];
 
-        let raw = OrbitState::new(epoch, r, v);
-        let typed = OrbitState::from_typed(
+        let from_new = OrbitState::new(
             epoch,
             Position::<GCRS>::new(r[0], r[1], r[2]),
             Velocity::<GCRS>::new(v[0], v[1], v[2]),
         );
+        let from_arr = OrbitState::from_array6(epoch, [r[0], r[1], r[2], v[0], v[1], v[2]]);
 
-        assert_eq!(raw, typed);
+        assert_eq!(from_new, from_arr);
     }
 }

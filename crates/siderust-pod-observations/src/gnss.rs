@@ -172,13 +172,14 @@ impl MeasurementModel for GnssCarrierModel {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
+    use siderust_pod_core::{Position, Velocity};
 
     #[test]
     fn pseudorange_partials_match_finite_difference() {
         let state = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.0, 0.0, 0.0],
-            [0.0, 7.5, 0.0],
+            Position::new(7000.0, 0.0, 0.0),
+            Velocity::new(0.0, 7.5, 0.0),
         );
         let gps = [26_000.0, 1_000.0, 5_000.0];
         let model = GnssCodeModel {

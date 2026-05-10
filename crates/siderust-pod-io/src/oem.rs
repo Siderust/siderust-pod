@@ -102,19 +102,20 @@ fn jd_to_iso8601(jd: f64) -> String {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
+    use siderust_pod_core::{Position, Velocity};
 
     #[test]
     fn writes_header_and_data_lines() {
         let states = vec![
             OrbitState::new(
                 JulianDate::new(2_451_545.0),
-                [7000.0, 0.0, 0.0],
-                [0.0, 7.5, 0.0],
+                Position::new(7000.0, 0.0, 0.0),
+                Velocity::new(0.0, 7.5, 0.0),
             ),
             OrbitState::new(
                 JulianDate::new(2_451_545.0 + 30.0 / 86_400.0),
-                [6999.0, 225.0, 0.0],
-                [-0.24, 7.49, 0.0],
+                Position::new(6999.0, 225.0, 0.0),
+                Velocity::new(-0.24, 7.49, 0.0),
             ),
         ];
         let mut buf = Vec::new();

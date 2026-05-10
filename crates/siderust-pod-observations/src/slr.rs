@@ -160,6 +160,7 @@ mod tests {
     use siderust::time::JulianDate;
     use siderust::coordinates::frames::GCRS;
     use siderust_pod_core::Position;
+    use siderust_pod_core::Velocity;
 
     #[test]
     fn predicts_two_way_range_at_rest() {
@@ -167,8 +168,8 @@ mod tests {
         // expected two-way range ≈ 2 000 000 m.
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [0.0, 0.0, 7378.137],
-            [0.0, 0.0, 0.0],
+            Position::new(0.0, 0.0, 7378.137),
+            Velocity::new(0.0, 0.0, 0.0),
         );
         let m = SlrRangeModel::new([0.0, 0.0, 6378.137], 0.0, 0.01);
         let p = m.predict(&s, &[]);
@@ -180,8 +181,8 @@ mod tests {
     fn partial_matches_finite_difference() {
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7100.0, 200.0, 50.0],
-            [0.5, 7.5, 0.1],
+            Position::new(7100.0, 200.0, 50.0),
+            Velocity::new(0.5, 7.5, 0.1),
         );
         let m = SlrRangeModel::new([6378.0, 100.0, 0.0], 0.0, 0.01);
         let pred = m.predict(&s, &[]);

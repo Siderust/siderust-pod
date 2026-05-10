@@ -85,13 +85,14 @@ pub fn transpose3(r: &Rotation3) -> Rotation3 {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
+    use crate::state::{Position, Velocity};
 
     #[test]
     fn rtn_basis_orthonormal_for_circular_orbit() {
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.0, 0.0, 0.0],
-            [0.0, 7.5, 0.0],
+            Position::new(7000.0, 0.0, 0.0),
+            Velocity::new(0.0, 7.5, 0.0),
         );
         let r = rtn_from_state(&s);
         // First row should be +x.
@@ -106,8 +107,8 @@ mod tests {
     fn vnc_basis_aligned_with_velocity_for_circular_orbit() {
         let s = OrbitState::new(
             JulianDate::new(2_451_545.0),
-            [7000.0, 0.0, 0.0],
-            [0.0, 7.5, 0.0],
+            Position::new(7000.0, 0.0, 0.0),
+            Velocity::new(0.0, 7.5, 0.0),
         );
         let r = vnc_from_state(&s);
         assert!((r[0][1] - 1.0).abs() < 1e-12);
