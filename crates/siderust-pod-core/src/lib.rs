@@ -23,6 +23,7 @@ pub mod providers;
 pub mod state;
 
 pub use error::{PodError, Result};
+pub use frames::{RTN, VNC, LVLH};
 pub use manifest::{DatasetRef, RunManifest};
 pub use parameter::{Parameter, ParameterKind};
 pub use state::{Position, Velocity, OrbitState, StateDerivative, SpacecraftProperties, SpacecraftState};

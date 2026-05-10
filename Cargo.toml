@@ -65,6 +65,16 @@ tokio       = { version = "1.39", features = ["macros", "rt-multi-thread"] }
 tower       = "0.5"
 uuid        = { version = "1.10", features = ["v4"] }
 
+# Redirect transitive crates.io pulls of these foundational crates to the local
+# path checkouts.  Without this, `siderust` (which declares `affn = "0.7"` from
+# crates.io in its own Cargo.toml) would get a *different* affn instance than the
+# local path dep, causing type-level incompatibilities at crate boundaries.
+[patch.crates-io]
+qtty     = { path = "../qtty/qtty" }
+tempoch  = { path = "../tempoch/tempoch" }
+affn     = { path = "../affn" }
+siderust = { path = "../siderust" }
+
 [profile.release]
 opt-level = 3
 lto       = "thin"

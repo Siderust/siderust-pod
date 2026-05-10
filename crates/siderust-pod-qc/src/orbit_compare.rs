@@ -1,6 +1,9 @@
 //! Orbit-vs-orbit comparison (RTN/RIC) at matched epochs.
 
-use siderust_pod_core::frames::rtn_from_state;
+use affn::cartesian::Displacement;
+use affn::frames::GCRS;
+use qtty::units::Kilometer;
+use siderust_pod_core::frames::{rotate_gcrs_to_rtn, RTN};
 use siderust_pod_core::OrbitState;
 
 /// Per-epoch RTN difference between an estimated and reference state.
@@ -14,6 +17,13 @@ pub struct RtnDiff {
     pub t_m: f64,
     /// Cross-track difference (m).
     pub n_m: f64,
+}
+
+impl RtnDiff {
+    /// Position difference as a typed displacement in the RTN frame (kilometres).
+    pub fn position_rtn_km(&self) -> Displacement<RTN, Kilometer> {
+        Displacement::new(self.r_m * 1e-3, self.t_m * 1e-3, self.n_m * 1e-3)
+    }
 }
 
 /// Aggregate RTN statistics over a comparison run.
@@ -39,19 +49,14 @@ pub fn rtn_diff(estimated: &[OrbitState], reference: &[OrbitState]) -> Vec<RtnDi
     for i in 0..n {
         let e = estimated[i];
         let r = reference[i];
-        let rtn = rtn_from_state(&r);
-        // Position difference in km, then convert to metres after projection.
-        let d_km = [
-            e.position.x().value() - r.position.x().value(),
-            e.position.y().value() - r.position.y().value(),
-            e.position.z().value() - r.position.z().value(),
-        ];
-        let rtn_km = rtn.apply_array(d_km);
+        // Position difference in GCRS (typed Displacement<GCRS, Km>).
+        let d_gcrs: Displacement<GCRS, Kilometer> = e.position - r.position;
+        let d_rtn = rotate_gcrs_to_rtn(&r, d_gcrs);
         out.push(RtnDiff {
             jd_tt: e.epoch_tt.jd_value(),
-            r_m: rtn_km[0] * 1000.0,
-            t_m: rtn_km[1] * 1000.0,
-            n_m: rtn_km[2] * 1000.0,
+            r_m: d_rtn.x().value() * 1000.0,
+            t_m: d_rtn.y().value() * 1000.0,
+            n_m: d_rtn.z().value() * 1000.0,
         });
     }
     out

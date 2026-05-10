@@ -10,7 +10,7 @@ checksum = "0014e31e5ef8439603545dbc2913307dcb82910809484ddec91c58dccf7a8b9b"
 dependencies = [
  "affn-derive 0.1.5",
  "nalgebra",
- "qtty 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "qtty",
 ]
 
 [[package]]
@@ -18,17 +18,7 @@ name = "affn"
 version = "0.7.0"
 dependencies = [
  "affn-derive 0.7.0",
- "qtty 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "affn"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bccc9086e3ce406084e92ab6b01d010fe30fb4ce9e6aaed9e168f0e7ca35145d"
-dependencies = [
- "affn-derive 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "qtty 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "qtty",
 ]
 
 [[package]]
@@ -45,17 +35,6 @@ dependencies = [
 [[package]]
 name = "affn-derive"
 version = "0.7.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.117",
-]
-
-[[package]]
-name = "affn-derive"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb6481b80c14e224ae4471e7841d293789f9deb34a2aefe7a3aec842a5bb18bf"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -317,7 +296,7 @@ checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 name = "cheby"
 version = "0.2.0"
 dependencies = [
- "qtty 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "qtty",
 ]
 
 [[package]]
@@ -326,7 +305,7 @@ version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "409383f88b63b5c7267b52adbef8fd3a216beb265a14fcbc775f4fe2ec85624a"
 dependencies = [
- "qtty 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "qtty",
 ]
 
 [[package]]
@@ -1686,18 +1665,8 @@ dependencies = [
 name = "qtty"
 version = "0.7.1"
 dependencies = [
- "qtty-core 0.7.1",
- "qtty-derive 0.7.1",
-]
-
-[[package]]
-name = "qtty"
-version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f529220548fba3c86bdf30115782d93aa8bc80963ba30d1763f8e6037a77f295"
-dependencies = [
- "qtty-core 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "qtty-derive 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "qtty-core",
+ "qtty-derive",
 ]
 
 [[package]]
@@ -1705,35 +1674,13 @@ name = "qtty-core"
 version = "0.7.1"
 dependencies = [
  "libm",
- "qtty-derive 0.7.1",
- "typenum",
-]
-
-[[package]]
-name = "qtty-core"
-version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c53264e49b419b9a4f39d1d51ddc10857c579568ae54fe8effbb43e5f832cbc2"
-dependencies = [
- "libm",
- "qtty-derive 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "qtty-derive",
  "typenum",
 ]
 
 [[package]]
 name = "qtty-derive"
 version = "0.7.1"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 2.0.117",
-]
-
-[[package]]
-name = "qtty-derive"
-version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4eeedf0593d54273f6d67b46b4f381901290728327e0006b40c624cfaf0dfe8"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1976,13 +1923,13 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 name = "siderust"
 version = "0.7.0"
 dependencies = [
- "affn 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "affn 0.7.0",
  "anyhow",
  "approx",
  "cheby 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono",
  "paste",
- "qtty 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "qtty",
  "regex",
  "sha2 0.11.0",
  "tempoch 0.4.4",
@@ -2009,7 +1956,7 @@ dependencies = [
  "approx",
  "cheby 0.2.0",
  "hex",
- "qtty 0.7.1",
+ "qtty",
  "serde",
  "serde_json",
  "sha2 0.10.9",
@@ -2027,7 +1974,7 @@ dependencies = [
  "approx",
  "cheby 0.2.0",
  "criterion",
- "qtty 0.7.1",
+ "qtty",
  "siderust",
  "siderust-pod-core",
  "tempoch 0.4.3",
@@ -2041,7 +1988,7 @@ dependencies = [
  "affn 0.7.0",
  "approx",
  "faer",
- "qtty 0.7.1",
+ "qtty",
  "siderust-pod-core",
  "tempoch 0.4.3",
  "thiserror",
@@ -2054,7 +2001,7 @@ dependencies = [
  "affn 0.7.0",
  "approx",
  "hex",
- "qtty 0.7.1",
+ "qtty",
  "sha2 0.10.9",
  "siderust",
  "siderust-pod-core",
@@ -2068,7 +2015,7 @@ version = "0.0.0"
 dependencies = [
  "affn 0.7.0",
  "approx",
- "qtty 0.7.1",
+ "qtty",
  "siderust",
  "siderust-pod-core",
  "siderust-pod-dynamics",
@@ -2082,7 +2029,7 @@ version = "0.0.0"
 dependencies = [
  "affn 0.7.0",
  "hex",
- "qtty 0.7.1",
+ "qtty",
  "serde",
  "serde_json",
  "sha2 0.10.9",
@@ -2109,7 +2056,7 @@ version = "0.0.0"
 dependencies = [
  "affn 0.7.0",
  "approx",
- "qtty 0.7.1",
+ "qtty",
  "serde",
  "serde_json",
  "siderust",
@@ -2143,7 +2090,7 @@ dependencies = [
  "chrono",
  "hex",
  "log",
- "qtty 0.7.1",
+ "qtty",
  "serde",
  "serde_json",
  "serde_yaml",
@@ -2277,7 +2224,7 @@ version = "0.4.3"
 dependencies = [
  "affn 0.6.2",
  "chrono",
- "qtty 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "qtty",
  "tempoch-time-data 0.1.0",
 ]
 
@@ -2289,7 +2236,7 @@ checksum = "7d5916a4f0c15921b6399418163d0afef7c4bc85fbbda595a1cb289066e8041e"
 dependencies = [
  "affn 0.6.2",
  "chrono",
- "qtty 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "qtty",
  "tempoch-time-data 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
