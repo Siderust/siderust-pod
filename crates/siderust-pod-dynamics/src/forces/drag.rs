@@ -1,4 +1,7 @@
-//! Atmospheric drag with an exponential-density atmosphere.
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Vallés Puig, Ramon
+
+//! Atmospheric drag force model.
 //!
 //! Implements the standard cannonball drag acceleration
 //!
@@ -10,12 +13,10 @@
 //!
 //! * `Cd` is the drag coefficient (typical LEO value ≈ 2.2);
 //! * `A/m` is the area-to-mass ratio in m² / kg;
-//! * `ρ(h) = ρ₀ · exp(−(h − h₀) / H)` is an exponential atmosphere with
-//!   reference altitude `h₀` (km), scale height `H` (km), and reference
-//!   density `ρ₀` (kg/m³);
+//! * `ρ(h)` is the atmospheric mass density provided by a [`DensityProvider`];
 //! * `h` is the geocentric altitude `|r| − R_⊕` (km);
 //! * `v_rel = v − ω_⊕ × r` is the inertial velocity corrected for
-//!   co-rotating atmosphere (Earth angular velocity vector
+//!   the co-rotating atmosphere (Earth angular velocity
 //!   ω_⊕ = (0, 0, 7.292 115 × 10⁻⁵) rad/s).
 //!
 //! This is a *minimum-viable* atmosphere: density only depends on the
@@ -23,6 +24,8 @@
 //! richer model (NRLMSISE-00 / DTM2000) belongs in a follow-up.
 
 use crate::forces::ForceModel;
+use siderust::astro::dynamics::atmosphere::{DensityProvider, ExponentialAtmosphere};
+use siderust::qtty::Kilometers;
 use siderust_pod_core::OrbitState;
 
 /// Earth equatorial radius, km.
@@ -31,43 +34,32 @@ pub const R_EARTH_KM: f64 = 6_378.137;
 /// Earth angular speed, rad/s (sidereal).
 pub const OMEGA_EARTH_RAD_S: f64 = 7.292_115e-5;
 
-/// Exponential-atmosphere drag.
-#[derive(Debug, Clone, Copy)]
-pub struct ExponentialDrag {
+/// Drag force model parameterised over any [`DensityProvider`].
+///
+/// Separate the atmosphere model from the spacecraft geometry so each can
+/// be replaced independently.
+#[derive(Debug, Clone)]
+pub struct DragForce<D: DensityProvider> {
     /// Drag coefficient (dimensionless).
     pub cd: f64,
     /// Area-to-mass ratio, m² / kg.
     pub area_to_mass_m2_kg: f64,
-    /// Reference density, kg / m³.
-    pub rho0_kg_m3: f64,
-    /// Reference altitude, km.
-    pub h0_km: f64,
-    /// Scale height, km.
-    pub scale_height_km: f64,
+    /// Atmosphere density provider.
+    pub atmosphere: D,
 }
 
-impl ExponentialDrag {
-    /// "USSA-like" defaults near 500 km altitude. The numbers here are
-    /// representative, not authoritative — production runs should
-    /// inject a calibrated table or NRLMSISE-00.
+impl DragForce<ExponentialAtmosphere> {
+    /// Build a drag model using the [`ExponentialAtmosphere::LEO_500KM`] profile.
     pub fn leo_500km(cd: f64, area_to_mass_m2_kg: f64) -> Self {
         Self {
             cd,
             area_to_mass_m2_kg,
-            rho0_kg_m3: 6.967e-13,
-            h0_km: 500.0,
-            scale_height_km: 63.822,
+            atmosphere: ExponentialAtmosphere::LEO_500KM,
         }
-    }
-
-    /// Density model — exposed to keep tests honest.
-    #[inline]
-    pub fn density_kg_m3(&self, altitude_km: f64) -> f64 {
-        self.rho0_kg_m3 * (-(altitude_km - self.h0_km) / self.scale_height_km).exp()
     }
 }
 
-impl ForceModel for ExponentialDrag {
+impl<D: DensityProvider> ForceModel for DragForce<D> {
     fn acceleration(
         &self,
         s: &OrbitState,
@@ -79,18 +71,16 @@ impl ForceModel for ExponentialDrag {
             siderust::coordinates::frames::GCRS,
             siderust::astro::dynamics::state::AccelerationUnit,
         >;
-        // Geocentric altitude.
         let r = s.position.distance().value();
         let h = r - R_EARTH_KM;
         if h < 0.0 {
             return AccVec::new(0.0, 0.0, 0.0);
         }
-        let rho = self.density_kg_m3(h);
+        let rho = self.atmosphere.density_kg_m3(Kilometers::new(h));
 
         let [rx, ry, _] = [s.position.x().value(), s.position.y().value(), s.position.z().value()];
         let [vx, vy, vz] = [s.velocity.x().value(), s.velocity.y().value(), s.velocity.z().value()];
 
-        // v_rel = v − ω × r.   ω = (0, 0, ω_⊕).
         let omega_cross_r = [-OMEGA_EARTH_RAD_S * ry, OMEGA_EARTH_RAD_S * rx, 0.0];
         let v_rel_km_s = [
             vx - omega_cross_r[0],
@@ -110,6 +100,9 @@ impl ForceModel for ExponentialDrag {
     }
 }
 
+/// Type alias: drag model with the built-in exponential atmosphere.
+pub type ExponentialDrag = DragForce<ExponentialAtmosphere>;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -121,31 +114,28 @@ mod tests {
 
     #[test]
     fn density_decreases_with_altitude() {
-        let d = ExponentialDrag::leo_500km(2.2, 0.02);
-        assert!(d.density_kg_m3(500.0) > d.density_kg_m3(600.0));
-        assert!(d.density_kg_m3(400.0) > d.density_kg_m3(500.0));
+        let d = DragForce::leo_500km(2.2, 0.02);
+        assert!(d.atmosphere.density_kg_m3(Kilometers::new(500.0)) > d.atmosphere.density_kg_m3(Kilometers::new(600.0)));
+        assert!(d.atmosphere.density_kg_m3(Kilometers::new(400.0)) > d.atmosphere.density_kg_m3(Kilometers::new(500.0)));
     }
 
     #[test]
     fn drag_decays_altitude_monotonically() {
-        // Two-body + heavy drag should secularly reduce semi-major axis,
-        // so the post-propagation radius should be smaller than the
-        // initial radius after a few orbital revolutions.
         let mu: f64 = 398_600.441_8;
-        let r0: f64 = R_EARTH_KM + 350.0; // very-low LEO
+        let r0: f64 = R_EARTH_KM + 350.0;
         let v0: f64 = (mu / r0).sqrt();
         let s0 = OrbitState::new(JulianDate::new(2_451_545.0), Position::new(r0, 0.0, 0.0), Velocity::new(0.0, v0, 0.0));
-        // Exaggerated A/m to make decay visible in a short integration.
         let force = CompositeForce::empty()
             .push(Box::new(TwoBody::earth()))
-            .push(Box::new(ExponentialDrag {
+            .push(Box::new(DragForce {
                 cd: 2.2,
-                area_to_mass_m2_kg: 5.0, // very draggy spacecraft
-                rho0_kg_m3: 1.0e-11,     // amplified
-                h0_km: 350.0,
-                scale_height_km: 50.0,
+                area_to_mass_m2_kg: 5.0,
+                atmosphere: ExponentialAtmosphere {
+                    rho0_kg_m3: 1.0e-11,
+                    h0_km: 350.0,
+                    scale_height_km: 50.0,
+                },
             }));
-        // 12 hours at 30 s.
         let s_end = rk4_propagate(&force, s0, 30.0, 1440);
         let r_end_x = s_end.position.x().value();
         let r_end_y = s_end.position.y().value();

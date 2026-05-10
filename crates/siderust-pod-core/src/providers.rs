@@ -13,8 +13,8 @@ pub mod ephemeris;
 pub mod frame_transform;
 pub mod gravity_field;
 
-pub use atmosphere_density::AtmosphereDensityProvider;
-pub use earth_orientation::EarthOrientationProvider;
+pub use atmosphere_density::{ConstantDensity, DensityProvider, ExponentialAtmosphere};
+pub use earth_orientation::{EopError, EopProvider, EopValues};
 pub use ephemeris::EphemerisProvider;
 pub use frame_transform::FrameTransformProvider;
-pub use gravity_field::GravityFieldProvider;
+pub use gravity_field::{GravityConstants, GravityFieldProvider, TwoBodyEarth};
