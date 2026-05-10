@@ -267,7 +267,8 @@ fn assemble_normal_equations<F: ForceModel>(
 
     for ep in &arc.epochs {
         let s = &states[ep.state_index];
-        let phi = &stms[ep.state_index];
+        let phi_mat = stms[ep.state_index].to_row_major();
+        let phi = &phi_mat;
         for (_sat, obs) in &ep.code {
             let model = siderust_pod_observations::gnss::GnssCodeModel {
                 obs: *obs,
