@@ -12,7 +12,7 @@ pub mod srp;
 pub mod third_body;
 pub mod two_body;
 
-pub use drag::ExponentialDrag;
+pub use drag::{DragForce, ExponentialDrag};
 pub use j2::J2;
 pub use siderust::astro::dynamics::forces::{CompositeForce, ForceModel};
 pub use srp::CannonballSrp;
