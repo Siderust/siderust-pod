@@ -12,7 +12,6 @@ description = "Estimation algorithms for Siderust POD: WLS (faer-backed), robust
 qtty.workspace = true
 tempoch.workspace = true
 affn.workspace = true
-siderust-pod-core.workspace = true
 faer.workspace = true
 thiserror.workspace = true
 

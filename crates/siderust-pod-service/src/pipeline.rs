@@ -13,11 +13,13 @@
 //!   qc/qc.json
 //! ```
 
+use crate::manifest::{canonical_json, DatasetRef, RunManifest};
 use crate::synth::SyntheticArc;
-use siderust_pod_core::{OrbitState, Position, Velocity, RunManifest};
-use siderust_pod_dynamics::forces::{CompositeForce, ForceModel, TwoBody, J2};
-use siderust_pod_dynamics::integrators::rk4_propagate_series;
-use siderust_pod_dynamics::stm::finite_diff_stm_series;
+use siderust::astro::dynamics::{OrbitState, Position, Velocity};
+use siderust::astro::dynamics::forces::{CompositeForce, ForceModel, TwoBody, J2};
+use siderust::astro::dynamics::integrators::rk4_propagate_series;
+use siderust::astro::dynamics::finite_diff_stm_series;
+use siderust::qtty::Second;
 use siderust_pod_estimation::{
     gauss_newton, NonlinearError, NonlinearOptions, NonlinearReport, NormalEquations,
 };
@@ -133,7 +135,7 @@ pub fn run_synth(
         Velocity::new(report.parameters[3], report.parameters[4], report.parameters[5]),
     );
     let clk = report.parameters[6];
-    let estimated_states = rk4_propagate_series(&force, estimated_initial, dt_s, n_steps);
+    let estimated_states = rk4_propagate_series(&force, estimated_initial, Second::new(dt_s), n_steps);
     let estimated_final = *estimated_states.last().unwrap();
 
     // Postfit residuals.
@@ -186,28 +188,28 @@ pub fn run_synth(
     manifest.config_sha256 = String::new();
     manifest
         .outputs
-        .push(siderust_pod_core::DatasetRef::from_path(
+        .push(DatasetRef::from_path(
             "orbit-sp3",
             "SP3",
             &output_dir.join("products/orbit.sp3").to_string_lossy(),
         )?);
     manifest
         .outputs
-        .push(siderust_pod_core::DatasetRef::from_path(
+        .push(DatasetRef::from_path(
             "orbit-oem",
             "OEM",
             &output_dir.join("products/orbit.oem").to_string_lossy(),
         )?);
     manifest
         .outputs
-        .push(siderust_pod_core::DatasetRef::from_path(
+        .push(DatasetRef::from_path(
             "residuals",
             "CSV",
             &output_dir.join("residuals/residuals.csv").to_string_lossy(),
         )?);
     manifest
         .outputs
-        .push(siderust_pod_core::DatasetRef::from_path(
+        .push(DatasetRef::from_path(
             "qc",
             "JSON",
             &output_dir.join("qc/qc.json").to_string_lossy(),
@@ -215,7 +217,7 @@ pub fn run_synth(
     let manifest_path = output_dir.join("run.manifest.json");
     fs::write(
         &manifest_path,
-        siderust_pod_core::manifest::canonical_json(&manifest),
+        canonical_json(&manifest),
     )?;
 
     Ok(PipelineReport {
@@ -256,8 +258,8 @@ fn assemble_normal_equations<F: ForceModel>(
         Position::new(params[0], params[1], params[2]),
         Velocity::new(params[3], params[4], params[5]),
     );
-    let states = rk4_propagate_series(force, s0, dt_s, n_steps);
-    let stms = finite_diff_stm_series(force, s0, dt_s, n_steps);
+    let states = rk4_propagate_series(force, s0, Second::new(dt_s), n_steps);
+    let stms = finite_diff_stm_series(force, s0, Second::new(dt_s), n_steps);
     let n_sats = arc.gss_count();
     let n_params = 6 + 1 + n_sats;
     let mut ne = NormalEquations::new(n_params);

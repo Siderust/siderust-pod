@@ -4,9 +4,7 @@
 //! within a tight tolerance of the truth state.
 
 use siderust::time::JulianDate;
-use siderust_pod_core::OrbitState;
-use siderust_pod_core::{Position, Velocity};
-use siderust_pod_service::{generate, run_synth, SyntheticArcConfig};
+use siderust_pod_service::{generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity};
 use std::path::PathBuf;
 
 #[test]

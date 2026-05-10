@@ -15,10 +15,11 @@
 //!
 //! Tropospheric and ionospheric delays are zero in MVP-1; they are added in
 //! M3 follow-up tasks together with a real ITRF-vs-GCRF rotation supplied by
-//! the [`siderust_pod_core::providers::FrameTransformProvider`].
+//! a [`crate::FrameTransformProvider`].
 
 use crate::model::{MeasurementModel, Partials, Prediction};
-use siderust_pod_core::{Position, Velocity, VelocityUnit, OrbitState};
+use siderust::astro::dynamics::{OrbitState, Position, Velocity};
+use siderust::astro::dynamics::state::VelocityUnit;
 use siderust::coordinates::frames::GCRS;
 
 /// Speed of light, m/s.
@@ -76,24 +77,10 @@ pub struct GnssCarrierModel {
     pub ambiguity_index: usize,
 }
 
-#[inline]
-fn diff(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
-    [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
-}
-
-#[inline]
-fn dot(a: [f64; 3], b: [f64; 3]) -> f64 {
-    a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
-}
-
-#[inline]
-fn norm(a: [f64; 3]) -> f64 {
-    dot(a, a).sqrt()
-}
-
-fn sagnac_km(gps_pos_km: Position<GCRS>, rx_pos_km: [f64; 3]) -> f64 {
+fn sagnac_km(gps_pos_km: Position<GCRS>, rx_pos_km: Position<GCRS>) -> f64 {
     OMEGA_EARTH_RAD_S
-        * (gps_pos_km.x().value() * rx_pos_km[1] - gps_pos_km.y().value() * rx_pos_km[0])
+        * (gps_pos_km.x().value() * rx_pos_km.y().value()
+            - gps_pos_km.y().value() * rx_pos_km.x().value())
         / C_KM_S
 }
 
@@ -110,15 +97,17 @@ fn predict_range_m(
     gps_pos_km: Position<GCRS>,
     gps_vel_km_s: Velocity<GCRS, VelocityUnit>,
 ) -> (f64, [f64; 3]) {
-    let rx_km = [state.position.x().value(), state.position.y().value(), state.position.z().value()];
-    let gps = [gps_pos_km.x().value(), gps_pos_km.y().value(), gps_pos_km.z().value()];
-    let los = diff(rx_km, gps);
-    let geom_km = norm(los);
+    let los = state.position - gps_pos_km;
+    let geom_km = los.magnitude().value();
     let geom_m = geom_km * 1_000.0;
-    let sagnac_m = sagnac_km(gps_pos_km, rx_km) * 1_000.0;
+    let sagnac_m = sagnac_km(gps_pos_km, state.position) * 1_000.0;
     let rel_m = relativistic_gps_clock_m(gps_pos_km, gps_vel_km_s);
     let u = if geom_km > 0.0 {
-        [los[0] / geom_km, los[1] / geom_km, los[2] / geom_km]
+        [
+            los.x().value() / geom_km,
+            los.y().value() / geom_km,
+            los.z().value() / geom_km,
+        ]
     } else {
         [0.0; 3]
     };
@@ -177,7 +166,7 @@ impl MeasurementModel for GnssCarrierModel {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
-    use siderust_pod_core::{Position, Velocity};
+    use siderust::astro::dynamics::{Position, Velocity};
 
     #[test]
     fn pseudorange_partials_match_finite_difference() {

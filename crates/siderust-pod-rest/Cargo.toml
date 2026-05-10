@@ -23,4 +23,3 @@ anyhow.workspace = true
 log.workspace = true
 env_logger.workspace = true
 siderust-pod-service.workspace = true
-siderust-pod-core.workspace = true

@@ -3,8 +3,8 @@
 use affn::cartesian::Displacement;
 use affn::frames::GCRS;
 use qtty::units::Kilometer;
-use siderust_pod_core::frames::RTN;
-use siderust_pod_core::OrbitState;
+use siderust::astro::dynamics::OrbitState;
+use siderust::astro::dynamics::frames::RTN;
 
 /// Per-epoch RTN difference between an estimated and reference state.
 #[derive(Debug, Clone)]
@@ -100,7 +100,7 @@ pub fn rtn_summary(diffs: &[RtnDiff]) -> RtnSummary {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
-    use siderust_pod_core::{Position, Velocity};
+    use siderust::astro::dynamics::{Position, Velocity};
 
     #[test]
     fn rtn_zero_for_identical_orbits() {

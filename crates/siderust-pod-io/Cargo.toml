@@ -13,7 +13,6 @@ qtty.workspace = true
 tempoch.workspace = true
 affn.workspace = true
 siderust.workspace = true
-siderust-pod-core.workspace = true
 thiserror.workspace = true
 sha2.workspace = true
 hex.workspace = true

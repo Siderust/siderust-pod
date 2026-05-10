@@ -5,11 +5,10 @@
 //! against the same orbit and confirms residuals are zero (the model is
 //! consistent with itself) and the QC summary reports zero RMS.
 
-use siderust_pod_core::Position;
+use siderust_pod_service::{generate, SyntheticArcConfig, Position};
 use siderust_pod_observations::model::MeasurementModel;
 use siderust_pod_observations::SlrRangeModel;
 use siderust_pod_qc::SlrValidationReport;
-use siderust_pod_service::{generate, SyntheticArcConfig};
 use siderust::coordinates::frames::GCRS;
 
 #[test]

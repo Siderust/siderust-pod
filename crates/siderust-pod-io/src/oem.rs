@@ -5,7 +5,7 @@
 //! METADATA + DATA blocks, no covariance.
 
 use crate::PodIoError;
-use siderust_pod_core::OrbitState;
+use siderust::astro::dynamics::OrbitState;
 use std::io::Write;
 
 /// Metadata for a single OEM segment.
@@ -101,7 +101,7 @@ fn jd_to_iso8601(jd: f64) -> String {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
-    use siderust_pod_core::{Position, Velocity};
+    use siderust::astro::dynamics::{Position, Velocity};
 
     #[test]
     fn writes_header_and_data_lines() {

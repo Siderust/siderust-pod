@@ -1,6 +1,6 @@
 //! Build SP3 / OEM products from an in-memory state time series.
 
-use siderust_pod_core::OrbitState;
+use siderust::astro::dynamics::OrbitState;
 use siderust_pod_io::oem::{write_oem, OemMetadata};
 use siderust_pod_io::sp3::{write_sp3, Sp3Epoch, Sp3Position, Sp3Record};
 use siderust_pod_io::PodIoError;
@@ -98,7 +98,7 @@ pub fn write_oem_from_states<W: Write>(
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
-    use siderust_pod_core::{Position, Velocity};
+    use siderust::astro::dynamics::{Position, Velocity};
 
     fn fake_states() -> Vec<OrbitState> {
         (0..5)

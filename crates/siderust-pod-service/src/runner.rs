@@ -10,8 +10,8 @@
 //!   `tests/mvp1_e2e.rs`.
 //!
 //! * **Real-input ingestion.** When the configuration carries real
-//!   inputs the runner currently refuses with
-//!   [`PodError::NotImplemented`]. The pre-M9 implementation only
+//!   inputs the runner currently refuses with an
+//!   [`std::io::ErrorKind::Unsupported`] error. The pre-M9 implementation only
 //!   propagated the initial state and silently ignored the real inputs,
 //!   which made every integration test green for the wrong reason. That
 //!   dead branch was removed in the M8 audit pass; the real ingestion
@@ -20,7 +20,7 @@
 use crate::config::RunConfig;
 use crate::pipeline::run_synth;
 use crate::synth::{generate, SyntheticArcConfig};
-use siderust_pod_core::{OrbitState, PodError, Position, Velocity};
+use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 use std::path::PathBuf;
 
 /// Outcome of a run.
@@ -43,15 +43,11 @@ pub fn run(cfg: &RunConfig, _config_path: &str) -> std::io::Result<RunReport> {
 
     if cfg.inputs.sp3.is_some() || cfg.inputs.rinex_obs.is_some() {
         // Refuse rather than silently propagate-and-ignore.
-        let err = PodError::NotImplemented(
-            "real GNSS ingestion (SP3 / RINEX OBS → estimator) is scheduled for milestone M9; \
-             see plan.md §13.3. The current build only supports the synthetic-arc MVP-1 \
-             pipeline (`inputs.sp3` and `inputs.rinex_obs` both null)."
-                .to_string(),
-        );
         return Err(std::io::Error::new(
             std::io::ErrorKind::Unsupported,
-            err.to_string(),
+            "not implemented: real GNSS ingestion (SP3 / RINEX OBS → estimator) is scheduled \
+             for milestone M9; see plan.md §13.3. The current build only supports the \
+             synthetic-arc MVP-1 pipeline (`inputs.sp3` and `inputs.rinex_obs` both null).",
         ));
     }
 

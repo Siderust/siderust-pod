@@ -16,7 +16,7 @@
 //! ITRF→GCRF rotation using a `siderust` frame transform provider.
 
 use crate::model::{MeasurementModel, Partials, Prediction};
-use siderust_pod_core::{Position, OrbitState};
+use siderust::astro::dynamics::{OrbitState, Position};
 use siderust::coordinates::frames::GCRS;
 
 /// One SLR range observation (two-way time-of-flight converted to metres).
@@ -165,7 +165,7 @@ fn unit(v: &[f64; 3]) -> [f64; 3] {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
-    use siderust_pod_core::{Position, Velocity};
+    use siderust::astro::dynamics::{Position, Velocity};
 
     #[test]
     fn predicts_two_way_range_at_rest() {

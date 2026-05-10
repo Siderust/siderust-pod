@@ -8,9 +8,11 @@
 #![warn(missing_docs)]
 
 pub mod nonlinear;
+pub mod parameter;
 pub mod sequential;
 pub mod wls;
 
 pub use nonlinear::{gauss_newton, NonlinearError, NonlinearOptions, NonlinearReport};
+pub use parameter::{Parameter, ParameterKind};
 pub use sequential::{Ekf, EkfError, InnovationRecord};
 pub use wls::{NormalEquations, WlsResult, WlsSolverError};

@@ -13,8 +13,7 @@ use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
-use siderust_pod_core::{Position, Velocity};
-use siderust_pod_service::{generate, run_synth, OrbitState, SyntheticArcConfig};
+use siderust_pod_service::{generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity};
 use uuid::Uuid;
 
 /// Job status snapshot.

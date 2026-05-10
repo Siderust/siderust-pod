@@ -2,8 +2,7 @@
 //! manifest hashes and identical SP3 / OEM byte content. This validates the
 //! reproducibility property promised by the run manifest.
 
-use siderust_pod_core::{Position, Velocity};
-use siderust_pod_service::{generate, run_synth, OrbitState, SyntheticArcConfig};
+use siderust_pod_service::{generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity};
 use std::path::PathBuf;
 
 fn run_once(label: &str) -> (PathBuf, Vec<u8>, Vec<u8>, Vec<u8>) {

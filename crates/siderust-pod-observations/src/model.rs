@@ -4,7 +4,7 @@
 //! and parameter block, and provides the row of partial derivatives the
 //! estimator needs to assemble its design matrix.
 
-use siderust_pod_core::OrbitState;
+use siderust::astro::dynamics::OrbitState;
 
 /// Predicted observation value with attached partial-derivative row.
 #[derive(Debug, Clone)]

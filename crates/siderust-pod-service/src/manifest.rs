@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Vallés Puig, Ramon
+
 //! Run manifest: deterministic, hash-anchored description of a POD run.
 
 use sha2::{Digest, Sha256};
@@ -59,7 +62,7 @@ impl RunManifest {
     }
 
     /// Compute the canonical SHA-256 of the manifest using the deterministic
-    /// formatter in [`crate::manifest::canonical_json`].
+    /// formatter in [`canonical_json`].
     pub fn canonical_sha256(&self) -> String {
         let mut h = Sha256::new();
         h.update(canonical_json(self).as_bytes());

@@ -6,8 +6,7 @@
 
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
-use siderust_pod_core::{Position, Velocity};
-use siderust_pod_service::{generate, run_synth, OrbitState, SyntheticArcConfig};
+use siderust_pod_service::{generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity};
 
 /// Run the synthetic-arc MVP-1 pipeline and return a status dict.
 #[pyfunction]

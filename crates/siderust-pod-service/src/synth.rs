@@ -9,10 +9,11 @@
 use crate::pipeline::{ArcEpoch, GpsSatellite};
 use siderust::coordinates::frames::GCRS;
 use siderust::time::JulianDate;
-use siderust_pod_core::OrbitState;
-use siderust_pod_core::{Position, Velocity, VelocityUnit};
-use siderust_pod_dynamics::forces::TwoBody;
-use siderust_pod_dynamics::integrators::rk4_propagate_series;
+use siderust::astro::dynamics::{OrbitState, Position, Velocity};
+use siderust::astro::dynamics::state::VelocityUnit;
+use siderust::astro::dynamics::forces::TwoBody;
+use siderust::astro::dynamics::integrators::rk4_propagate_series;
+use siderust::qtty::Second;
 use siderust_pod_observations::gnss::{CarrierPhaseObs, GnssCodeModel, PseudorangeObs};
 use siderust_pod_observations::model::MeasurementModel;
 
@@ -118,7 +119,7 @@ impl Lcg {
 /// Generate the synthetic arc.
 pub fn generate(cfg: &SyntheticArcConfig) -> SyntheticArc {
     let force = TwoBody::earth();
-    let truth = rk4_propagate_series(&force, cfg.truth_initial, cfg.dt_s, cfg.n_steps);
+    let truth = rk4_propagate_series(&force, cfg.truth_initial, Second::new(cfg.dt_s), cfg.n_steps);
     let mut rng = Lcg::new(cfg.seed);
     let gps_sats: Vec<GpsSatellite> = (0..cfg.n_gps_sats)
         .map(|i| GpsSatellite {
