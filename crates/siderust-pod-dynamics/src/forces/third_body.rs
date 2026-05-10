@@ -16,6 +16,7 @@
 //! IAU-2006/2000A chain.
 
 use crate::forces::ForceModel;
+use siderust::astro::precession::ecliptic_of_date_to_mean_equatorial_matrix;
 use siderust::time::JulianDate;
 use siderust_pod_core::providers::EphemerisProvider;
 use siderust_pod_core::OrbitState;
@@ -25,9 +26,6 @@ use std::sync::Arc;
 pub const MU_SUN_KM3_S2: f64 = 1.327_124_400_18e11;
 /// Standard gravitational parameter of the Moon (km³/s²).
 pub const MU_MOON_KM3_S2: f64 = 4.902_800_066e3;
-
-/// Mean obliquity of the ecliptic at J2000 (radians).
-const EPS_J2000_RAD: f64 = 0.409_092_804_222_329_5;
 
 /// Astronomical unit, km.
 const AU_KM: f64 = 149_597_870.7;
@@ -54,7 +52,8 @@ impl ThirdBodySunMoon {
         let s = position_xyz_au(&sun_b);
         let e = position_xyz_au(&earth_b);
         let d_ecl_au = [s[0] - e[0], s[1] - e[1], s[2] - e[2]];
-        let d_eq_au = rotx_to_equator(d_ecl_au);
+        let rot = ecliptic_of_date_to_mean_equatorial_matrix(JulianDate::J2000);
+        let d_eq_au = rot.apply_array(d_ecl_au);
         [d_eq_au[0] * AU_KM, d_eq_au[1] * AU_KM, d_eq_au[2] * AU_KM]
     }
 
@@ -64,7 +63,8 @@ impl ThirdBodySunMoon {
             Err(_) => return [0.0; 3],
         };
         let m = position_xyz_km(&m_geo);
-        rotx_to_equator(m)
+        let rot = ecliptic_of_date_to_mean_equatorial_matrix(JulianDate::J2000);
+        rot.apply_array(m)
     }
 }
 
@@ -104,13 +104,6 @@ impl ForceModel for ThirdBodySunMoon {
 #[inline]
 fn norm3(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
-}
-
-/// Rotate a vector around the X axis by `+ε` to convert ecliptic of J2000
-/// into the mean equator of J2000.
-fn rotx_to_equator(v: [f64; 3]) -> [f64; 3] {
-    let (s, c) = EPS_J2000_RAD.sin_cos();
-    [v[0], c * v[1] - s * v[2], s * v[1] + c * v[2]]
 }
 
 // --- helpers extracting f64 vectors from typed siderust positions ----------

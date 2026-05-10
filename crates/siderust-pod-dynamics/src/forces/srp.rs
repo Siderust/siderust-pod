@@ -25,6 +25,7 @@
 //! as visible. A conical Earth-shadow model belongs in a follow-up.
 
 use crate::forces::ForceModel;
+use siderust::astro::precession::ecliptic_of_date_to_mean_equatorial_matrix;
 use siderust::time::JulianDate;
 use siderust_pod_core::providers::EphemerisProvider;
 use siderust_pod_core::OrbitState;
@@ -35,9 +36,6 @@ pub const P0_N_M2: f64 = 4.560e-6;
 
 /// Astronomical unit, km.
 const AU_KM: f64 = 149_597_870.7;
-
-/// Mean obliquity of the ecliptic at J2000, rad.
-const EPS_J2000_RAD: f64 = 0.409_092_804_222_329_5;
 
 /// Cannonball SRP force model.
 pub struct CannonballSrp {
@@ -68,12 +66,8 @@ impl CannonballSrp {
             earth_b.z().value(),
         ];
         let d_ecl_au = [s[0] - e[0], s[1] - e[1], s[2] - e[2]];
-        let (sn, cs) = EPS_J2000_RAD.sin_cos();
-        let d_eq_au = [
-            d_ecl_au[0],
-            cs * d_ecl_au[1] - sn * d_ecl_au[2],
-            sn * d_ecl_au[1] + cs * d_ecl_au[2],
-        ];
+        let rot = ecliptic_of_date_to_mean_equatorial_matrix(JulianDate::J2000);
+        let d_eq_au = rot.apply_array(d_ecl_au);
         Some([d_eq_au[0] * AU_KM, d_eq_au[1] * AU_KM, d_eq_au[2] * AU_KM])
     }
 }
