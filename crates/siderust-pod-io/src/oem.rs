@@ -57,16 +57,13 @@ pub fn write_oem<W: Write>(
     writeln!(w, "META_STOP")?;
     writeln!(w)?;
     for s in states {
+        let [rx, ry, rz] = s.position_km();
+        let [vx, vy, vz] = s.velocity_km_s();
         writeln!(
             w,
             "{} {:.6} {:.6} {:.6} {:.9} {:.9} {:.9}",
             jd_to_iso8601(s.epoch_tt.jd_value()),
-            s.rx_km,
-            s.ry_km,
-            s.rz_km,
-            s.vx_km_s,
-            s.vy_km_s,
-            s.vz_km_s
+            rx, ry, rz, vx, vy, vz
         )?;
     }
     Ok(())

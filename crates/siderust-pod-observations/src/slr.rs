@@ -57,16 +57,10 @@ const C_M_S: f64 = 299_792_458.0;
 
 impl MeasurementModel for SlrRangeModel {
     fn predict(&self, state: &OrbitState, extra: &[f64]) -> Prediction {
-        let r_sat_m = [
-            state.rx_km * 1000.0,
-            state.ry_km * 1000.0,
-            state.rz_km * 1000.0,
-        ];
-        let v_sat_m_s = [
-            state.vx_km_s * 1000.0,
-            state.vy_km_s * 1000.0,
-            state.vz_km_s * 1000.0,
-        ];
+        let [rx_km, ry_km, rz_km] = state.position_km();
+        let [vx_km_s, vy_km_s, vz_km_s] = state.velocity_km_s();
+        let r_sat_m = [rx_km * 1000.0, ry_km * 1000.0, rz_km * 1000.0];
+        let v_sat_m_s = [vx_km_s * 1000.0, vy_km_s * 1000.0, vz_km_s * 1000.0];
         let r_sta_m = [
             self.station_inertial_km[0] * 1000.0,
             self.station_inertial_km[1] * 1000.0,
@@ -164,6 +158,7 @@ fn unit(v: &[f64; 3]) -> [f64; 3] {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
+    use siderust_pod_core::GcrsPosition;
 
     #[test]
     fn predicts_two_way_range_at_rest() {
@@ -193,18 +188,19 @@ mod tests {
         for (axis, idx) in [(0, 0), (1, 1), (2, 2)] {
             let mut up = s;
             let mut dn = s;
+            let [rx, ry, rz] = s.position_km();
             match axis {
                 0 => {
-                    up.rx_km += h;
-                    dn.rx_km -= h;
+                    up.position = GcrsPosition::new(rx + h, ry, rz);
+                    dn.position = GcrsPosition::new(rx - h, ry, rz);
                 }
                 1 => {
-                    up.ry_km += h;
-                    dn.ry_km -= h;
+                    up.position = GcrsPosition::new(rx, ry + h, rz);
+                    dn.position = GcrsPosition::new(rx, ry - h, rz);
                 }
                 _ => {
-                    up.rz_km += h;
-                    dn.rz_km -= h;
+                    up.position = GcrsPosition::new(rx, ry, rz + h);
+                    dn.position = GcrsPosition::new(rx, ry, rz - h);
                 }
             }
             let fd = (m.predict(&up, &[]).value - m.predict(&dn, &[]).value) / (2.0 * h);

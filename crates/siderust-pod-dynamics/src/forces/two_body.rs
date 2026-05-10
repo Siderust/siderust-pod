@@ -23,6 +23,7 @@ impl ForceModel for TwoBody {
         let r2 = s.r2();
         let r = r2.sqrt();
         let k = -self.gm / (r2 * r);
-        [k * s.rx_km, k * s.ry_km, k * s.rz_km]
+        let [rx, ry, rz] = s.position_km();
+        [k * rx, k * ry, k * rz]
     }
 }

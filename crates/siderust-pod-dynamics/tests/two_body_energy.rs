@@ -5,7 +5,8 @@ use siderust_pod_dynamics::prelude::{rk4_propagate, TwoBody};
 /// Specific orbital energy: ½v² - μ/r.
 fn energy(s: &OrbitState, gm: f64) -> f64 {
     let r = s.r2().sqrt();
-    let v2 = s.vx_km_s.powi(2) + s.vy_km_s.powi(2) + s.vz_km_s.powi(2);
+    let [vx, vy, vz] = s.velocity_km_s();
+    let v2 = vx.powi(2) + vy.powi(2) + vz.powi(2);
     0.5 * v2 - gm / r
 }
 
@@ -46,9 +47,11 @@ fn two_body_returns_to_origin_one_period() {
     let n = 600usize;
     let s1 = rk4_propagate(&force, s0, dt, n);
 
-    let dx = s1.rx_km - s0.rx_km;
-    let dy = s1.ry_km - s0.ry_km;
-    let dz = s1.rz_km - s0.rz_km;
+    let [x0, y0, z0] = s0.position_km();
+    let [x1, y1, z1] = s1.position_km();
+    let dx = x1 - x0;
+    let dy = y1 - y0;
+    let dz = z1 - z0;
     let err = (dx * dx + dy * dy + dz * dz).sqrt();
     assert!(err < 1.0, "position error {} km too large", err);
 }

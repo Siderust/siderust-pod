@@ -65,9 +65,9 @@ pub fn write_sp3_from_states<W: Write>(
                 second: sec,
                 positions: vec![Sp3Position {
                     sat_id: sat_id.to_string(),
-                    x_km: s.rx_km,
-                    y_km: s.ry_km,
-                    z_km: s.rz_km,
+                    x_km: s.position.x().value(),
+                    y_km: s.position.y().value(),
+                    z_km: s.position.z().value(),
                     clock_us: 999_999.999_999,
                 }],
             }

@@ -77,16 +77,15 @@ impl ForceModel for ExponentialDrag {
         }
         let rho = self.density_kg_m3(h);
 
+        let [rx, ry, _] = s.position_km();
+        let [vx, vy, vz] = s.velocity_km_s();
+
         // v_rel = v − ω × r.   ω = (0, 0, ω_⊕).
-        let omega_cross_r = [
-            -OMEGA_EARTH_RAD_S * s.ry_km,
-            OMEGA_EARTH_RAD_S * s.rx_km,
-            0.0,
-        ];
+        let omega_cross_r = [-OMEGA_EARTH_RAD_S * ry, OMEGA_EARTH_RAD_S * rx, 0.0];
         let v_rel_km_s = [
-            s.vx_km_s - omega_cross_r[0],
-            s.vy_km_s - omega_cross_r[1],
-            s.vz_km_s - omega_cross_r[2],
+            vx - omega_cross_r[0],
+            vy - omega_cross_r[1],
+            vz - omega_cross_r[2],
         ];
 
         // Convert km/s → m/s for the dynamic-pressure expression, then back.
@@ -142,7 +141,8 @@ mod tests {
             }));
         // 12 hours at 30 s.
         let s_end = rk4_propagate(&force, s0, 30.0, 1440);
-        let r_end = (s_end.rx_km.powi(2) + s_end.ry_km.powi(2) + s_end.rz_km.powi(2)).sqrt();
+        let [r_end_x, r_end_y, r_end_z] = s_end.position_km();
+        let r_end = (r_end_x.powi(2) + r_end_y.powi(2) + r_end_z.powi(2)).sqrt();
         assert!(
             r_end < r0,
             "expected drag-driven decay; r0={r0:.3}, r_end={r_end:.3}",

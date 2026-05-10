@@ -9,10 +9,12 @@ fn run_once(label: &str) -> (PathBuf, Vec<u8>, Vec<u8>, Vec<u8>) {
     let cfg = SyntheticArcConfig::default();
     let arc = generate(&cfg);
     let t0 = arc.truth_states[0];
+    let [r0x, r0y, r0z] = t0.position_km();
+    let [v0x, v0y, v0z] = t0.velocity_km_s();
     let init = OrbitState::new(
         t0.epoch_tt,
-        [t0.rx_km + 0.05, t0.ry_km - 0.05, t0.rz_km + 0.05],
-        [t0.vx_km_s + 5e-5, t0.vy_km_s - 5e-5, t0.vz_km_s + 5e-5],
+        [r0x + 0.05, r0y - 0.05, r0z + 0.05],
+        [v0x + 5e-5, v0y - 5e-5, v0z + 5e-5],
     );
     let out = std::env::temp_dir().join(format!(
         "siderust_pod_repro_{}_{}",

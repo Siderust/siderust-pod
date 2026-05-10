@@ -38,12 +38,12 @@ pub fn rtn_diff(estimated: &[OrbitState], reference: &[OrbitState]) -> Vec<RtnDi
     for i in 0..n {
         let e = estimated[i];
         let r = reference[i];
-        let r_pos = [r.rx_km * 1000.0, r.ry_km * 1000.0, r.rz_km * 1000.0];
-        let r_vel = [r.vx_km_s * 1000.0, r.vy_km_s * 1000.0, r.vz_km_s * 1000.0];
+        let r_pos = [r.position.x().value() * 1000.0, r.position.y().value() * 1000.0, r.position.z().value() * 1000.0];
+        let r_vel = [r.velocity.x().value() * 1000.0, r.velocity.y().value() * 1000.0, r.velocity.z().value() * 1000.0];
         let d_pos = [
-            (e.rx_km - r.rx_km) * 1000.0,
-            (e.ry_km - r.ry_km) * 1000.0,
-            (e.rz_km - r.rz_km) * 1000.0,
+            (e.position.x().value() - r.position.x().value()) * 1000.0,
+            (e.position.y().value() - r.position.y().value()) * 1000.0,
+            (e.position.z().value() - r.position.z().value()) * 1000.0,
         ];
         let basis = rtn_basis(&r_pos, &r_vel);
         let r_comp = dot(&d_pos, &basis.0);

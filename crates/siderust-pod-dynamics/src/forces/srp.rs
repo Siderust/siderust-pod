@@ -83,7 +83,8 @@ impl ForceModel for CannonballSrp {
         let Some(sun) = self.sun_geocentric_km(s.epoch_tt) else {
             return [0.0; 3];
         };
-        let r_sun_sat_km = [s.rx_km - sun[0], s.ry_km - sun[1], s.rz_km - sun[2]];
+        let [rx, ry, rz] = s.position_km();
+        let r_sun_sat_km = [rx - sun[0], ry - sun[1], rz - sun[2]];
         let r2 = r_sun_sat_km[0] * r_sun_sat_km[0]
             + r_sun_sat_km[1] * r_sun_sat_km[1]
             + r_sun_sat_km[2] * r_sun_sat_km[2];
