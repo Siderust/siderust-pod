@@ -77,8 +77,8 @@ impl ForceModel for ExponentialDrag {
         }
         let rho = self.density_kg_m3(h);
 
-        let [rx, ry, _] = s.position_km();
-        let [vx, vy, vz] = s.velocity_km_s();
+        let [rx, ry, _] = [s.position.x().value(), s.position.y().value(), s.position.z().value()];
+        let [vx, vy, vz] = [s.velocity.x().value(), s.velocity.y().value(), s.velocity.z().value()];
 
         // v_rel = v − ω × r.   ω = (0, 0, ω_⊕).
         let omega_cross_r = [-OMEGA_EARTH_RAD_S * ry, OMEGA_EARTH_RAD_S * rx, 0.0];
@@ -142,7 +142,9 @@ mod tests {
             }));
         // 12 hours at 30 s.
         let s_end = rk4_propagate(&force, s0, 30.0, 1440);
-        let [r_end_x, r_end_y, r_end_z] = s_end.position_km();
+        let r_end_x = s_end.position.x().value();
+        let r_end_y = s_end.position.y().value();
+        let r_end_z = s_end.position.z().value();
         let r_end = (r_end_x.powi(2) + r_end_y.powi(2) + r_end_z.powi(2)).sqrt();
         assert!(
             r_end < r0,

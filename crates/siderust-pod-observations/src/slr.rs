@@ -57,10 +57,16 @@ const C_M_S: f64 = 299_792_458.0;
 
 impl MeasurementModel for SlrRangeModel {
     fn predict(&self, state: &OrbitState, extra: &[f64]) -> Prediction {
-        let [rx_km, ry_km, rz_km] = state.position_km();
-        let [vx_km_s, vy_km_s, vz_km_s] = state.velocity_km_s();
-        let r_sat_m = [rx_km * 1000.0, ry_km * 1000.0, rz_km * 1000.0];
-        let v_sat_m_s = [vx_km_s * 1000.0, vy_km_s * 1000.0, vz_km_s * 1000.0];
+        let r_sat_m = [
+            state.position.x().value() * 1000.0,
+            state.position.y().value() * 1000.0,
+            state.position.z().value() * 1000.0,
+        ];
+        let v_sat_m_s = [
+            state.velocity.x().value() * 1000.0,
+            state.velocity.y().value() * 1000.0,
+            state.velocity.z().value() * 1000.0,
+        ];
         let r_sta_m = [
             self.station_inertial_km[0] * 1000.0,
             self.station_inertial_km[1] * 1000.0,
@@ -190,7 +196,9 @@ mod tests {
         for (axis, idx) in [(0, 0), (1, 1), (2, 2)] {
             let mut up = s;
             let mut dn = s;
-            let [rx, ry, rz] = s.position_km();
+            let rx = s.position.x().value();
+            let ry = s.position.y().value();
+            let rz = s.position.z().value();
             match axis {
                 0 => {
                     up.position = Position::<GCRS>::new(rx + h, ry, rz);

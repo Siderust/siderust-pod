@@ -24,17 +24,17 @@
 //! The raw-array helpers [`OrbitState::to_array6`] and
 //! [`OrbitState::from_array6`] are retained for the integrator inner loops
 //! where arithmetic operates on plain `[f64; 6]` slices.
-
 use siderust::coordinates::centers::Geocentric;
+use siderust::coordinates::cartesian;
 use siderust::coordinates::frames::GCRS;
 use siderust::qtty::unit::{Kilometer, Per, Second};
 use siderust::time::JulianDate;
 
 /// Geocentric inertial position in GCRS, km.
-pub type Position<S> = siderust::coordinates::cartesian::Position<Geocentric, S, Kilometer>;
+pub type Position<S, U = Kilometer> = cartesian::Position<Geocentric, S, U>;
 
 /// Velocity vector in GCRS frame, km/s.
-pub type Velocity<U> = siderust::coordinates::cartesian::Velocity<U, Per<Kilometer, Second>>;
+pub type Velocity<S, U = Per<Kilometer, Second>> = cartesian::Velocity<S, U>;
 
 /// Cartesian inertial position + velocity in km / (km/s) in GCRS.
 ///
@@ -47,9 +47,9 @@ pub struct OrbitState {
     /// Epoch (TT scale, Julian Date).
     pub epoch_tt: JulianDate,
     /// Position in GCRS, km.
-    pub position: Position<GCRS>,
+    pub position: Position<GCRS, Kilometer>,
     /// Velocity in GCRS, km/s.
-    pub velocity: Velocity<GCRS>,
+    pub velocity: Velocity<GCRS, Per<Kilometer, Second>>,
 }
 
 impl PartialEq for OrbitState {
@@ -73,32 +73,17 @@ impl OrbitState {
         Self { epoch_tt, position, velocity }
     }
 
-    /// Position vector as `[x, y, z]` km.
+    /// 6-vector `[r, v]` packing used by integrators.
     #[inline]
-    pub fn position_km(&self) -> [f64; 3] {
+    pub fn to_array6(&self) -> [f64; 6] {
         [
             self.position.x().value(),
             self.position.y().value(),
             self.position.z().value(),
-        ]
-    }
-
-    /// Velocity vector as `[vx, vy, vz]` km/s.
-    #[inline]
-    pub fn velocity_km_s(&self) -> [f64; 3] {
-        [
             self.velocity.x().value(),
             self.velocity.y().value(),
             self.velocity.z().value(),
         ]
-    }
-
-    /// 6-vector `[r, v]` packing used by integrators.
-    #[inline]
-    pub fn to_array6(&self) -> [f64; 6] {
-        let [rx, ry, rz] = self.position_km();
-        let [vx, vy, vz] = self.velocity_km_s();
-        [rx, ry, rz, vx, vy, vz]
     }
 
     /// Construct from a 6-vector `[r, v]` at a given epoch.
@@ -114,8 +99,8 @@ impl OrbitState {
     /// Position magnitude squared (km²).
     #[inline]
     pub fn r2(&self) -> f64 {
-        let [rx, ry, rz] = self.position_km();
-        rx * rx + ry * ry + rz * rz
+        let d = self.position.distance();
+        d.value() * d.value()
     }
 }
 
@@ -176,16 +161,14 @@ mod tests {
         assert!((s.velocity.y().value() - 7.4).abs() < f64::EPSILON);
         assert!((s.velocity.z().value() - (-0.1)).abs() < f64::EPSILON);
 
-        // Array helpers must reproduce the same values.
-        let [rx, ry, rz] = s.position_km();
-        assert!((rx - 7000.0).abs() < f64::EPSILON);
-        assert!((ry - 100.0).abs() < f64::EPSILON);
-        assert!((rz - (-200.0)).abs() < f64::EPSILON);
-
-        let [vx, vy, vz] = s.velocity_km_s();
-        assert!((vx - 0.5).abs() < f64::EPSILON);
-        assert!((vy - 7.4).abs() < f64::EPSILON);
-        assert!((vz - (-0.1)).abs() < f64::EPSILON);
+        // to_array6 must reproduce the same values.
+        let arr = s.to_array6();
+        assert!((arr[0] - 7000.0).abs() < f64::EPSILON);
+        assert!((arr[1] - 100.0).abs() < f64::EPSILON);
+        assert!((arr[2] - (-200.0)).abs() < f64::EPSILON);
+        assert!((arr[3] - 0.5).abs() < f64::EPSILON);
+        assert!((arr[4] - 7.4).abs() < f64::EPSILON);
+        assert!((arr[5] - (-0.1)).abs() < f64::EPSILON);
     }
 
     #[test]

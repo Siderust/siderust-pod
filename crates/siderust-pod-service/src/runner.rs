@@ -59,12 +59,18 @@ pub fn run(cfg: &RunConfig, _config_path: &str) -> std::io::Result<RunReport> {
     let synth_cfg = SyntheticArcConfig::default();
     let arc = generate(&synth_cfg);
     let t0 = arc.truth_states[0];
-    let [r0x, r0y, r0z] = t0.position_km();
-    let [v0x, v0y, v0z] = t0.velocity_km_s();
     let init = OrbitState::new(
         t0.epoch_tt,
-        Position::new(r0x + 0.05, r0y - 0.05, r0z + 0.05),
-        Velocity::new(v0x + 5e-5, v0y - 5e-5, v0z + 5e-5),
+        Position::new(
+            t0.position.x().value() + 0.05,
+            t0.position.y().value() - 0.05,
+            t0.position.z().value() + 0.05,
+        ),
+        Velocity::new(
+            t0.velocity.x().value() + 5e-5,
+            t0.velocity.y().value() - 5e-5,
+            t0.velocity.z().value() + 5e-5,
+        ),
     );
     let report = run_synth(&arc, init, 0.0, &output_dir, &cfg.run_id, cfg.forces.j2)
         .map_err(std::io::Error::other)?;

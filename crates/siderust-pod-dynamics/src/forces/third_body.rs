@@ -70,7 +70,7 @@ impl ThirdBodySunMoon {
 
 impl ForceModel for ThirdBodySunMoon {
     fn acceleration(&self, s: &OrbitState) -> [f64; 3] {
-        let r = s.position_km();
+        let r = [s.position.x().value(), s.position.y().value(), s.position.z().value()];
         let mut a = [0.0; 3];
         for (mu, d) in [
             (MU_SUN_KM3_S2, self.sun_geocentric_km(s.epoch_tt)),

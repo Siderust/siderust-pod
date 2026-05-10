@@ -12,7 +12,7 @@
 //! and ignores the time-derivative of `R` (valid for short propagation
 //! windows; see `docs/architecture/dispatch.md` for the modelling note).
 
-use crate::frames::{rtn_from_state, transpose3, Rotation3};
+use crate::frames::{rtn_from_state, Rotation3};
 use crate::state::OrbitState;
 
 /// 6×6 row-major covariance matrix.
@@ -31,11 +31,12 @@ pub fn identity6() -> Covariance6 {
 ///
 /// The result `T` satisfies `[r;v]_local = T · [r;v]_inertial`.
 pub fn block_diag(r: &Rotation3) -> Covariance6 {
+    let m = r.as_matrix();
     let mut t = [[0.0; 6]; 6];
     for i in 0..3 {
         for j in 0..3 {
-            t[i][j] = r[i][j];
-            t[i + 3][j + 3] = r[i][j];
+            t[i][j] = m[i][j];
+            t[i + 3][j + 3] = m[i][j];
         }
     }
     t
@@ -85,7 +86,7 @@ pub fn cartesian_to_rtn(state: &OrbitState, p_inertial: &Covariance6) -> Covaria
 /// Convert an RTN covariance back to Cartesian inertial.
 pub fn rtn_to_cartesian(state: &OrbitState, p_rtn: &Covariance6) -> Covariance6 {
     let r = rtn_from_state(state);
-    let r_t = transpose3(&r);
+    let r_t = r.transpose();
     let t = block_diag(&r_t);
     similarity(&t, p_rtn)
 }

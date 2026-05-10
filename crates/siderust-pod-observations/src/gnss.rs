@@ -105,7 +105,7 @@ fn predict_range_m(
     gps_pos_km: [f64; 3],
     gps_vel_km_s: [f64; 3],
 ) -> (f64, [f64; 3]) {
-    let rx_km = state.position_km();
+    let rx_km = [state.position.x().value(), state.position.y().value(), state.position.z().value()];
     let los = diff(rx_km, gps_pos_km);
     let geom_km = norm(los);
     let geom_m = geom_km * 1_000.0;

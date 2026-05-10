@@ -16,12 +16,18 @@ fn mvp1_synth_pipeline_recovers_truth() {
 
     // Initial guess: truth perturbed by 50 m position, 0.05 m/s velocity.
     let t0 = arc.truth_states[0];
-    let [r0x, r0y, r0z] = t0.position_km();
-    let [v0x, v0y, v0z] = t0.velocity_km_s();
     let init = OrbitState::new(
         t0.epoch_tt,
-        Position::new(r0x + 0.05, r0y - 0.05, r0z + 0.05),
-        Velocity::new(v0x + 5e-5, v0y - 5e-5, v0z + 5e-5),
+        Position::new(
+            t0.position.x().value() + 0.05,
+            t0.position.y().value() - 0.05,
+            t0.position.z().value() + 0.05,
+        ),
+        Velocity::new(
+            t0.velocity.x().value() + 5e-5,
+            t0.velocity.y().value() - 5e-5,
+            t0.velocity.z().value() + 5e-5,
+        ),
     );
     let _ = init.epoch_tt; // silence unused variant
     let _ = JulianDate::new(2_451_545.0);
@@ -52,11 +58,12 @@ fn mvp1_synth_pipeline_recovers_truth() {
     }
 
     // Position recovery: estimated initial state should be within ~1 m of truth.
-    let [ei_rx, ei_ry, ei_rz] = report.estimated_initial.position_km();
-    let [t0_rx, t0_ry, t0_rz] = t0.position_km();
-    let dx = (ei_rx - t0_rx) * 1000.0;
-    let dy = (ei_ry - t0_ry) * 1000.0;
-    let dz = (ei_rz - t0_rz) * 1000.0;
+    let ei_rx = report.estimated_initial.position.x().value();
+    let ei_ry = report.estimated_initial.position.y().value();
+    let ei_rz = report.estimated_initial.position.z().value();
+    let dx = (ei_rx - t0.position.x().value()) * 1000.0;
+    let dy = (ei_ry - t0.position.y().value()) * 1000.0;
+    let dz = (ei_rz - t0.position.z().value()) * 1000.0;
     let pos_err_m = (dx * dx + dy * dy + dz * dz).sqrt();
     assert!(
         pos_err_m < 5.0,

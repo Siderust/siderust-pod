@@ -31,7 +31,9 @@ impl ForceModel for J2 {
     fn acceleration(&self, s: &OrbitState) -> [f64; 3] {
         let r2 = s.r2();
         let r = r2.sqrt();
-        let [rx, ry, rz] = s.position_km();
+        let rx = s.position.x().value();
+        let ry = s.position.y().value();
+        let rz = s.position.z().value();
         let z2_over_r2 = (rz * rz) / r2;
         let factor = 1.5 * self.j2 * self.gm * self.req_km * self.req_km / (r2 * r2 * r);
         let cx = 5.0 * z2_over_r2 - 1.0;

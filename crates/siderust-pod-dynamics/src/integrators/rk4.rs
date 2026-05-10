@@ -28,7 +28,9 @@ pub fn rk4_step<F: ForceModel>(force: &F, s: &OrbitState, dt_s: f64) -> OrbitSta
 
 fn derivative<F: ForceModel>(force: &F, s: &OrbitState) -> [f64; 6] {
     let a = force.acceleration(s);
-    let [vx, vy, vz] = s.velocity_km_s();
+    let vx = s.velocity.x().value();
+    let vy = s.velocity.y().value();
+    let vz = s.velocity.z().value();
     [vx, vy, vz, a[0], a[1], a[2]]
 }
 

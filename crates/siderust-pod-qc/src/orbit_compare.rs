@@ -1,5 +1,6 @@
 //! Orbit-vs-orbit comparison (RTN/RIC) at matched epochs.
 
+use siderust_pod_core::frames::rtn_from_state;
 use siderust_pod_core::OrbitState;
 
 /// Per-epoch RTN difference between an estimated and reference state.
@@ -38,22 +39,19 @@ pub fn rtn_diff(estimated: &[OrbitState], reference: &[OrbitState]) -> Vec<RtnDi
     for i in 0..n {
         let e = estimated[i];
         let r = reference[i];
-        let r_pos = [r.position.x().value() * 1000.0, r.position.y().value() * 1000.0, r.position.z().value() * 1000.0];
-        let r_vel = [r.velocity.x().value() * 1000.0, r.velocity.y().value() * 1000.0, r.velocity.z().value() * 1000.0];
-        let d_pos = [
-            (e.position.x().value() - r.position.x().value()) * 1000.0,
-            (e.position.y().value() - r.position.y().value()) * 1000.0,
-            (e.position.z().value() - r.position.z().value()) * 1000.0,
+        let rtn = rtn_from_state(&r);
+        // Position difference in km, then convert to metres after projection.
+        let d_km = [
+            e.position.x().value() - r.position.x().value(),
+            e.position.y().value() - r.position.y().value(),
+            e.position.z().value() - r.position.z().value(),
         ];
-        let basis = rtn_basis(&r_pos, &r_vel);
-        let r_comp = dot(&d_pos, &basis.0);
-        let t_comp = dot(&d_pos, &basis.1);
-        let n_comp = dot(&d_pos, &basis.2);
+        let rtn_km = rtn.apply_array(d_km);
         out.push(RtnDiff {
             jd_tt: e.epoch_tt.jd_value(),
-            r_m: r_comp,
-            t_m: t_comp,
-            n_m: n_comp,
+            r_m: rtn_km[0] * 1000.0,
+            t_m: rtn_km[1] * 1000.0,
+            n_m: rtn_km[2] * 1000.0,
         });
     }
     out
@@ -89,35 +87,6 @@ pub fn rtn_summary(diffs: &[RtnDiff]) -> RtnSummary {
         rms_r_m: rms_r,
         rms_t_m: rms_t,
         rms_n_m: rms_n,
-    }
-}
-
-fn rtn_basis(r: &[f64; 3], v: &[f64; 3]) -> ([f64; 3], [f64; 3], [f64; 3]) {
-    let rh = unit(r);
-    let h = cross(r, v);
-    let nh = unit(&h);
-    let th = cross(&nh, &rh);
-    (rh, th, nh)
-}
-
-fn dot(a: &[f64; 3], b: &[f64; 3]) -> f64 {
-    a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
-}
-
-fn cross(a: &[f64; 3], b: &[f64; 3]) -> [f64; 3] {
-    [
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    ]
-}
-
-fn unit(v: &[f64; 3]) -> [f64; 3] {
-    let n = (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt();
-    if n > 0.0 {
-        [v[0] / n, v[1] / n, v[2] / n]
-    } else {
-        [0.0; 3]
     }
 }
 

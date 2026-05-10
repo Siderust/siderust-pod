@@ -31,7 +31,9 @@ impl Default for Tolerance {
 #[allow(clippy::needless_range_loop)]
 fn rhs<F: ForceModel>(force: &F, s: &OrbitState) -> [f64; 6] {
     let a = force.acceleration(s);
-    let [vx, vy, vz] = s.velocity_km_s();
+    let vx = s.velocity.x().value();
+    let vy = s.velocity.y().value();
+    let vz = s.velocity.z().value();
     [vx, vy, vz, a[0], a[1], a[2]]
 }
 
@@ -192,7 +194,9 @@ mod tests {
         let s0 = OrbitState::new(JulianDate::new(2_451_545.0), Position::new(r, 0.0, 0.0), Velocity::new(0.0, v, 0.0));
         let period = 2.0 * std::f64::consts::PI * (r.powi(3) / mu).sqrt();
         let s = dopri5_propagate(&TwoBody::earth(), s0, period, Tolerance::default());
-        let [rx, ry, rz] = s.position_km();
+        let rx = s.position.x().value();
+        let ry = s.position.y().value();
+        let rz = s.position.z().value();
         let dr = ((rx - r).powi(2) + ry.powi(2) + rz.powi(2)).sqrt();
         assert!(dr < 1.0, "orbit closure error {} km exceeds 1 km", dr);
     }
