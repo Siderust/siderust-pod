@@ -12,6 +12,7 @@ description = "Quality control and validation artifacts for Siderust POD runs."
 qtty.workspace = true
 tempoch.workspace = true
 affn.workspace = true
+siderust.workspace = true
 siderust-pod-core.workspace = true
 serde.workspace = true
 serde_json.workspace = true

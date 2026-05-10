@@ -3,7 +3,7 @@
 use affn::cartesian::Displacement;
 use affn::frames::GCRS;
 use qtty::units::Kilometer;
-use siderust_pod_core::frames::{rotate_gcrs_to_rtn, RTN};
+use siderust_pod_core::frames::RTN;
 use siderust_pod_core::OrbitState;
 
 /// Per-epoch RTN difference between an estimated and reference state.
@@ -51,7 +51,8 @@ pub fn rtn_diff(estimated: &[OrbitState], reference: &[OrbitState]) -> Vec<RtnDi
         let r = reference[i];
         // Position difference in GCRS (typed Displacement<GCRS, Km>).
         let d_gcrs: Displacement<GCRS, Kilometer> = e.position - r.position;
-        let d_rtn = rotate_gcrs_to_rtn(&r, d_gcrs);
+        let frame = siderust::astro::dynamics::frames::LocalOrbitalFrame::<RTN>::from_state(&r);
+        let d_rtn = frame.to_local(d_gcrs);
         out.push(RtnDiff {
             jd_tt: e.epoch_tt.jd_value(),
             r_m: d_rtn.x().value() * 1000.0,
