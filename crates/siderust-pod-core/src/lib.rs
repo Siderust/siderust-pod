@@ -20,10 +20,15 @@ pub mod frames;
 pub mod manifest;
 pub mod parameter;
 pub mod providers;
-pub mod state;
 
 pub use error::{PodError, Result};
 pub use frames::{RTN, VNC, LVLH};
 pub use manifest::{DatasetRef, RunManifest};
 pub use parameter::{Parameter, ParameterKind};
-pub use state::{Position, Velocity, OrbitState, StateDerivative, SpacecraftProperties, SpacecraftState};
+
+// State types live upstream in siderust; re-export here so existing POD
+// callers keep working without change.
+pub use siderust::astro::dynamics::state::{
+    Acceleration, AccelerationUnit, OrbitState, Position, SpacecraftProperties, SpacecraftState,
+    StateDerivative, Velocity, VelocityUnit,
+};
