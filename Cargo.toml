@@ -8,7 +8,6 @@ members = [
     "crates/siderust-pod-products",
     "crates/siderust-pod-service",
     "crates/siderust-pod-cli",
-    "crates/siderust-pod-py",
     "crates/siderust-pod-rest",
 ]
 
@@ -55,7 +54,6 @@ log         = "0.4"
 env_logger  = "0.11"
 trybuild    = "1.0"
 approx      = "0.5"
-pyo3        = { version = "0.22", features = ["extension-module"] }
 axum        = "0.7"
 tokio       = { version = "1.39", features = ["macros", "rt-multi-thread"] }
 tower       = "0.5"

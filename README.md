@@ -13,7 +13,6 @@ top of the [siderust](../siderust) astronomy stack.
 
 ```
 crates/
-  siderust-pod-core/          domain primitives, providers, manifest, errors
   siderust-pod-dynamics/      forces (two-body, J2, third-body, SRP, drag), integrators, STM
   siderust-pod-io/            SP3 / RINEX OBS+NAV / ANTEX / EOP / CRD / CPF / OEM (MVP subsets)
   siderust-pod-observations/  GNSS code+carrier, SLR range, corrections
@@ -22,7 +21,6 @@ crates/
   siderust-pod-products/      SP3/OEM/residual writers, manifest packaging
   siderust-pod-service/       config loader, pipeline runner, artifact layout
   siderust-pod-cli/           thin CLI over the service crate
-  siderust-pod-py/            PyO3 bindings (early)
   siderust-pod-rest/          axum-based REST surface (early; unauthenticated)
 ```
 
