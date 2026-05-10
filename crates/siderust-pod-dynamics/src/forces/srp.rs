@@ -79,9 +79,19 @@ impl CannonballSrp {
 }
 
 impl ForceModel for CannonballSrp {
-    fn acceleration(&self, s: &OrbitState) -> [f64; 3] {
+    fn acceleration(
+        &self,
+        s: &OrbitState,
+    ) -> siderust::astro::dynamics::state::Acceleration<
+        siderust::coordinates::frames::GCRS,
+        siderust::astro::dynamics::state::AccelerationUnit,
+    > {
+        type AccVec = siderust::astro::dynamics::state::Acceleration<
+            siderust::coordinates::frames::GCRS,
+            siderust::astro::dynamics::state::AccelerationUnit,
+        >;
         let Some(sun) = self.sun_geocentric_km(s.epoch_tt) else {
-            return [0.0; 3];
+            return AccVec::new(0.0, 0.0, 0.0);
         };
         let rx = s.position.x().value();
         let ry = s.position.y().value();
@@ -92,17 +102,17 @@ impl ForceModel for CannonballSrp {
             + r_sun_sat_km[2] * r_sun_sat_km[2];
         let r = r2.sqrt();
         if r == 0.0 {
-            return [0.0; 3];
+            return AccVec::new(0.0, 0.0, 0.0);
         }
         // Convert N/m² · m²/kg = m/s²; we want km/s² so divide by 1000.
         let mag_km_s2 =
             self.cr * P0_N_M2 * (AU_KM * AU_KM / r2) * self.area_to_mass_m2_kg / 1_000.0;
         let inv_r = 1.0 / r;
-        [
+        AccVec::new(
             mag_km_s2 * r_sun_sat_km[0] * inv_r,
             mag_km_s2 * r_sun_sat_km[1] * inv_r,
             mag_km_s2 * r_sun_sat_km[2] * inv_r,
-        ]
+        )
     }
 }
 
@@ -124,7 +134,7 @@ mod tests {
             Velocity::new(0.0, 7.5, 0.0),
         );
         let a = srp.acceleration(&s);
-        let mag = (a[0] * a[0] + a[1] * a[1] + a[2] * a[2]).sqrt();
+        let mag = (a.x().value().powi(2) + a.y().value().powi(2) + a.z().value().powi(2)).sqrt();
         assert!(
             (5e-11..5e-10).contains(&mag),
             "SRP magnitude out of expected band: {mag} km/s²",
@@ -141,6 +151,6 @@ mod tests {
             Velocity::new(0.0, 7.5, 0.0),
         );
         let a = srp.acceleration(&s);
-        assert!(a.iter().all(|x| *x == 0.0));
+        assert!(a.x().value() == 0.0 && a.y().value() == 0.0 && a.z().value() == 0.0);
     }
 }

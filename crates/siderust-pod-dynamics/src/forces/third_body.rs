@@ -69,7 +69,13 @@ impl ThirdBodySunMoon {
 }
 
 impl ForceModel for ThirdBodySunMoon {
-    fn acceleration(&self, s: &OrbitState) -> [f64; 3] {
+    fn acceleration(
+        &self,
+        s: &OrbitState,
+    ) -> siderust::astro::dynamics::state::Acceleration<
+        siderust::coordinates::frames::GCRS,
+        siderust::astro::dynamics::state::AccelerationUnit,
+    > {
         let r = [s.position.x().value(), s.position.y().value(), s.position.z().value()];
         let mut a = [0.0; 3];
         for (mu, d) in [
@@ -88,7 +94,10 @@ impl ForceModel for ThirdBodySunMoon {
                 a[i] += mu * (dr[i] / dr3 - d[i] / d3);
             }
         }
-        a
+        siderust::astro::dynamics::state::Acceleration::<
+            siderust::coordinates::frames::GCRS,
+            siderust::astro::dynamics::state::AccelerationUnit,
+        >::new(a[0], a[1], a[2])
     }
 }
 

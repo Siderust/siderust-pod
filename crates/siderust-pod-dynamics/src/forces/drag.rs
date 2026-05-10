@@ -68,12 +68,22 @@ impl ExponentialDrag {
 }
 
 impl ForceModel for ExponentialDrag {
-    fn acceleration(&self, s: &OrbitState) -> [f64; 3] {
+    fn acceleration(
+        &self,
+        s: &OrbitState,
+    ) -> siderust::astro::dynamics::state::Acceleration<
+        siderust::coordinates::frames::GCRS,
+        siderust::astro::dynamics::state::AccelerationUnit,
+    > {
+        type AccVec = siderust::astro::dynamics::state::Acceleration<
+            siderust::coordinates::frames::GCRS,
+            siderust::astro::dynamics::state::AccelerationUnit,
+        >;
         // Geocentric altitude.
         let r = s.position.distance().value();
         let h = r - R_EARTH_KM;
         if h < 0.0 {
-            return [0.0; 3];
+            return AccVec::new(0.0, 0.0, 0.0);
         }
         let rho = self.density_kg_m3(h);
 
@@ -88,20 +98,15 @@ impl ForceModel for ExponentialDrag {
             vz - omega_cross_r[2],
         ];
 
-        // Convert km/s → m/s for the dynamic-pressure expression, then back.
-        // |v_rel| in m/s; v_rel in m/s; ρ in kg/m³; A/m in m²/kg.
-        // a_m_s2 = −0.5 · Cd · A/m · ρ · |v| · v
         let v2_km2_s2 = v_rel_km_s[0].powi(2) + v_rel_km_s[1].powi(2) + v_rel_km_s[2].powi(2);
         let v_mag_m_s = v2_km2_s2.sqrt() * 1_000.0;
         let pre_m_s2 = -0.5 * self.cd * self.area_to_mass_m2_kg * rho * v_mag_m_s;
-        // v_rel in m/s = v_rel_km_s * 1000.
-        // We want km/s², so divide overall by 1000.
-        let pre_km_s2 = pre_m_s2; // pre_m_s2 * (m/s) = m/s² accumulated below
-        [
-            pre_km_s2 * v_rel_km_s[0], // m/s² (since v_rel_km_s * 1000 cancels with /1000)
+        let pre_km_s2 = pre_m_s2;
+        AccVec::new(
+            pre_km_s2 * v_rel_km_s[0],
             pre_km_s2 * v_rel_km_s[1],
             pre_km_s2 * v_rel_km_s[2],
-        ]
+        )
     }
 }
 

@@ -1,6 +1,8 @@
-//! Numerical integrators for orbital state.
+//! Compatibility shim: integrators now live upstream in
+//! [`siderust::astro::dynamics::integrators`].
 
-pub mod dopri5;
-pub mod rk4;
-pub use dopri5::{dopri5_propagate, dopri5_step, Tolerance};
-pub use rk4::{rk4_propagate, rk4_propagate_series, rk4_step};
+pub use siderust::astro::dynamics::integrators::dopri5;
+pub use siderust::astro::dynamics::integrators::rk4;
+pub use siderust::astro::dynamics::integrators::{
+    dopri5_propagate, dopri5_step, rk4_propagate, rk4_propagate_series, rk4_step, Tolerance,
+};
