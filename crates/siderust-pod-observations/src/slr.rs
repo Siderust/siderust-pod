@@ -158,7 +158,8 @@ fn unit(v: &[f64; 3]) -> [f64; 3] {
 mod tests {
     use super::*;
     use siderust::time::JulianDate;
-    use siderust_pod_core::GcrsPosition;
+    use siderust::coordinates::frames::GCRS;
+    use siderust_pod_core::Position;
 
     #[test]
     fn predicts_two_way_range_at_rest() {
@@ -191,16 +192,16 @@ mod tests {
             let [rx, ry, rz] = s.position_km();
             match axis {
                 0 => {
-                    up.position = GcrsPosition::new(rx + h, ry, rz);
-                    dn.position = GcrsPosition::new(rx - h, ry, rz);
+                    up.position = Position::<GCRS>::new(rx + h, ry, rz);
+                    dn.position = Position::<GCRS>::new(rx - h, ry, rz);
                 }
                 1 => {
-                    up.position = GcrsPosition::new(rx, ry + h, rz);
-                    dn.position = GcrsPosition::new(rx, ry - h, rz);
+                    up.position = Position::<GCRS>::new(rx, ry + h, rz);
+                    dn.position = Position::<GCRS>::new(rx, ry - h, rz);
                 }
                 _ => {
-                    up.position = GcrsPosition::new(rx, ry, rz + h);
-                    dn.position = GcrsPosition::new(rx, ry, rz - h);
+                    up.position = Position::<GCRS>::new(rx, ry, rz + h);
+                    dn.position = Position::<GCRS>::new(rx, ry, rz - h);
                 }
             }
             let fd = (m.predict(&up, &[]).value - m.predict(&dn, &[]).value) / (2.0 * h);

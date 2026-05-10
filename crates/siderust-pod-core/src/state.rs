@@ -11,11 +11,12 @@
 //!
 //! ```rust
 //! use siderust_pod_core::OrbitState;
-//! use siderust_pod_core::state::{GcrsPosition, GcrsVelocity};
+//! use siderust_pod_core::state::{Position, Velocity};
 //! use siderust::time::JulianDate;
+//! use siderust::coordinates::frames::GCRS;
 //!
-//! let pos = GcrsPosition::new(7000.0, 0.0, 0.0);
-//! let vel = GcrsVelocity::new(0.0, 7.5, 0.0);
+//! let pos = Position::<GCRS>::new(7000.0, 0.0, 0.0);
+//! let vel = Velocity::<GCRS>::new(0.0, 7.5, 0.0);
 //! let s = OrbitState::from_typed(JulianDate::new(2_451_545.0), pos, vel);
 //! assert!((s.position.x().value() - 7000.0).abs() < 1e-12);
 //! ```
@@ -24,17 +25,16 @@
 //! [`OrbitState::from_array6`] are retained for the integrator inner loops
 //! where arithmetic operates on plain `[f64; 6]` slices.
 
-use siderust::coordinates::cartesian::{Position, Velocity};
 use siderust::coordinates::centers::Geocentric;
 use siderust::coordinates::frames::GCRS;
 use siderust::qtty::unit::{Kilometer, Per, Second};
 use siderust::time::JulianDate;
 
 /// Geocentric inertial position in GCRS, km.
-pub type GcrsPosition = Position<Geocentric, GCRS, Kilometer>;
+pub type Position<S> = siderust::coordinates::cartesian::Position<Geocentric, S, Kilometer>;
 
 /// Velocity vector in GCRS frame, km/s.
-pub type GcrsVelocity = Velocity<GCRS, Per<Kilometer, Second>>;
+pub type Velocity<U> = siderust::coordinates::cartesian::Velocity<U, Per<Kilometer, Second>>;
 
 /// Cartesian inertial position + velocity in km / (km/s) in GCRS.
 ///
@@ -47,9 +47,9 @@ pub struct OrbitState {
     /// Epoch (TT scale, Julian Date).
     pub epoch_tt: JulianDate,
     /// Position in GCRS, km.
-    pub position: GcrsPosition,
+    pub position: Position<GCRS>,
     /// Velocity in GCRS, km/s.
-    pub velocity: GcrsVelocity,
+    pub velocity: Velocity<GCRS>,
 }
 
 impl PartialEq for OrbitState {
@@ -64,14 +64,14 @@ impl OrbitState {
     pub fn new(epoch_tt: JulianDate, r_km: [f64; 3], v_km_s: [f64; 3]) -> Self {
         Self {
             epoch_tt,
-            position: GcrsPosition::new(r_km[0], r_km[1], r_km[2]),
-            velocity: GcrsVelocity::new(v_km_s[0], v_km_s[1], v_km_s[2]),
+            position: Position::<GCRS>::new(r_km[0], r_km[1], r_km[2]),
+            velocity: Velocity::<GCRS>::new(v_km_s[0], v_km_s[1], v_km_s[2]),
         }
     }
 
     /// Construct from typed GCRS position and velocity.
     #[inline]
-    pub fn from_typed(epoch_tt: JulianDate, position: GcrsPosition, velocity: GcrsVelocity) -> Self {
+    pub fn from_typed(epoch_tt: JulianDate, position: Position<GCRS>, velocity: Velocity<GCRS>) -> Self {
         Self { epoch_tt, position, velocity }
     }
 
@@ -161,8 +161,8 @@ mod tests {
     #[test]
     fn typed_roundtrip_preserves_values() {
         let epoch = JulianDate::new(2_451_545.0);
-        let pos = GcrsPosition::new(7000.0, 100.0, -200.0);
-        let vel = GcrsVelocity::new(0.5, 7.4, -0.1);
+        let pos = Position::<GCRS>::new(7000.0, 100.0, -200.0);
+        let vel = Velocity::<GCRS>::new(0.5, 7.4, -0.1);
 
         let s = OrbitState::from_typed(epoch, pos, vel);
 
@@ -195,8 +195,8 @@ mod tests {
         let raw = OrbitState::new(epoch, r, v);
         let typed = OrbitState::from_typed(
             epoch,
-            GcrsPosition::new(r[0], r[1], r[2]),
-            GcrsVelocity::new(v[0], v[1], v[2]),
+            Position::<GCRS>::new(r[0], r[1], r[2]),
+            Velocity::<GCRS>::new(v[0], v[1], v[2]),
         );
 
         assert_eq!(raw, typed);
