@@ -14,7 +14,7 @@
 //! ```
 
 use crate::synth::SyntheticArc;
-use siderust_pod_core::{OrbitState, RunManifest};
+use siderust_pod_core::{OrbitState, Position, Velocity, RunManifest};
 use siderust_pod_dynamics::forces::{CompositeForce, ForceModel, TwoBody, J2};
 use siderust_pod_dynamics::integrators::rk4_propagate_series;
 use siderust_pod_dynamics::stm::finite_diff_stm_series;
@@ -101,8 +101,12 @@ pub fn run_synth(
     let n_params = 6 + 1 + n_sats; // state + clock + per-sat float ambiguity
 
     let mut params = vec![0.0_f64; n_params];
-    let g = initial_guess.to_array6();
-    params[..6].copy_from_slice(&g);
+    params[0] = initial_guess.position.x().value();
+    params[1] = initial_guess.position.y().value();
+    params[2] = initial_guess.position.z().value();
+    params[3] = initial_guess.velocity.x().value();
+    params[4] = initial_guess.velocity.y().value();
+    params[5] = initial_guess.velocity.z().value();
     params[6] = initial_clock_guess_m;
     // Ambiguities (params[7..]) start at zero.
 
@@ -123,16 +127,10 @@ pub fn run_synth(
         },
     )?;
 
-    let estimated_initial = OrbitState::from_array6(
+    let estimated_initial = OrbitState::new(
         initial_guess.epoch_tt,
-        [
-            report.parameters[0],
-            report.parameters[1],
-            report.parameters[2],
-            report.parameters[3],
-            report.parameters[4],
-            report.parameters[5],
-        ],
+        Position::new(report.parameters[0], report.parameters[1], report.parameters[2]),
+        Velocity::new(report.parameters[3], report.parameters[4], report.parameters[5]),
     );
     let clk = report.parameters[6];
     let estimated_states = rk4_propagate_series(&force, estimated_initial, dt_s, n_steps);
@@ -253,11 +251,10 @@ fn assemble_normal_equations<F: ForceModel>(
     n_steps: usize,
     force: &F,
 ) -> Result<NormalEquations, siderust_pod_estimation::WlsSolverError> {
-    let s0 = OrbitState::from_array6(
+    let s0 = OrbitState::new(
         arc.truth_states[0].epoch_tt,
-        [
-            params[0], params[1], params[2], params[3], params[4], params[5],
-        ],
+        Position::new(params[0], params[1], params[2]),
+        Velocity::new(params[3], params[4], params[5]),
     );
     let states = rk4_propagate_series(force, s0, dt_s, n_steps);
     let stms = finite_diff_stm_series(force, s0, dt_s, n_steps);

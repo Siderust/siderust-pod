@@ -10,7 +10,36 @@
 
 use crate::forces::ForceModel;
 use crate::integrators::{rk4_propagate, rk4_propagate_series};
-use siderust_pod_core::OrbitState;
+use siderust_pod_core::{OrbitState, Position, Velocity};
+use siderust::coordinates::frames::GCRS;
+
+/// Return component `j` of the 6-state `[rx, ry, rz, vx, vy, vz]`.
+fn state_component(s: &OrbitState, j: usize) -> f64 {
+    match j {
+        0 => s.position.x().value(),
+        1 => s.position.y().value(),
+        2 => s.position.z().value(),
+        3 => s.velocity.x().value(),
+        4 => s.velocity.y().value(),
+        5 => s.velocity.z().value(),
+        _ => panic!("index out of range"),
+    }
+}
+
+/// Return a copy of `s` with component `j` shifted by `delta`.
+fn perturb_component(s: &OrbitState, j: usize, delta: f64) -> OrbitState {
+    let rx = s.position.x().value() + if j == 0 { delta } else { 0.0 };
+    let ry = s.position.y().value() + if j == 1 { delta } else { 0.0 };
+    let rz = s.position.z().value() + if j == 2 { delta } else { 0.0 };
+    let vx = s.velocity.x().value() + if j == 3 { delta } else { 0.0 };
+    let vy = s.velocity.y().value() + if j == 4 { delta } else { 0.0 };
+    let vz = s.velocity.z().value() + if j == 5 { delta } else { 0.0 };
+    OrbitState::new(
+        s.epoch_tt,
+        Position::<GCRS>::new(rx, ry, rz),
+        Velocity::<GCRS>::new(vx, vy, vz),
+    )
+}
 
 /// Finite-difference state-transition matrix Φ(t,t0).
 ///
@@ -24,23 +53,16 @@ pub fn finite_diff_stm<F: ForceModel>(
     n_steps: usize,
 ) -> [[f64; 6]; 6] {
     let mut stm = [[0.0; 6]; 6];
-    let x0 = s0.to_array6();
     for j in 0..6 {
-        let scale = x0[j].abs().max(1.0);
+        let x0j = state_component(&s0, j);
+        let scale = x0j.abs().max(1.0);
         let h = 1e-6 * scale;
 
-        let mut xp = x0;
-        xp[j] += h;
-        let sp = OrbitState::from_array6(s0.epoch_tt, xp);
-        let s_plus = rk4_propagate(force, sp, dt_s, n_steps).to_array6();
-
-        let mut xm = x0;
-        xm[j] -= h;
-        let sm = OrbitState::from_array6(s0.epoch_tt, xm);
-        let s_minus = rk4_propagate(force, sm, dt_s, n_steps).to_array6();
+        let s_plus = rk4_propagate(force, perturb_component(&s0, j, h), dt_s, n_steps);
+        let s_minus = rk4_propagate(force, perturb_component(&s0, j, -h), dt_s, n_steps);
 
         for i in 0..6 {
-            stm[i][j] = (s_plus[i] - s_minus[i]) / (2.0 * h);
+            stm[i][j] = (state_component(&s_plus, i) - state_component(&s_minus, i)) / (2.0 * h);
         }
     }
     stm
@@ -57,19 +79,27 @@ pub fn finite_diff_stm_series<F: ForceModel>(
     dt_s: f64,
     n_steps: usize,
 ) -> Vec<[[f64; 6]; 6]> {
-    let x0 = s0.to_array6();
     let mut perturbed: [[Vec<[f64; 6]>; 2]; 6] = Default::default();
     let mut hs = [0.0_f64; 6];
     for j in 0..6 {
-        let scale = x0[j].abs().max(1.0);
+        let x0j = state_component(&s0, j);
+        let scale = x0j.abs().max(1.0);
         let h = 1e-6 * scale;
         hs[j] = h;
         for (sign_idx, sign) in [-1.0_f64, 1.0_f64].iter().enumerate() {
-            let mut xp = x0;
-            xp[j] += sign * h;
-            let sp = OrbitState::from_array6(s0.epoch_tt, xp);
+            let sp = perturb_component(&s0, j, sign * h);
             let series = rk4_propagate_series(force, sp, dt_s, n_steps);
-            perturbed[j][sign_idx] = series.into_iter().map(|s| s.to_array6()).collect();
+            perturbed[j][sign_idx] = series
+                .into_iter()
+                .map(|s| [
+                    state_component(&s, 0),
+                    state_component(&s, 1),
+                    state_component(&s, 2),
+                    state_component(&s, 3),
+                    state_component(&s, 4),
+                    state_component(&s, 5),
+                ])
+                .collect();
         }
     }
     let mut out = Vec::with_capacity(n_steps + 1);

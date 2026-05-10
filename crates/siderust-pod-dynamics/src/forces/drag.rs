@@ -70,7 +70,7 @@ impl ExponentialDrag {
 impl ForceModel for ExponentialDrag {
     fn acceleration(&self, s: &OrbitState) -> [f64; 3] {
         // Geocentric altitude.
-        let r = s.r2().sqrt();
+        let r = s.position.distance().value();
         let h = r - R_EARTH_KM;
         if h < 0.0 {
             return [0.0; 3];

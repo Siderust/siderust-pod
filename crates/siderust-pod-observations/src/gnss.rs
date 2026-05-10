@@ -194,10 +194,16 @@ mod tests {
         let extra = [0.0];
         let p0 = model.predict(&state, &extra);
         let h = 1e-3;
+        // Perturb each position component individually.
         for i in 0..3 {
-            let mut x = state.to_array6();
-            x[i] += h;
-            let s = OrbitState::from_array6(state.epoch_tt, x);
+            let rx = state.position.x().value() + if i == 0 { h } else { 0.0 };
+            let ry = state.position.y().value() + if i == 1 { h } else { 0.0 };
+            let rz = state.position.z().value() + if i == 2 { h } else { 0.0 };
+            let s = OrbitState::new(
+                state.epoch_tt,
+                Position::new(rx, ry, rz),
+                state.velocity,
+            );
             let p1 = model.predict(&s, &extra);
             let fd = (p1.value - p0.value) / h;
             let analytic = p0.partials.entries.iter().find(|(j, _)| *j == i).unwrap().1;

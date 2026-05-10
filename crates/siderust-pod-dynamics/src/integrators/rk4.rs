@@ -1,45 +1,33 @@
-//! Classical Runge-Kutta 4 integrator for the orbital `[r,v]` 6-vector.
+//! Classical Runge-Kutta 4 integrator for the orbital state.
 
 use crate::forces::ForceModel;
 use siderust::time::JulianDate;
-use siderust_pod_core::OrbitState;
+use siderust_pod_core::{OrbitState, StateDerivative};
 
 /// Day-fraction equivalent to one second.
 const SEC_PER_DAY: f64 = 86_400.0;
 
 /// Step the orbit state by `dt_s` seconds using RK4 with the given force.
 pub fn rk4_step<F: ForceModel>(force: &F, s: &OrbitState, dt_s: f64) -> OrbitState {
-    let y0 = s.to_array6();
     let k1 = derivative(force, s);
-    let s1 = step_with(s, &y0, &k1, dt_s * 0.5);
+    let s1 = s.advance(&k1, dt_s * 0.5);
     let k2 = derivative(force, &s1);
-    let s2 = step_with(s, &y0, &k2, dt_s * 0.5);
+    let s2 = s.advance(&k2, dt_s * 0.5);
     let k3 = derivative(force, &s2);
-    let s3 = step_with(s, &y0, &k3, dt_s);
+    let s3 = s.advance(&k3, dt_s);
     let k4 = derivative(force, &s3);
 
-    let mut y = [0.0f64; 6];
-    for i in 0..6 {
-        y[i] = y0[i] + dt_s / 6.0 * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
-    }
+    let combined = StateDerivative::rk4_combine(&k1, &k2, &k3, &k4);
     let new_jd = JulianDate::new(s.epoch_tt.jd_value() + dt_s / SEC_PER_DAY);
-    OrbitState::from_array6(new_jd, y)
+    let advanced = s.advance(&combined, dt_s);
+    OrbitState::new(new_jd, advanced.position, advanced.velocity)
 }
 
-fn derivative<F: ForceModel>(force: &F, s: &OrbitState) -> [f64; 6] {
-    let a = force.acceleration(s);
-    let vx = s.velocity.x().value();
-    let vy = s.velocity.y().value();
-    let vz = s.velocity.z().value();
-    [vx, vy, vz, a[0], a[1], a[2]]
-}
-
-fn step_with(base: &OrbitState, y0: &[f64; 6], k: &[f64; 6], dt: f64) -> OrbitState {
-    let mut y = [0.0f64; 6];
-    for i in 0..6 {
-        y[i] = y0[i] + dt * k[i];
+fn derivative<F: ForceModel>(force: &F, s: &OrbitState) -> StateDerivative {
+    StateDerivative {
+        vel: [s.velocity.x().value(), s.velocity.y().value(), s.velocity.z().value()],
+        acc: force.acceleration(s),
     }
-    OrbitState::from_array6(base.epoch_tt, y)
 }
 
 /// Propagate `state` over `n_steps` of `dt_s` seconds each.

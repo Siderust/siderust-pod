@@ -20,13 +20,10 @@
 //! let s = OrbitState::new(JulianDate::new(2_451_545.0), pos, vel);
 //! assert!((s.position.x().value() - 7000.0).abs() < 1e-12);
 //! ```
-//!
-//! The raw-array helpers [`OrbitState::to_array6`] and
-//! [`OrbitState::from_array6`] are retained for the integrator inner loops
-//! where arithmetic operates on plain `[f64; 6]` slices.
 use siderust::coordinates::centers::Geocentric;
 use siderust::coordinates::cartesian;
 use siderust::coordinates::frames::GCRS;
+use siderust::qtty::{Kilograms, SquareMeters};
 use siderust::qtty::unit::{Kilometer, Per, Second};
 use siderust::time::JulianDate;
 
@@ -39,9 +36,7 @@ pub type Velocity<S, U = Per<Kilometer, Second>> = cartesian::Velocity<S, U>;
 /// Cartesian inertial position + velocity in km / (km/s) in GCRS.
 ///
 /// Position and velocity are stored as typed [`siderust`] coordinate values,
-/// giving compile-time frame and unit guarantees. The raw-array helpers
-/// [`to_array6`](OrbitState::to_array6) / [`from_array6`](OrbitState::from_array6)
-/// are provided for numeric inner loops (integrators, STM).
+/// giving compile-time frame and unit guarantees.
 #[derive(Debug, Clone, Copy)]
 pub struct OrbitState {
     /// Epoch (TT scale, Julian Date).
@@ -54,7 +49,13 @@ pub struct OrbitState {
 
 impl PartialEq for OrbitState {
     fn eq(&self, other: &Self) -> bool {
-        self.epoch_tt == other.epoch_tt && self.to_array6() == other.to_array6()
+        self.epoch_tt == other.epoch_tt
+            && self.position.x() == other.position.x()
+            && self.position.y() == other.position.y()
+            && self.position.z() == other.position.z()
+            && self.velocity.x() == other.velocity.x()
+            && self.velocity.y() == other.velocity.y()
+            && self.velocity.z() == other.velocity.z()
     }
 }
 
@@ -73,48 +74,97 @@ impl OrbitState {
         Self { epoch_tt, position, velocity }
     }
 
-    /// 6-vector `[r, v]` packing used by integrators.
+    /// Advance position and velocity by `dt_s` seconds along `deriv`.
+    ///
+    /// The epoch is **not** updated — the caller is responsible for advancing
+    /// `epoch_tt` to the new time. This mirrors the mathematical step
+    /// `x(t + h) ≈ x(t) + h · ẋ(t)`.
     #[inline]
-    pub fn to_array6(&self) -> [f64; 6] {
-        [
-            self.position.x().value(),
-            self.position.y().value(),
-            self.position.z().value(),
-            self.velocity.x().value(),
-            self.velocity.y().value(),
-            self.velocity.z().value(),
-        ]
-    }
-
-    /// Construct from a 6-vector `[r, v]` at a given epoch.
-    #[inline]
-    pub fn from_array6(epoch_tt: JulianDate, x: [f64; 6]) -> Self {
+    pub fn advance(&self, deriv: &StateDerivative, dt_s: f64) -> Self {
         Self {
-            epoch_tt,
-            position: Position::<GCRS>::new(x[0], x[1], x[2]),
-            velocity: Velocity::<GCRS>::new(x[3], x[4], x[5]),
+            epoch_tt: self.epoch_tt,
+            position: Position::<GCRS>::new(
+                self.position.x().value() + dt_s * deriv.vel[0],
+                self.position.y().value() + dt_s * deriv.vel[1],
+                self.position.z().value() + dt_s * deriv.vel[2],
+            ),
+            velocity: Velocity::<GCRS>::new(
+                self.velocity.x().value() + dt_s * deriv.acc[0],
+                self.velocity.y().value() + dt_s * deriv.acc[1],
+                self.velocity.z().value() + dt_s * deriv.acc[2],
+            ),
+        }
+    }
+}
+
+/// Time derivative of an [`OrbitState`]: the 6-vector `[dr/dt, dv/dt]`.
+///
+/// `vel` is the position rate (= velocity, km/s) and `acc` is the velocity
+/// rate (= inertial acceleration in km/s²). Keeping these as raw `[f64; 3]`
+/// arrays allows force-model arithmetic without hitting the `affn` version
+/// boundary; a fully-typed version is deferred until the version split is
+/// resolved.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct StateDerivative {
+    /// Position rate (= velocity), km/s.
+    pub vel: [f64; 3],
+    /// Velocity rate (= acceleration), km/s².
+    pub acc: [f64; 3],
+}
+
+impl StateDerivative {
+    /// Weighted combination: `self + (w2·d2 + w3·d3 + w4·d4) / norm` used by RK4.
+    #[inline]
+    pub fn rk4_combine(
+        k1: &Self,
+        k2: &Self,
+        k3: &Self,
+        k4: &Self,
+    ) -> Self {
+        Self {
+            vel: [
+                (k1.vel[0] + 2.0 * k2.vel[0] + 2.0 * k3.vel[0] + k4.vel[0]) / 6.0,
+                (k1.vel[1] + 2.0 * k2.vel[1] + 2.0 * k3.vel[1] + k4.vel[1]) / 6.0,
+                (k1.vel[2] + 2.0 * k2.vel[2] + 2.0 * k3.vel[2] + k4.vel[2]) / 6.0,
+            ],
+            acc: [
+                (k1.acc[0] + 2.0 * k2.acc[0] + 2.0 * k3.acc[0] + k4.acc[0]) / 6.0,
+                (k1.acc[1] + 2.0 * k2.acc[1] + 2.0 * k3.acc[1] + k4.acc[1]) / 6.0,
+                (k1.acc[2] + 2.0 * k2.acc[2] + 2.0 * k3.acc[2] + k4.acc[2]) / 6.0,
+            ],
         }
     }
 
-    /// Position magnitude squared (km²).
+    /// Scale this derivative by `factor`.
     #[inline]
-    pub fn r2(&self) -> f64 {
-        let d = self.position.distance();
-        d.value() * d.value()
+    pub fn scaled(&self, factor: f64) -> Self {
+        Self {
+            vel: [self.vel[0] * factor, self.vel[1] * factor, self.vel[2] * factor],
+            acc: [self.acc[0] * factor, self.acc[1] * factor, self.acc[2] * factor],
+        }
+    }
+
+    /// Element-wise addition.
+    #[inline]
+    pub fn add(&self, other: &Self) -> Self {
+        Self {
+            vel: [self.vel[0] + other.vel[0], self.vel[1] + other.vel[1], self.vel[2] + other.vel[2]],
+            acc: [self.acc[0] + other.acc[0], self.acc[1] + other.acc[1], self.acc[2] + other.acc[2]],
+        }
     }
 }
 
 /// Spacecraft properties carried alongside the orbit state.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct SpacecraftProperties {
-    /// Total mass, kg.
-    pub mass_kg: f64,
-    /// Cross-section for drag, m².
-    pub drag_area_m2: f64,
+    /// Total mass.
+    pub mass: Kilograms,
+    /// Cross-section for drag.
+    pub drag_area: SquareMeters,
     /// Drag coefficient (dimensionless).
     pub cd: f64,
-    /// Cross-section for SRP, m².
-    pub srp_area_m2: f64,
+    /// Cross-section for SRP.
+    pub srp_area: SquareMeters,
     /// SRP coefficient (dimensionless).
     pub cr: f64,
 }
@@ -123,10 +173,10 @@ impl SpacecraftProperties {
     /// Reasonable demo defaults for a small LEO platform.
     pub fn demo_leo() -> Self {
         Self {
-            mass_kg: 500.0,
-            drag_area_m2: 2.0,
+            mass: Kilograms::new(500.0),
+            drag_area: SquareMeters::new(2.0),
             cd: 2.2,
-            srp_area_m2: 2.0,
+            srp_area: SquareMeters::new(2.0),
             cr: 1.3,
         }
     }
@@ -160,30 +210,34 @@ mod tests {
         assert!((s.velocity.x().value() - 0.5).abs() < f64::EPSILON);
         assert!((s.velocity.y().value() - 7.4).abs() < f64::EPSILON);
         assert!((s.velocity.z().value() - (-0.1)).abs() < f64::EPSILON);
-
-        // to_array6 must reproduce the same values.
-        let arr = s.to_array6();
-        assert!((arr[0] - 7000.0).abs() < f64::EPSILON);
-        assert!((arr[1] - 100.0).abs() < f64::EPSILON);
-        assert!((arr[2] - (-200.0)).abs() < f64::EPSILON);
-        assert!((arr[3] - 0.5).abs() < f64::EPSILON);
-        assert!((arr[4] - 7.4).abs() < f64::EPSILON);
-        assert!((arr[5] - (-0.1)).abs() < f64::EPSILON);
     }
 
     #[test]
-    fn from_array6_consistent_with_new() {
+    fn advance_applies_derivative_correctly() {
         let epoch = JulianDate::new(2_451_545.0);
-        let r = [6378.0, 0.0, 1000.0];
-        let v = [0.0, 7.8, 0.0];
+        let pos = Position::<GCRS>::new(7000.0, 0.0, 0.0);
+        let vel = Velocity::<GCRS>::new(0.0, 7.5, 0.0);
+        let s = OrbitState::new(epoch, pos, vel);
 
-        let from_new = OrbitState::new(
-            epoch,
-            Position::<GCRS>::new(r[0], r[1], r[2]),
-            Velocity::<GCRS>::new(v[0], v[1], v[2]),
-        );
-        let from_arr = OrbitState::from_array6(epoch, [r[0], r[1], r[2], v[0], v[1], v[2]]);
+        let deriv = StateDerivative {
+            vel: [0.0, 7.5, 0.0],
+            acc: [0.0, 0.0, -9.8e-3],
+        };
+        let dt = 10.0;
+        let s2 = s.advance(&deriv, dt);
 
-        assert_eq!(from_new, from_arr);
+        assert!((s2.position.x().value() - 7000.0).abs() < 1e-10);
+        assert!((s2.position.y().value() - 75.0).abs() < 1e-10);
+        assert!((s2.velocity.z().value() - (-0.098)).abs() < 1e-10);
+        // Epoch is unchanged by advance.
+        assert_eq!(s2.epoch_tt, epoch);
+    }
+
+    #[test]
+    fn spacecraft_properties_demo_leo() {
+        let p = SpacecraftProperties::demo_leo();
+        assert!((p.mass.value() - 500.0).abs() < f64::EPSILON);
+        assert!((p.drag_area.value() - 2.0).abs() < f64::EPSILON);
+        assert!((p.srp_area.value() - 2.0).abs() < f64::EPSILON);
     }
 }

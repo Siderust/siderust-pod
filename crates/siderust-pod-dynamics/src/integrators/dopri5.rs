@@ -6,7 +6,7 @@
 
 use crate::forces::ForceModel;
 use siderust::time::JulianDate;
-use siderust_pod_core::OrbitState;
+use siderust_pod_core::{OrbitState, StateDerivative};
 
 const SEC_PER_DAY: f64 = 86_400.0;
 
@@ -28,13 +28,39 @@ impl Default for Tolerance {
     }
 }
 
-#[allow(clippy::needless_range_loop)]
-fn rhs<F: ForceModel>(force: &F, s: &OrbitState) -> [f64; 6] {
-    let a = force.acceleration(s);
-    let vx = s.velocity.x().value();
-    let vy = s.velocity.y().value();
-    let vz = s.velocity.z().value();
-    [vx, vy, vz, a[0], a[1], a[2]]
+/// Return the i-th component of the 6-state `[rx, ry, rz, vx, vy, vz]`.
+#[inline]
+fn state_component(s: &OrbitState, i: usize) -> f64 {
+    match i {
+        0 => s.position.x().value(),
+        1 => s.position.y().value(),
+        2 => s.position.z().value(),
+        3 => s.velocity.x().value(),
+        4 => s.velocity.y().value(),
+        5 => s.velocity.z().value(),
+        _ => panic!("index out of range"),
+    }
+}
+
+/// Return the i-th component of a `StateDerivative` 6-vector `[vel, acc]`.
+#[inline]
+fn deriv_component(d: &StateDerivative, i: usize) -> f64 {
+    if i < 3 { d.vel[i] } else { d.acc[i - 3] }
+}
+
+fn rhs<F: ForceModel>(force: &F, s: &OrbitState) -> StateDerivative {
+    StateDerivative {
+        vel: [s.velocity.x().value(), s.velocity.y().value(), s.velocity.z().value()],
+        acc: force.acceleration(s),
+    }
+}
+
+/// Create an intermediate state: `s` advanced by `h * d` at epoch `s.epoch + dt`.
+#[inline]
+fn state_at(s: &OrbitState, d: &StateDerivative, h: f64, dt: f64) -> OrbitState {
+    let jd = JulianDate::new(s.epoch_tt.jd_value() + dt / SEC_PER_DAY);
+    let advanced = s.advance(d, h);
+    OrbitState::new(jd, advanced.position, advanced.velocity)
 }
 
 /// Single adaptive DOPRI5 step. Returns `(new_state, h_used, h_next)`.
@@ -72,8 +98,7 @@ pub fn dopri5_step<F: ForceModel>(
     let a75 = -2_187.0 / 6_784.0;
     let a76 = 11.0 / 84.0;
 
-    // 5th-order weights = a7*
-    // 4th-order embedded weights:
+    // Error estimate weights (difference of 5th and 4th order):
     let e1 = 71.0 / 57_600.0;
     let e3 = -71.0 / 16_695.0;
     let e4 = 71.0 / 1_920.0;
@@ -82,59 +107,26 @@ pub fn dopri5_step<F: ForceModel>(
     let e7 = -1.0 / 40.0;
 
     let mut h = h_try;
-    let y0 = s.to_array6();
 
     loop {
-        let s_at = |dt: f64, y: [f64; 6]| -> OrbitState {
-            let jd = JulianDate::new(s.epoch_tt.jd_value() + dt / SEC_PER_DAY);
-            OrbitState::from_array6(jd, y)
-        };
-
         let k1 = rhs(force, s);
-        let mut y2 = [0.0; 6];
-        for i in 0..6 {
-            y2[i] = y0[i] + h * a21 * k1[i];
-        }
-        let k2 = rhs(force, &s_at(c2 * h, y2));
-
-        let mut y3 = [0.0; 6];
-        for i in 0..6 {
-            y3[i] = y0[i] + h * (a31 * k1[i] + a32 * k2[i]);
-        }
-        let k3 = rhs(force, &s_at(c3 * h, y3));
-
-        let mut y4 = [0.0; 6];
-        for i in 0..6 {
-            y4[i] = y0[i] + h * (a41 * k1[i] + a42 * k2[i] + a43 * k3[i]);
-        }
-        let k4 = rhs(force, &s_at(c4 * h, y4));
-
-        let mut y5 = [0.0; 6];
-        for i in 0..6 {
-            y5[i] = y0[i] + h * (a51 * k1[i] + a52 * k2[i] + a53 * k3[i] + a54 * k4[i]);
-        }
-        let k5 = rhs(force, &s_at(c5 * h, y5));
-
-        let mut y6 = [0.0; 6];
-        for i in 0..6 {
-            y6[i] =
-                y0[i] + h * (a61 * k1[i] + a62 * k2[i] + a63 * k3[i] + a64 * k4[i] + a65 * k5[i]);
-        }
-        let k6 = rhs(force, &s_at(h, y6));
-
-        let mut y7 = [0.0; 6];
-        for i in 0..6 {
-            y7[i] =
-                y0[i] + h * (a71 * k1[i] + a73 * k3[i] + a74 * k4[i] + a75 * k5[i] + a76 * k6[i]);
-        }
-        let k7 = rhs(force, &s_at(h, y7));
+        let k2 = rhs(force, &state_at(s, &k1.scaled(a21), h, c2 * h));
+        let k3 = rhs(force, &state_at(s, &k1.scaled(a31).add(&k2.scaled(a32)), h, c3 * h));
+        let k4 = rhs(force, &state_at(s, &k1.scaled(a41).add(&k2.scaled(a42)).add(&k3.scaled(a43)), h, c4 * h));
+        let k5 = rhs(force, &state_at(s, &k1.scaled(a51).add(&k2.scaled(a52)).add(&k3.scaled(a53)).add(&k4.scaled(a54)), h, c5 * h));
+        let k6 = rhs(force, &state_at(s, &k1.scaled(a61).add(&k2.scaled(a62)).add(&k3.scaled(a63)).add(&k4.scaled(a64)).add(&k5.scaled(a65)), h, h));
+        let d7 = k1.scaled(a71).add(&k3.scaled(a73)).add(&k4.scaled(a74)).add(&k5.scaled(a75)).add(&k6.scaled(a76));
+        let s7 = state_at(s, &d7, h, h);
+        let k7 = rhs(force, &s7);
 
         // Error estimate.
+        let err_d = k1.scaled(e1).add(&k3.scaled(e3)).add(&k4.scaled(e4)).add(&k5.scaled(e5)).add(&k6.scaled(e6)).add(&k7.scaled(e7));
         let mut err_norm = 0.0;
         for i in 0..6 {
-            let err =
-                h * (e1 * k1[i] + e3 * k3[i] + e4 * k4[i] + e5 * k5[i] + e6 * k6[i] + e7 * k7[i]);
-            let sc = tol.abs + tol.rel * y0[i].abs().max(y7[i].abs());
+            let err = h * deriv_component(&err_d, i);
+            let y0i = state_component(s, i);
+            let y7i = state_component(&s7, i);
+            let sc = tol.abs + tol.rel * y0i.abs().max(y7i.abs());
             let r = err / sc;
             err_norm += r * r;
         }
@@ -148,8 +140,7 @@ pub fn dopri5_step<F: ForceModel>(
                 let factor = 0.9 * err_norm.powf(-0.2);
                 h * factor.clamp(0.2, 5.0)
             };
-            let new_state = s_at(h, y7);
-            return (new_state, h, h_next);
+            return (s7, h, h_next);
         } else {
             // Reject and shrink.
             let factor = 0.9 * err_norm.powf(-0.2);

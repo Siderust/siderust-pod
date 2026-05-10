@@ -20,8 +20,8 @@ impl TwoBody {
 impl ForceModel for TwoBody {
     #[inline]
     fn acceleration(&self, s: &OrbitState) -> [f64; 3] {
-        let r2 = s.r2();
-        let r = r2.sqrt();
+        let r = s.position.distance().value();
+        let r2 = r * r;
         let k = -self.gm / (r2 * r);
         [
             k * s.position.x().value(),

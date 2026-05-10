@@ -29,8 +29,8 @@ impl J2 {
 impl ForceModel for J2 {
     #[inline]
     fn acceleration(&self, s: &OrbitState) -> [f64; 3] {
-        let r2 = s.r2();
-        let r = r2.sqrt();
+        let r = s.position.distance().value();
+        let r2 = r * r;
         let rx = s.position.x().value();
         let ry = s.position.y().value();
         let rz = s.position.z().value();

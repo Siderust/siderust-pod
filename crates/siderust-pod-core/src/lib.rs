@@ -25,4 +25,4 @@ pub mod state;
 pub use error::{PodError, Result};
 pub use manifest::{DatasetRef, RunManifest};
 pub use parameter::{Parameter, ParameterKind};
-pub use state::{Position, Velocity, OrbitState, SpacecraftProperties, SpacecraftState};
+pub use state::{Position, Velocity, OrbitState, StateDerivative, SpacecraftProperties, SpacecraftState};

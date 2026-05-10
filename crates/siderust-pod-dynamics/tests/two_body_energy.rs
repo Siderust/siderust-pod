@@ -5,7 +5,7 @@ use siderust_pod_dynamics::prelude::{rk4_propagate, TwoBody};
 
 /// Specific orbital energy: ½v² - μ/r.
 fn energy(s: &OrbitState, gm: f64) -> f64 {
-    let r = s.r2().sqrt();
+    let r = s.position.distance().value();
     let vx = s.velocity.x().value();
     let vy = s.velocity.y().value();
     let vz = s.velocity.z().value();
