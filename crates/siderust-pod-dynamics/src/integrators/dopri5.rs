@@ -45,14 +45,22 @@ fn state_component(s: &OrbitState, i: usize) -> f64 {
 /// Return the i-th component of a `StateDerivative` 6-vector `[vel, acc]`.
 #[inline]
 fn deriv_component(d: &StateDerivative, i: usize) -> f64 {
-    if i < 3 { d.vel[i] } else { d.acc[i - 3] }
+    match i {
+        0 => d.vel.x().value(),
+        1 => d.vel.y().value(),
+        2 => d.vel.z().value(),
+        3 => d.acc.x().value(),
+        4 => d.acc.y().value(),
+        5 => d.acc.z().value(),
+        _ => panic!("index out of range"),
+    }
 }
 
 fn rhs<F: ForceModel>(force: &F, s: &OrbitState) -> StateDerivative {
-    StateDerivative {
-        vel: [s.velocity.x().value(), s.velocity.y().value(), s.velocity.z().value()],
-        acc: force.acceleration(s),
-    }
+    StateDerivative::from_components(
+        [s.velocity.x().value(), s.velocity.y().value(), s.velocity.z().value()],
+        force.acceleration(s),
+    )
 }
 
 /// Create an intermediate state: `s` advanced by `h * d` at epoch `s.epoch + dt`.

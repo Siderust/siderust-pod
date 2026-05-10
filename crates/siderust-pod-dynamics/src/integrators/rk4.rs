@@ -24,10 +24,10 @@ pub fn rk4_step<F: ForceModel>(force: &F, s: &OrbitState, dt_s: f64) -> OrbitSta
 }
 
 fn derivative<F: ForceModel>(force: &F, s: &OrbitState) -> StateDerivative {
-    StateDerivative {
-        vel: [s.velocity.x().value(), s.velocity.y().value(), s.velocity.z().value()],
-        acc: force.acceleration(s),
-    }
+    StateDerivative::from_components(
+        [s.velocity.x().value(), s.velocity.y().value(), s.velocity.z().value()],
+        force.acceleration(s),
+    )
 }
 
 /// Propagate `state` over `n_steps` of `dt_s` seconds each.
