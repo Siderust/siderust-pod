@@ -1,0 +1,10 @@
+target/
+.git/
+*.bak
+out/
+**/__pycache__/
+**/*.pyc
+.venv/
+.idea/
+.vscode/
+node_modules/

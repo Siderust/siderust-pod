@@ -1,0 +1,30 @@
+[package]
+name = "siderust-pod-service"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Job model, pipeline runner, config loading, and artifact orchestration for Siderust POD."
+
+[dependencies]
+qtty.workspace = true
+tempoch.workspace = true
+affn.workspace = true
+siderust.workspace = true
+siderust-pod-core.workspace = true
+siderust-pod-dynamics.workspace = true
+siderust-pod-io.workspace = true
+siderust-pod-observations.workspace = true
+siderust-pod-estimation.workspace = true
+siderust-pod-qc.workspace = true
+siderust-pod-products.workspace = true
+serde.workspace = true
+serde_yaml.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+hex.workspace = true
+thiserror.workspace = true
+log.workspace = true
+chrono.workspace = true

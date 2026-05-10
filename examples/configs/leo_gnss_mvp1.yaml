@@ -1,0 +1,12 @@
+schema_version: "1.0.0"
+run_id: leo-gnss-mvp1-demo
+output_dir: ./out/leo-gnss-mvp1
+inputs:
+  sp3: null
+  rinex_obs: null
+  rinex_nav: null
+  antex: null
+forces:
+  two_body: true
+  j2: false
+  third_body: false

@@ -1,0 +1,45 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rust/siderust-pod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: fmt
+        run: cargo fmt --all -- --check
+      - name: clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: test
+        run: cargo test --workspace
+      - name: dep-graph
+        run: bash scripts/check_dep_graph.sh
+      - name: doc
+        run: cargo doc --workspace --no-deps
+        env:
+          RUSTDOCFLAGS: -D rustdoc::broken-intra-doc-links
+
+  supply-chain:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rust/siderust-pod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: install cargo-deny
+        run: cargo install --locked cargo-deny || true
+      - name: cargo deny
+        run: cargo deny --all-features check
+        continue-on-error: true   # advisory-only until M11 hardens the policy
+

@@ -1,0 +1,76 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/siderust-pod-core",
+    "crates/siderust-pod-dynamics",
+    "crates/siderust-pod-io",
+    "crates/siderust-pod-observations",
+    "crates/siderust-pod-estimation",
+    "crates/siderust-pod-qc",
+    "crates/siderust-pod-products",
+    "crates/siderust-pod-service",
+    "crates/siderust-pod-cli",
+    "crates/siderust-pod-py",
+    "crates/siderust-pod-rest",
+]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.82"
+authors = ["Siderust authors"]
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/Siderust/siderust-pod"
+homepage = "https://github.com/Siderust/siderust-pod"
+keywords = ["satellite", "pod", "orbit-determination", "geodesy", "gnss"]
+categories = ["science", "aerospace"]
+
+[workspace.dependencies]
+# Foundational crates (read-only to this workspace).
+# Pinned by path during local dev; published versions are fine for crates.io builds.
+qtty     = { version = "0.7", path = "../qtty/qtty" }
+tempoch  = { version = "0.4", path = "../tempoch/tempoch" }
+affn     = { version = "0.7", path = "../affn", features = ["astro"] }
+cheby    = { version = "0.2", path = "../cheby" }
+siderust = { version = "0.7", path = "../siderust" }
+
+# POD-internal crates referenced from siblings.
+siderust-pod-core         = { path = "crates/siderust-pod-core",         version = "0.0.0" }
+siderust-pod-dynamics     = { path = "crates/siderust-pod-dynamics",     version = "0.0.0" }
+siderust-pod-io           = { path = "crates/siderust-pod-io",           version = "0.0.0" }
+siderust-pod-observations = { path = "crates/siderust-pod-observations", version = "0.0.0" }
+siderust-pod-estimation   = { path = "crates/siderust-pod-estimation",   version = "0.0.0" }
+siderust-pod-qc           = { path = "crates/siderust-pod-qc",           version = "0.0.0" }
+siderust-pod-products     = { path = "crates/siderust-pod-products",     version = "0.0.0" }
+siderust-pod-service      = { path = "crates/siderust-pod-service",      version = "0.0.0" }
+
+# Third-party.
+faer        = { version = "0.22", default-features = false, features = ["std", "linalg"] }
+serde       = { version = "1.0", features = ["derive"] }
+serde_json  = "1.0"
+serde_yaml  = "0.9"
+thiserror   = "1.0"
+clap        = { version = "4.5", features = ["derive"] }
+sha2        = "0.10"
+hex         = "0.4"
+chrono      = "0.4"
+anyhow      = "1.0"
+log         = "0.4"
+env_logger  = "0.11"
+trybuild    = "1.0"
+approx      = "0.5"
+pyo3        = { version = "0.22", features = ["extension-module"] }
+axum        = "0.7"
+tokio       = { version = "1.39", features = ["macros", "rt-multi-thread"] }
+tower       = "0.5"
+uuid        = { version = "1.10", features = ["v4"] }
+
+[profile.release]
+opt-level = 3
+lto       = "thin"
+codegen-units = 1
+panic = "abort"
+
+[profile.bench]
+opt-level = 3
+lto = "thin"

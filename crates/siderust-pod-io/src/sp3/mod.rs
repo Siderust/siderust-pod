@@ -1,0 +1,265 @@
+//! Minimal SP3-c/d reader and writer (sufficient for MVP-1 round-trip tests).
+//!
+//! Implements the subset of the SP3 specification required for ingesting
+//! precise GNSS satellite ephemerides and writing back the POD orbit product:
+//!
+//! * Header lines `#a/#b/#c/#d`, `##`.
+//! * `+ ` satellite-id lines.
+//! * `++` accuracy lines (parsed but not interpreted).
+//! * `%c` / `%f` / `%i` / `/*` lines (preserved verbatim on round-trip).
+//! * Epoch lines `* `.
+//! * Position records `P<id> X Y Z CLK`.
+//!
+//! Velocity records (`V`), correlation records (`EP`/`EV`) and per-record
+//! flags are out of MVP-1 scope and are ignored on read with a diagnostic.
+
+use std::io::{BufRead, BufReader, Read, Write};
+use thiserror::Error;
+
+/// SP3 parse / write errors.
+#[derive(Debug, Error)]
+pub enum Sp3Error {
+    /// I/O failure.
+    #[error("I/O error: {0}")]
+    Io(#[from] std::io::Error),
+    /// Header malformed.
+    #[error("malformed SP3 header at line {line}: {message}")]
+    Header {
+        /// 1-based line number.
+        line: usize,
+        /// Diagnostic.
+        message: String,
+    },
+    /// Record line malformed.
+    #[error("malformed SP3 record at line {line}: {message}")]
+    Record {
+        /// 1-based line number.
+        line: usize,
+        /// Diagnostic.
+        message: String,
+    },
+}
+
+/// One satellite position record at one epoch (km, microsecond clock).
+#[derive(Debug, Clone, PartialEq)]
+pub struct Sp3Position {
+    /// Satellite identifier (3 chars, e.g. `G01`).
+    pub sat_id: String,
+    /// X (km).
+    pub x_km: f64,
+    /// Y (km).
+    pub y_km: f64,
+    /// Z (km).
+    pub z_km: f64,
+    /// Clock bias (µs). 999999.999999 means unavailable.
+    pub clock_us: f64,
+}
+
+/// One epoch with all satellite records.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Sp3Epoch {
+    /// Year.
+    pub year: i32,
+    /// Month (1-12).
+    pub month: u32,
+    /// Day (1-31).
+    pub day: u32,
+    /// Hour (0-23).
+    pub hour: u32,
+    /// Minute (0-59).
+    pub minute: u32,
+    /// Second (0.0-60.0).
+    pub second: f64,
+    /// Position records.
+    pub positions: Vec<Sp3Position>,
+}
+
+/// Full SP3 record.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Sp3Record {
+    /// Verbatim header lines (preserved for round-trip).
+    pub header: Vec<String>,
+    /// Epochs.
+    pub epochs: Vec<Sp3Epoch>,
+}
+
+/// Parse an SP3 file from a reader.
+pub fn read_sp3<R: Read>(r: R) -> Result<Sp3Record, Sp3Error> {
+    let mut buf = BufReader::new(r);
+    let mut header = Vec::new();
+    let mut epochs = Vec::new();
+    let mut line_no = 0usize;
+    let mut in_header = true;
+    let mut current: Option<Sp3Epoch> = None;
+
+    let mut s = String::new();
+    loop {
+        s.clear();
+        let n = buf.read_line(&mut s)?;
+        if n == 0 {
+            break;
+        }
+        line_no += 1;
+        let trimmed_eol = s.trim_end_matches(['\r', '\n']).to_string();
+
+        if trimmed_eol == "EOF" {
+            break;
+        }
+
+        if in_header {
+            // Header runs until the first '*' epoch line.
+            if trimmed_eol.starts_with('*') {
+                in_header = false;
+            } else {
+                header.push(trimmed_eol);
+                continue;
+            }
+        }
+
+        if trimmed_eol.starts_with('*') {
+            // Epoch line: "* YYYY MM DD HH MM SS.SSSSSSSS"
+            if let Some(e) = current.take() {
+                epochs.push(e);
+            }
+            let fields: Vec<&str> = trimmed_eol
+                .strip_prefix('*')
+                .unwrap_or(trimmed_eol.as_str())
+                .split_whitespace()
+                .collect();
+            if fields.len() < 6 {
+                return Err(Sp3Error::Record {
+                    line: line_no,
+                    message: format!("epoch needs 6 fields, got {}", fields.len()),
+                });
+            }
+            current = Some(Sp3Epoch {
+                year: parse_field(fields[0], line_no, "year")?,
+                month: parse_field(fields[1], line_no, "month")?,
+                day: parse_field(fields[2], line_no, "day")?,
+                hour: parse_field(fields[3], line_no, "hour")?,
+                minute: parse_field(fields[4], line_no, "minute")?,
+                second: parse_field(fields[5], line_no, "second")?,
+                positions: Vec::new(),
+            });
+        } else if trimmed_eol.starts_with('P') {
+            let epoch = current.as_mut().ok_or_else(|| Sp3Error::Record {
+                line: line_no,
+                message: "P record before any epoch".into(),
+            })?;
+            // Columns are fixed in SP3, but split_whitespace is robust enough
+            // for MVP-1 fixtures.
+            // Format: "PXXX  X.X         Y.Y         Z.Z         CLOCK"
+            let id = trimmed_eol
+                .get(1..4)
+                .ok_or_else(|| Sp3Error::Record {
+                    line: line_no,
+                    message: "P record too short for sat id".into(),
+                })?
+                .trim()
+                .to_string();
+            let rest: Vec<&str> = trimmed_eol[4..].split_whitespace().collect();
+            if rest.len() < 4 {
+                return Err(Sp3Error::Record {
+                    line: line_no,
+                    message: format!("P record needs 4 numeric fields, got {}", rest.len()),
+                });
+            }
+            epoch.positions.push(Sp3Position {
+                sat_id: id,
+                x_km: parse_field(rest[0], line_no, "x")?,
+                y_km: parse_field(rest[1], line_no, "y")?,
+                z_km: parse_field(rest[2], line_no, "z")?,
+                clock_us: parse_field(rest[3], line_no, "clock")?,
+            });
+        } else if trimmed_eol.starts_with('V')
+            || trimmed_eol.starts_with("EP")
+            || trimmed_eol.starts_with("EV")
+        {
+            // MVP-1: silently ignore.
+            continue;
+        }
+    }
+    if let Some(e) = current {
+        epochs.push(e);
+    }
+    Ok(Sp3Record { header, epochs })
+}
+
+fn parse_field<T>(raw: &str, line: usize, what: &str) -> Result<T, Sp3Error>
+where
+    T: std::str::FromStr,
+    <T as std::str::FromStr>::Err: std::fmt::Display,
+{
+    raw.parse::<T>().map_err(|e| Sp3Error::Record {
+        line,
+        message: format!("bad {what}: {e}"),
+    })
+}
+
+/// Write an SP3 record. The header lines are emitted verbatim, then each
+/// epoch as `* YYYY MM DD HH MM SS.SS...` followed by `PXXX X Y Z CLK` lines.
+pub fn write_sp3<W: Write>(w: &mut W, rec: &Sp3Record) -> Result<(), Sp3Error> {
+    for h in &rec.header {
+        writeln!(w, "{h}")?;
+    }
+    for e in &rec.epochs {
+        writeln!(
+            w,
+            "*  {:4} {:>2} {:>2} {:>2} {:>2} {:11.8}",
+            e.year, e.month, e.day, e.hour, e.minute, e.second
+        )?;
+        for p in &e.positions {
+            writeln!(
+                w,
+                "P{:<3} {:14.6} {:14.6} {:14.6} {:14.6}",
+                p.sat_id, p.x_km, p.y_km, p.z_km, p.clock_us
+            )?;
+        }
+    }
+    writeln!(w, "EOF")?;
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const SAMPLE: &str = "\
+#dP2024  1  1  0  0  0.00000000      96 ORBIT IGS20 HLM  IGS\n\
+##  2295 518400.00000000   900.00000000 60310 0.0000000000000\n\
++    2   G01G02                                                     \n\
+++         5   5                                                    \n\
+%c L  cc GPS ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc\n\
+%c cc cc ccc ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc\n\
+%f  1.2500000  1.025000000  0.00000000000  0.000000000000000\n\
+%f  0.0000000  0.000000000  0.00000000000  0.000000000000000\n\
+%i    0    0    0    0      0      0      0      0         0\n\
+%i    0    0    0    0      0      0      0      0         0\n\
+/* COMMENT LINE\n\
+*  2024  1  1  0  0  0.00000000\n\
+PG01   1000.000000   2000.000000   3000.000000      0.000123\n\
+PG02  -1500.000000   1700.000000  -2500.000000      0.000456\n\
+*  2024  1  1  0 15  0.00000000\n\
+PG01   1100.000000   2100.000000   3100.000000      0.000124\n\
+PG02  -1400.000000   1800.000000  -2400.000000      0.000457\n\
+EOF\n";
+
+    #[test]
+    fn parse_sample() {
+        let rec = read_sp3(SAMPLE.as_bytes()).expect("parse sample");
+        assert_eq!(rec.epochs.len(), 2);
+        assert_eq!(rec.epochs[0].positions.len(), 2);
+        assert_eq!(rec.epochs[0].positions[0].sat_id, "G01");
+        assert!((rec.epochs[0].positions[0].x_km - 1000.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn round_trip() {
+        let rec = read_sp3(SAMPLE.as_bytes()).expect("parse");
+        let mut buf = Vec::new();
+        write_sp3(&mut buf, &rec).expect("write");
+        let rec2 = read_sp3(buf.as_slice()).expect("re-parse");
+        assert_eq!(rec.epochs, rec2.epochs);
+        assert_eq!(rec.header.len(), rec2.header.len());
+    }
+}
