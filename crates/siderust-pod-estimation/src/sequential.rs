@@ -24,12 +24,12 @@
 //!   Determination. Elsevier Academic Press.
 //! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
 //!   (4th ed.). Microcosm Press.
-use affn::matrix3::{FrameMatrix3, SymmetricFrameMatrix3};
+use affn::Displacement;
 use faer::Mat;
+use qtty::unit::Kilometer;
 use siderust::astro::dynamics::covariance::StateCovariance;
-use siderust::astro::dynamics::{OrbitState, Position, Velocity};
+use siderust::astro::dynamics::{OrbitState, Velocity};
 use siderust::coordinates::frames::GCRS;
-use siderust::time::JulianDate;
 use thiserror::Error;
 
 /// EKF error type.
@@ -108,17 +108,21 @@ impl OrbitEkf {
         phi: [[f64; 6]; 6],
         q: Option<StateCovariance<GCRS>>,
     ) {
-        let phi_m = flat6x6(&phi);
-        let p_m = flat6x6(&self.cov.to_row_major());
+        let phi_m: Mat<f64> = Mat::from_fn(6, 6, |i, j| phi[i][j]);
+        let p = self.cov.to_row_major();
+        let p_m: Mat<f64> = Mat::from_fn(6, 6, |i, j| p[i][j]);
         // P ← Φ P Φᵀ (+ Q)
         let phi_p = &phi_m * &p_m;
         let mut p_next = &phi_p * phi_m.transpose();
         if let Some(q_cov) = q {
-            let q_m = flat6x6(&q_cov.to_row_major());
+            let q = q_cov.to_row_major();
+            let q_m: Mat<f64> = Mat::from_fn(6, 6, |i, j| q[i][j]);
             p_next = p_next + q_m;
         }
         self.state = state_pred;
-        self.cov = mat6x6_to_cov(&p_next);
+        self.cov = StateCovariance::from_row_major(
+            std::array::from_fn(|i| std::array::from_fn(|j| p_next[(i, j)])),
+        );
     }
 
     /// Scalar measurement update.
@@ -133,7 +137,8 @@ impl OrbitEkf {
         innovation: f64,
         r: f64,
     ) -> Result<InnovationRecord, EkfError> {
-        let p_m = flat6x6(&self.cov.to_row_major());
+        let p = self.cov.to_row_major();
+        let p_m: Mat<f64> = Mat::from_fn(6, 6, |i, j| p[i][j]);
         let h_col: Mat<f64> = Mat::from_fn(6, 1, |i, _| h[i]);
 
         // P h
@@ -151,10 +156,20 @@ impl OrbitEkf {
         // K = P h / S
         let k: Mat<f64> = Mat::from_fn(6, 1, |i, _| ph[(i, 0)] / s);
 
-        // x ← x + K * innovation
-        let x = orbit_state_to_vec(&self.state);
-        let x_new: [f64; 6] = std::array::from_fn(|i| x[i] + k[(i, 0)] * innovation);
-        self.state = vec6_to_orbit_state(x_new, self.state.epoch_tt);
+        // x ← x + K * innovation  (typed arithmetic)
+        let pos_delta = Displacement::<GCRS, Kilometer>::new(
+            k[(0, 0)] * innovation,
+            k[(1, 0)] * innovation,
+            k[(2, 0)] * innovation,
+        );
+        let vel_delta = Velocity::<GCRS>::new(
+            k[(3, 0)] * innovation,
+            k[(4, 0)] * innovation,
+            k[(5, 0)] * innovation,
+        );
+        let new_pos = self.state.position + pos_delta;
+        let new_vel = self.state.velocity + vel_delta;
+        self.state = OrbitState::new(self.state.epoch_tt, new_pos, new_vel);
 
         // P ← P − K (hᵀ P)  then symmetrise
         let htp: Mat<f64> = Mat::from_fn(1, 6, |_, j| {
@@ -169,7 +184,9 @@ impl OrbitEkf {
                 p_next[(j, i)] = v;
             }
         }
-        self.cov = mat6x6_to_cov(&p_next);
+        self.cov = StateCovariance::from_row_major(
+            std::array::from_fn(|i| std::array::from_fn(|j| p_next[(i, j)])),
+        );
         let nis = innovation * innovation / s;
         Ok(InnovationRecord {
             innovation,
@@ -179,51 +196,10 @@ impl OrbitEkf {
     }
 }
 
-/// Build a 6×6 faer matrix from a row-major `[[f64;6];6]` array.
-fn flat6x6(a: &[[f64; 6]; 6]) -> Mat<f64> {
-    Mat::from_fn(6, 6, |i, j| a[i][j])
-}
-
-/// Pack a 6×6 faer matrix back into a typed [`StateCovariance<GCRS>`].
-fn mat6x6_to_cov(m: &Mat<f64>) -> StateCovariance<GCRS> {
-    let rr = SymmetricFrameMatrix3::<GCRS>::from_upper([
-        [m[(0, 0)], m[(0, 1)], m[(0, 2)]],
-        [m[(1, 0)], m[(1, 1)], m[(1, 2)]],
-        [m[(2, 0)], m[(2, 1)], m[(2, 2)]],
-    ]);
-    let rv = FrameMatrix3::<GCRS>::from_array([
-        [m[(0, 3)], m[(0, 4)], m[(0, 5)]],
-        [m[(1, 3)], m[(1, 4)], m[(1, 5)]],
-        [m[(2, 3)], m[(2, 4)], m[(2, 5)]],
-    ]);
-    let vv = SymmetricFrameMatrix3::<GCRS>::from_upper([
-        [m[(3, 3)], m[(3, 4)], m[(3, 5)]],
-        [m[(4, 3)], m[(4, 4)], m[(4, 5)]],
-        [m[(5, 3)], m[(5, 4)], m[(5, 5)]],
-    ]);
-    StateCovariance::<GCRS>::from_blocks(rr, rv, vv)
-}
-
-fn orbit_state_to_vec(s: &OrbitState) -> [f64; 6] {
-    [
-        s.position.x().value(),
-        s.position.y().value(),
-        s.position.z().value(),
-        s.velocity.x().value(),
-        s.velocity.y().value(),
-        s.velocity.z().value(),
-    ]
-}
-
-fn vec6_to_orbit_state(v: [f64; 6], epoch: JulianDate) -> OrbitState {
-    let pos = Position::<GCRS>::new(v[0], v[1], v[2]);
-    let vel = Velocity::<GCRS>::new(v[3], v[4], v[5]);
-    OrbitState::new(epoch, pos, vel)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use siderust::astro::dynamics::Position;
     use siderust::time::JulianDate;
 
     fn make_orbit_state() -> OrbitState {
