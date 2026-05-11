@@ -1,8 +1,34 @@
-//! End-to-end MVP-1 acceptance test:
-//! generates a synthetic GNSS arc, runs the WLS pipeline, and asserts
-//! that all six artifacts are produced and the orbit is recovered to
-//! within a tight tolerance of the truth state.
-
+//! # MVP-1 end-to-end acceptance test
+//!
+//! ## Scientific scope
+//!
+//! This test runs the full synthetic MVP POD workflow from arc generation
+//! through estimation and product emission, then checks that the recovered
+//! orbit remains close to the synthetic truth. It is the main system-level
+//! scientific regression for the current short-arc GNSS path.
+//!
+//! The scenario stays within the simplified MVP regime: deterministic
+//! synthetic measurements, compact force modelling, and a fixed artifact
+//! set. It is therefore an integration guard rather than an external
+//! validation against real tracking data.
+//!
+//! ## Technical scope
+//!
+//! The test calls the top-level service runner on a synthetic
+//! configuration, verifies that all expected artifacts are produced, and
+//! checks that the final recovered state satisfies the current tolerance
+//! envelope. It intentionally spans several crates so wiring regressions
+//! surface quickly.
+//!
+//! This file is not a public API surface; it is a workspace acceptance
+//! harness.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust::time::JulianDate;
 use siderust_pod_service::{generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity};
 use std::path::PathBuf;

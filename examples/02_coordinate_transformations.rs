@@ -1,10 +1,34 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Coordinate Transformations Example (prefixed)
+//! # Example: coordinate transformations
 //!
-//! Run with: `cargo run --example 02_coordinate_transformations`
-
+//! ## Scientific scope
+//!
+//! This example demonstrates frame and centre transformations on typed
+//! astronomical coordinates. The scientific focus is the distinction
+//! between rotations that change basis and translations that change the
+//! origin of the coordinate description.
+//!
+//! It uses compact deterministic inputs at or near J2000 so the
+//! transformation patterns are easy to inspect. The example is illustrative
+//! rather than a standards-conformance test.
+//!
+//! ## Technical scope
+//!
+//! The program constructs a few representative positions, applies
+//! `to_frame` and `to_center` conversions, and prints the before/after
+//! values. It does not read external ephemerides or perform measurement
+//! modelling.
+//!
+//! This file is a runnable tutorial rather than a reusable library module.
+//!
+//! ## References
+//!
+//! - Seidelmann, P. K. (Ed.). (2006). Explanatory Supplement to the
+//!   Astronomical Almanac (3rd ed.). University Science Books.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust::bodies::solar_system::{Earth, Mars};
 use siderust::coordinates::cartesian::position::{
     EclipticMeanJ2000, EquatorialMeanJ2000, GCRS, HCRS, ICRS,

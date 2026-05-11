@@ -1,8 +1,34 @@
-//! Run configuration schema (YAML).
+//! # Run configuration schema
 //!
-//! MVP-1 uses a small, intentionally rigid schema. Future milestones will
-//! grow it through additive optional fields.
-
+//! ## Scientific scope
+//!
+//! A POD run needs a stable description of its input files, selected force
+//! toggles, and output location before any scientific computation begins.
+//! This module defines that configuration envelope for the current MVP
+//! service path.
+//!
+//! The schema is intentionally rigid so integration tests can rely on
+//! deterministic behaviour. Scientific interpretation enters later, when
+//! the selected inputs and force switches are bound into an actual
+//! estimation run.
+//!
+//! ## Technical scope
+//!
+//! The main public types are `RunConfig`, `InputsConfig`, and
+//! `ForcesConfig`, along with `RunConfig::from_yaml_file` and
+//! `RunConfig::validate`. The schema uses filesystem paths and booleans
+//! rather than typed orbit quantities because it describes workflow wiring
+//! rather than physical state.
+//!
+//! It does not execute the pipeline or hash artifacts; those
+//! responsibilities belong to the runner and manifest modules.
+//!
+//! ## References
+//!
+//! - Ben-Kiki, O., Evans, C., & d'Otremont, I. (2021). YAML Ain't Markup
+//!   Language (YAML) Version 1.2.2.
+//! - Bray, T. (2017). The JavaScript Object Notation (JSON) Data
+//!   Interchange Format. RFC 8259.
 use serde::{Deserialize, Serialize};
 
 /// Top-level run configuration.

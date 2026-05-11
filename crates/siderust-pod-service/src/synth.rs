@@ -1,11 +1,33 @@
-//! Synthetic GNSS arc generator for end-to-end testing.
+//! # Synthetic GNSS arc generation
 //!
-//! Generates noise-free or noisy GPS pseudorange + carrier-phase observations
-//! between a truth LEO orbit and a small constellation of static-orbit GPS
-//! satellites. Both truth and GPS orbits are integrated with two-body
-//! gravity only — sufficient for proving the WLS pipeline converges to the
-//! truth state on a synthetic arc.
-
+//! ## Scientific scope
+//!
+//! Synthetic truth data is essential for end-to-end POD tests because it
+//! gives a known reference orbit and controlled measurements without
+//! external archive dependencies. This module generates a small
+//! deterministic GNSS scenario with spacecraft truth states, transmitter
+//! states, and corresponding measurements.
+//!
+//! The regime is intentionally idealized: two-body dynamics, fixed
+//! transmitter orbits, and configurable but simple measurement noise. It is
+//! appropriate for pipeline verification, not for representing the full
+//! complexity of operational GNSS tracking.
+//!
+//! ## Technical scope
+//!
+//! The public items are `SyntheticArcConfig`, `SyntheticArc`, and
+//! `generate`. Callers supply simple scenario controls and receive a fully
+//! populated synthetic dataset ready for the estimation and QC pipeline.
+//!
+//! Real data ingestion, richer force models, and product writing are
+//! delegated elsewhere.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Consultative Committee for Space Data Systems. (2010). Orbit Data
+//!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
 use crate::pipeline::{ArcEpoch, GpsSatellite};
 use siderust::coordinates::frames::GCRS;
 use siderust::time::JulianDate;

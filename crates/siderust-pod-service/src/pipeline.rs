@@ -1,18 +1,36 @@
-//! End-to-end MVP-1 batch POD pipeline.
+//! # Synthetic batch POD pipeline
 //!
-//! Takes a synthetic GNSS arc (or in the future a real one assembled from
-//! RINEX/SP3), runs Gauss-Newton iterations on the joint orbit + clock-bias
-//! parameter vector, and writes the MVP-1 artifact set:
+//! ## Scientific scope
 //!
-//! ```text
-//! output_dir/
-//!   run.manifest.json
-//!   products/orbit.sp3
-//!   products/orbit.oem
-//!   residuals/residuals.csv
-//!   qc/qc.json
-//! ```
-
+//! This module assembles the current MVP synthetic orbit-determination
+//! workflow: generate or receive a controlled GNSS arc, build scalar
+//! observation equations, solve for a corrected spacecraft state and
+//! nuisance parameters, and emit standard orbit and QC artifacts. The
+//! scientific regime is deliberately narrow so the whole chain stays
+//! deterministic and regression-testable.
+//!
+//! The pipeline presently targets synthetic GNSS data and simplified force
+//! modelling. It is therefore a system-integration path for the broader
+//! architecture, not yet a full operational POD service for heterogeneous
+//! real data.
+//!
+//! ## Technical scope
+//!
+//! The public items are `GpsSatellite`, `ArcEpoch`, `PipelineError`,
+//! `PipelineReport`, and `run_synth`. Inputs are synthetic arc
+//! descriptions, initial orbit guesses, and output paths; outputs are
+//! written artifacts plus a structured run report.
+//!
+//! Observation physics, linear algebra, file-format serialization, and
+//! manifest encoding are delegated to their respective crates and only
+//! orchestrated here.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Consultative Committee for Space Data Systems. (2010). Orbit Data
+//!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
 use crate::manifest::{canonical_json, DatasetRef, RunManifest};
 use crate::synth::SyntheticArc;
 use siderust::astro::dynamics::{OrbitState, Position, Velocity};

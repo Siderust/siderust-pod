@@ -1,13 +1,32 @@
-//! RINEX 3 NAV (broadcast ephemeris) reader — MVP subset.
+//! # RINEX navigation message reader
 //!
-//! Reads GPS broadcast navigation messages: the eight 4-element data lines
-//! per record. Only the fields actually consumed by `pod-observations` are
-//! parsed; everything else is preserved as the raw broadcast value.
+//! ## Scientific scope
 //!
-//! The intent is to be permissive: any line that doesn't fit the expected
-//! shape is skipped rather than failing the whole file, so partial files
-//! still produce usable ephemerides.
-
+//! Broadcast navigation files encode the coarse orbital and clock
+//! information transmitted by GNSS spacecraft. This module reads the GPS-
+//! focused subset needed to reconstruct broadcast ephemerides for
+//! observation modelling and comparative POD workflows.
+//!
+//! The scientific regime is therefore limited to the message families and
+//! fields currently parsed from RINEX 3 NAV. Unsupported systems and
+//! optional record features are intentionally left for follow-up work.
+//!
+//! ## Technical scope
+//!
+//! The main entry points are `read_rinex_nav` and `parse_rinex_nav`,
+//! returning `RinexNavFile` collections of `GpsNavRecord` values. Parsed
+//! fields stay close to the broadcast representation so downstream code can
+//! choose how to convert them into propagated states.
+//!
+//! This module does not itself evaluate the broadcast model or perform
+//! orbit determination.
+//!
+//! ## References
+//!
+//! - International GNSS Service / RTCM. (2020). RINEX: The Receiver
+//!   Independent Exchange Format, Version 3.05.
+//! - IS-GPS-200. (current revision). Navstar GPS Space Segment / Navigation
+//!   User Interfaces.
 use crate::PodIoError;
 use std::fs;
 use std::path::Path;

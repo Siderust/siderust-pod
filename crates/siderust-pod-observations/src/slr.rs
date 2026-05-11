@@ -1,20 +1,36 @@
-//! Satellite Laser Ranging (SLR) two-way range measurement model.
+//! # Satellite laser ranging observation model
 //!
-//! Predicts a two-way range observation between an Earth-fixed station and
-//! a satellite given as inertial state. The model implemented here is
-//! intentionally minimal so that an MVP-2 SLR validation pipeline can be
-//! built without locking us into a specific atmosphere/relativity choice:
+//! ## Scientific scope
 //!
-//! * Light-time iteration (downlink + uplink) using a constant-velocity
-//!   tangent at the receive epoch — sufficient at LEO/MEO ranges where
-//!   the satellite moves <8 km/s and the bounce light-time is <0.1 s.
-//! * Optional constant tropospheric range bias (m). Replace with a Mendes-
-//!   Pavlis or Marini-Murray closure once `pod-qc::slr_validation` is wired.
+//! Satellite laser ranging measures a two-way light-time between a ground
+//! station and a spacecraft retroreflector. This module provides a minimal
+//! physically interpretable range model suitable for self-consistency
+//! checks and early POD validation against synthetic or controlled CRD
+//! data.
 //!
-//! Frames: the station position is expressed in the *same inertial frame as
-//! the satellite state at the bounce epoch*. The caller is responsible for
-//! ITRF→GCRF rotation using a `siderust` frame transform provider.
-
+//! The regime is intentionally limited: the model omits full atmospheric
+//! delay, relativity, station eccentricity, and advanced timing
+//! calibrations. It is therefore appropriate for integration tests and
+//! architectural plumbing, not for millimetre-accurate operational SLR
+//! analysis.
+//!
+//! ## Technical scope
+//!
+//! The public items are `SlrRangeObs` and `SlrRangeModel`. Given an
+//! inertial spacecraft state, an Earth-fixed station location, and frame-
+//! transform support, the model returns a scalar two-way range prediction
+//! and the corresponding partials for the estimation layer.
+//!
+//! Station data ingestion, CRD parsing, and QC summarization are handled by
+//! the IO and QC crates rather than here.
+//!
+//! ## References
+//!
+//! - Degnan, J. J. (1993). Millimeter accuracy satellite laser ranging: a
+//!   review. Contributions of Space Geodesy to Geodynamics: Technology, 25,
+//!   133-162.
+//! - Pearlman, M. R., Noll, C. E., et al. (2019). The ILRS: Current status
+//!   and future prospects. Journal of Geodesy, 93, 2161-2180.
 use crate::model::{MeasurementModel, Partials, Prediction};
 use siderust::astro::dynamics::{OrbitState, Position};
 use siderust::coordinates::frames::GCRS;

@@ -1,12 +1,37 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Frame-transform provider trait.
+//! # Earth-fixed to inertial frame-transform provider
 //!
-//! Encapsulates the full ITRF↔GCRF chain (precession, nutation, Earth rotation
-//! angle, polar motion). Default implementations are wired in once the EOP
-//! source is bound.
-
+//! ## Scientific scope
+//!
+//! Accurate range and carrier modelling requires moving consistently
+//! between terrestrial station coordinates and inertial spacecraft states.
+//! This module defines the provider seam for the full ITRF-GCRF chain
+//! driven by Earth-orientation inputs and standard precession, nutation,
+//! Earth rotation, and polar-motion conventions.
+//!
+//! The science here is limited to the interface contract: callers supply TT
+//! and UT1 epochs because different pieces of the transformation depend on
+//! different time scales. The module does not hard-code a specific
+//! convention realization.
+//!
+//! ## Technical scope
+//!
+//! The public items are `FrameTransformProvider` and `FrameTransformError`.
+//! Implementations return `Rotation3` transforms for ITRF-to-GCRF and the
+//! inverse direction, leaving the choice of EOP source and astronomical
+//! model to the concrete provider.
+//!
+//! Observation models consume this trait but do not own the realization of
+//! the Earth-orientation chain.
+//!
+//! ## References
+//!
+//! - IERS Conventions Centre. (2010). IERS Conventions (2010). Verlag des
+//!   Bundesamts fur Kartographie und Geodasie.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use affn::Rotation3;
 use siderust::time::JulianDate;
 use thiserror::Error;

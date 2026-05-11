@@ -1,3 +1,35 @@
+//! # POD command-line interface
+//!
+//! ## Scientific scope
+//!
+//! This binary is an operational entry point for batch POD workflows. It
+//! does not implement orbital physics directly; instead it exposes
+//! validation, execution, and artifact-inspection commands around the
+//! deterministic synthetic and configuration-driven flows implemented in
+//! the service crate.
+//!
+//! Its scientific regime is therefore inherited from the selected pipeline
+//! path. In the current MVP workflow that means short synthetic GNSS orbit-
+//! determination runs and post-run inspection of generated JSON products.
+//!
+//! ## Technical scope
+//!
+//! The executable uses `clap` to expose `validate-config`, `run`, `inspect-
+//! manifest`, and `qc` style operations. Inputs are filesystem paths to
+//! YAML configuration files or generated JSON artifacts, and outputs are
+//! terminal status messages or the raw text of previously produced manifest
+//! and QC documents.
+//!
+//! It deliberately does not own schema evolution, force-model selection, or
+//! estimation logic; those responsibilities remain in `siderust-pod-
+//! service`.
+//!
+//! ## References
+//!
+//! - Ben-Kiki, O., Evans, C., & d'Otremont, I. (2021). YAML Ain't Markup
+//!   Language (YAML) Version 1.2.2.
+//! - Bray, T. (2017). The JavaScript Object Notation (JSON) Data
+//!   Interchange Format. RFC 8259.
 use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]

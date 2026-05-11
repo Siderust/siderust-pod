@@ -1,11 +1,34 @@
-//! Weighted least squares — normal equations + dense Cholesky solve.
+//! # Weighted least-squares normal equations
 //!
-//! The estimator builds the symmetric positive-definite normal matrix
-//! `N = HᵀWH` and right-hand side `b = HᵀWr` from a stream of measurement
-//! rows, then computes the parameter update `Δp = N⁻¹b` using `faer`'s
-//! dense Cholesky factorisation. The covariance is `N⁻¹` and is computed
-//! by triangular solves once the factor exists.
-
+//! ## Scientific scope
+//!
+//! Batch POD commonly reduces to solving a symmetric positive-definite
+//! normal system assembled from many scalar observation equations. This
+//! module implements that algebraic core for short deterministic estimation
+//! arcs where the caller has already formed residuals and design-matrix
+//! coefficients.
+//!
+//! The numerical method is dense Cholesky factorization, which is
+//! appropriate for the small-to-medium problems exercised by the current
+//! workspace. It is not intended as a sparse or square-root information
+//! solver for very large operational networks.
+//!
+//! ## Technical scope
+//!
+//! The public surface centers on `NormalEquations`, `WlsResult`, and
+//! `WlsSolverError`. Callers stream rows into the accumulator, then solve
+//! for the parameter update and inverse normal matrix in raw `f64` form.
+//!
+//! Observation modelling, parameter semantics, and any typed quantity
+//! handling remain outside this module. It only owns the linear algebra and
+//! bookkeeping of the solve.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use faer::linalg::solvers::Solve;
 use faer::{Mat, Side};
 use thiserror::Error;

@@ -1,21 +1,34 @@
-//! Sequential Extended Kalman Filter (EKF) skeleton — MVP-3.
+//! # Sequential Kalman estimation
 //!
-//! The filter is intentionally generic: it tracks an `n_state`-dimensional
-//! parameter vector and an `n_state × n_state` covariance, performs a
-//! propagation step driven by a caller-supplied transition function (which
-//! returns the propagated mean and the state-transition matrix Φ), and a
-//! scalar measurement update driven by an observation that returns
-//! `(predicted, partials, sigma)`.
+//! ## Scientific scope
 //!
-//! This deliberately avoids leaking POD-specific orbit/observation types so
-//! the filter can be reused for clock-only, station-bias-only, or full POD
-//! state vectors without modification.
+//! This module provides a sequential estimator shaped like an Extended
+//! Kalman Filter for POD-style state updates. It is intended for settings
+//! where observations arrive one at a time and the caller can supply both a
+//! transition model and scalar measurement linearization.
 //!
-//! Linear algebra is plain row-major `Vec<f64>` because the typical POD
-//! state size (≤ a few dozen parameters) doesn't justify a faer dependency
-//! for the cubic operations the EKF actually does. We can swap to faer
-//! later if the state grows beyond ~50.
-
+//! The implementation targets compact, deterministic replay scenarios
+//! rather than full operational filtering. Process-noise modelling,
+//! smoothing, and advanced numerical stabilization are intentionally kept
+//! minimal in the current MVP stage.
+//!
+//! ## Technical scope
+//!
+//! The main public items are `Ekf`, `EkfError`, and `InnovationRecord`. The
+//! filter operates on a caller-owned state vector and covariance matrix,
+//! accepts a propagated mean plus state-transition matrix, and applies
+//! scalar observation updates using predicted values, partial derivatives,
+//! and sigmas returned by the caller.
+//!
+//! This module stays generic on purpose: it does not depend on orbit-state
+//! types, measurement-format structs, or specific force models.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use thiserror::Error;
 
 /// EKF error type.

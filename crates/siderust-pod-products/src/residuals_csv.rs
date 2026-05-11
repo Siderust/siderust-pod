@@ -1,5 +1,32 @@
-//! Residuals CSV writer.
-
+//! # Residual CSV writer
+//!
+//! ## Scientific scope
+//!
+//! Residual time series are a standard diagnostic product in POD, allowing
+//! analysts to inspect measurement fit quality by epoch, sensor, and
+//! observable type. This module serializes those diagnostics into a simple
+//! flat table for downstream plotting or audit workflows.
+//!
+//! It assumes residuals and sigmas have already been computed by the
+//! service and QC layers. The writer does not reinterpret or normalize the
+//! measurements.
+//!
+//! ## Technical scope
+//!
+//! The public surface consists of `ResidualRow` and `write_residuals_csv`.
+//! Rows are caller-assembled records containing timestamps, labels,
+//! residual values, and related metadata, and the writer streams them into
+//! CSV form.
+//!
+//! Formatting is intentionally simple and stable; statistical aggregation
+//! remains the responsibility of QC modules.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use serde::{Deserialize, Serialize};
 use std::io::Write;
 

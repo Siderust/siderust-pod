@@ -1,22 +1,34 @@
-//! GNSS pseudorange and carrier-phase models for MVP-1.
+//! # GNSS code and carrier observation models
 //!
-//! These are intentionally compact: a single-frequency, troposphere-free,
-//! one-way geometry between a known GPS satellite Cartesian position
-//! (provided by the caller from SP3 / synthetic generator) and the LEO
-//! receiver position carried inside the `OrbitState`. They include:
+//! ## Scientific scope
 //!
-//! - geometric range,
-//! - receiver clock bias (parameter index `clock_bias_index`),
-//! - Sagnac correction (light-time iteration is *not* performed; we use
-//!   a one-step Sagnac approximation suitable for low Earth orbiters
-//!   and a 30 s sampling),
-//! - relativistic GPS satellite clock correction (Δt = −2 r·v / c²),
-//! - float carrier ambiguity (parameter index `ambiguity_index`).
+//! This module models one-way GNSS geometry between a spacecraft receiver
+//! state and known transmitter states. The current regime is intentionally
+//! compact: geometric range, receiver clock bias, carrier ambiguity, and a
+//! Sagnac-style Earth-rotation correction for short light times typical of
+//! LEO and MEO POD scenarios.
 //!
-//! Tropospheric and ionospheric delays are zero in MVP-1; they are added in
-//! M3 follow-up tasks together with a real ITRF-vs-GCRF rotation supplied by
-//! a [`crate::FrameTransformProvider`].
-
+//! It does not yet include full light-time iteration, relativistic clock
+//! terms, troposphere, ionosphere, antenna phase-centre modelling, or
+//! ambiguity fixing. Those omissions are deliberate and documented so the
+//! current use stays within the MVP synthetic and controlled-data paths.
+//!
+//! ## Technical scope
+//!
+//! The public surface provides `PseudorangeObs`, `CarrierPhaseObs`,
+//! `GnssCodeModel`, and `GnssCarrierModel`. Models consume orbit states and
+//! caller-supplied auxiliary parameters, then return scalar predictions and
+//! design-matrix partials in the ordering expected by the estimation layer.
+//!
+//! File parsing and orbit propagation are not handled here; they are
+//! supplied by the IO and service crates.
+//!
+//! ## References
+//!
+//! - Misra, P., & Enge, P. (2012). Global Positioning System: Signals,
+//!   Measurements, and Performance (2nd ed.). Ganga-Jamuna Press.
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
 use crate::model::{MeasurementModel, Partials, Prediction};
 use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 use siderust::astro::dynamics::state::VelocityUnit;

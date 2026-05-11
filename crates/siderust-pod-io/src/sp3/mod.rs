@@ -1,18 +1,33 @@
-//! Minimal SP3-c/d reader and writer (sufficient for MVP-1 round-trip tests).
+//! # SP3 precise orbit reader and writer
 //!
-//! Implements the subset of the SP3 specification required for ingesting
-//! precise GNSS satellite ephemerides and writing back the POD orbit product:
+//! ## Scientific scope
 //!
-//! * Header lines `#a/#b/#c/#d`, `##`.
-//! * `+ ` satellite-id lines.
-//! * `++` accuracy lines (parsed but not interpreted).
-//! * `%c` / `%f` / `%i` / `/*` lines (preserved verbatim on round-trip).
-//! * Epoch lines `* `.
-//! * Position records `P<id> X Y Z CLK`.
+//! SP3 files distribute precise GNSS orbit and clock products as regularly
+//! sampled Cartesian state tables. This module supports the subset required
+//! by the POD workspace to ingest reference trajectories and emit
+//! comparable precise-orbit products.
 //!
-//! Velocity records (`V`), correlation records (`EP`/`EV`) and per-record
-//! flags are out of MVP-1 scope and are ignored on read with a diagnostic.
-
+//! The implementation is intentionally format-focused. It does not
+//! interpolate trajectories, reconcile multi-constellation metadata
+//! differences, or estimate clocks beyond the values explicitly present in
+//! the file.
+//!
+//! ## Technical scope
+//!
+//! The public APIs are `read_sp3`, `write_sp3`, and the data containers
+//! `Sp3Record`, `Sp3Epoch`, and `Sp3Position`. They preserve the row-major,
+//! epoch-sampled structure of the SP3 standard so service and QC code can
+//! decide how to consume the product.
+//!
+//! Any orbit fitting, frame conversion, or residual analysis is delegated
+//! to other crates.
+//!
+//! ## References
+//!
+//! - International GNSS Service. (2020). SP3-c / SP3-d Orbit Format
+//!   Specification.
+//! - Montenbruck, O., Steigenberger, P., & Khachikyan, R. (2017). GNSS
+//!   satellite geometry and ephemeris products. GPS Solutions, 21, 101-111.
 use std::io::{BufRead, BufReader, Read, Write};
 use thiserror::Error;
 

@@ -1,5 +1,32 @@
-//! Build SP3 / OEM products from an in-memory state time series.
-
+//! # Orbit product assembly
+//!
+//! ## Scientific scope
+//!
+//! Precise orbit determination ultimately produces a time history of
+//! spacecraft states that must be exchanged in community-standard orbit
+//! formats. This module bridges that scientific result into SP3 and OEM
+//! products without changing the underlying trajectory meaning.
+//!
+//! The validity of the output therefore depends entirely on the supplied
+//! state series and metadata. The module does not smooth, interpolate, or
+//! otherwise alter the orbit solution.
+//!
+//! ## Technical scope
+//!
+//! The public entry points are `write_sp3_from_states` and
+//! `write_oem_from_states`. They accept a sequence of `OrbitState` values
+//! and the minimal metadata needed by the target file format, then delegate
+//! low-level serialization to the IO crate.
+//!
+//! Residual statistics, manifests, and QC summaries are intentionally
+//! handled elsewhere.
+//!
+//! ## References
+//!
+//! - Consultative Committee for Space Data Systems. (2010). Orbit Data
+//!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
+//! - International GNSS Service. (2020). SP3-c / SP3-d Orbit Format
+//!   Specification.
 use siderust::astro::dynamics::OrbitState;
 use siderust_pod_io::oem::{write_oem, OemMetadata};
 use siderust_pod_io::sp3::{write_sp3, Sp3Epoch, Sp3Position, Sp3Record};

@@ -1,10 +1,30 @@
-//! Minimal HTML QC report renderer.
+//! # HTML QC report rendering
 //!
-//! Produces a self-contained HTML file from a `qc.json`-shaped value
-//! (deserialized into `serde_json::Value` so this module doesn't depend
-//! on the products crate). The report intentionally has no JavaScript
-//! and inlines a tiny CSS stylesheet so the artefact is fully portable.
-
+//! ## Scientific scope
+//!
+//! Human-readable QC artifacts are useful for quickly inspecting orbit-
+//! determination output outside a notebook or plotting stack. This module
+//! renders a compact HTML summary from the workspace QC JSON structure.
+//!
+//! The renderer is intentionally presentation-only. It preserves the
+//! upstream statistics verbatim and adds no new scientific interpretation.
+//!
+//! ## Technical scope
+//!
+//! The main entry point is `render_html`, which accepts a
+//! `serde_json::Value` compatible with the workspace QC schema and returns
+//! a self-contained HTML string. The output is static and dependency-free
+//! so it can be archived as a standalone artifact.
+//!
+//! It does not compute statistics, fetch assets, or depend on browser-side
+//! JavaScript.
+//!
+//! ## References
+//!
+//! - Fielding, R., Nottingham, M., & Reschke, J. (2022). HTTP Semantics.
+//!   RFC 9110.
+//! - Bray, T. (2017). The JavaScript Object Notation (JSON) Data
+//!   Interchange Format. RFC 8259.
 use std::fmt::Write;
 
 /// Render a `qc.json`-shaped JSON value to HTML.

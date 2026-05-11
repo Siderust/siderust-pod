@@ -1,11 +1,32 @@
-//! M6 acceptance: a degenerate EKF on a 1-D random walk converges to the
-//! noisy measurement and ends with sub-σ posterior variance.
+//! # EKF replay acceptance test
 //!
-//! The full POD-EKF replay (sharing `MeasurementModel` + `ForceModel` with
-//! the batch estimator) is wired in `pod-estimation::sequential`. This test
-//! exercises the same code path as a sanity check that the EKF reduces
-//! uncertainty as it absorbs measurements.
-
+//! ## Scientific scope
+//!
+//! This test checks that the sequential estimator reduces uncertainty and
+//! converges toward repeated noisy measurements in a deliberately simple
+//! one-dimensional random-walk setting. The scientific purpose is to
+//! validate the estimator plumbing before it is embedded in richer POD
+//! replay scenarios.
+//!
+//! Because the scenario is synthetic and low dimensional, passing this test
+//! does not certify full operational orbit-filter performance. It only
+//! confirms that the current EKF algebra behaves consistently on a
+//! controlled case.
+//!
+//! ## Technical scope
+//!
+//! The test instantiates the sequential estimator, feeds it deterministic
+//! updates, and asserts on posterior variance and state convergence. It is
+//! a narrow regression guard for the service-facing EKF path.
+//!
+//! No file I/O, REST handling, or product generation is involved.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust_pod_estimation::Ekf;
 
 #[test]

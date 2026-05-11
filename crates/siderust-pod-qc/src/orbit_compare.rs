@@ -1,5 +1,31 @@
-//! Orbit-vs-orbit comparison (RTN/RIC) at matched epochs.
-
+//! # RTN orbit-to-orbit comparison
+//!
+//! ## Scientific scope
+//!
+//! Comparing an estimated trajectory against a reference orbit is most
+//! interpretable in the local radial-transverse-normal frame, where along-
+//! track, radial, and cross-track errors separate naturally. This module
+//! computes that frame-aware difference for matched epochs.
+//!
+//! It assumes both trajectories are already sampled at identical epochs and
+//! expressed in compatible inertial coordinates. Interpolation and frame
+//! reconciliation are intentionally left to caller code.
+//!
+//! ## Technical scope
+//!
+//! The public items are `RtnDiff`, `RtnSummary`, `rtn_diff`, and
+//! `rtn_summary`. Callers pass slices of `OrbitState` values and receive
+//! per-epoch RTN differences plus a condensed summary for QC reporting.
+//!
+//! This module does not estimate the orbit or ingest external product files
+//! directly.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use affn::cartesian::Displacement;
 use affn::frames::GCRS;
 use qtty::units::Kilometer;

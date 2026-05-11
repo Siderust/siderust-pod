@@ -1,11 +1,33 @@
-//! Minimal IERS C04 EOP reader.
+//! # IERS C04 Earth-orientation records
 //!
-//! Reads the daily 14-column EOP series (year, month, day, MJD, x, y, UT1-UTC,
-//! LOD, dPsi, dEps, σ_x, σ_y, σ_UT1, σ_LOD). Comment lines and blank lines
-//! are ignored. The result is a vector of [`EopRecord`]; downstream code is
-//! responsible for interpolation and conversion to whichever
-//! `tempoch::eop::EopDataset` shape is wanted.
-
+//! ## Scientific scope
+//!
+//! Earth-orientation parameters link terrestrial and celestial reference
+//! frames by supplying polar motion, UT1-UTC, and related series. This
+//! module reads the daily IERS C04 product that underpins precise Earth
+//! rotation in POD frame transforms.
+//!
+//! Its validity regime is the cadence and fields offered by the C04 series.
+//! Higher-order interpolation policy and any conversion into richer EOP
+//! dataset abstractions are delegated downstream.
+//!
+//! ## Technical scope
+//!
+//! The module exports `EopRecord`, `read_eop_c04`, and a simple
+//! `interpolate` helper. Records expose Modified Julian Date tags and the
+//! standard C04 scalar fields used by frame-transform providers.
+//!
+//! This code does not itself build a full transformation matrix or bind to
+//! `siderust` frame APIs; it only prepares the underlying geodetic time-
+//! series inputs.
+//!
+//! ## References
+//!
+//! - Bizouard, C., & Gambis, D. (2009). The combined solution C04 for Earth
+//!   Orientation Parameters. IERS Technical Note / Observatoire de Paris
+//!   release documentation.
+//! - IERS Conventions Centre. (2010). IERS Conventions (2010). Verlag des
+//!   Bundesamts fur Kartographie und Geodasie.
 use crate::PodIoError;
 use std::io::{BufRead, BufReader, Read};
 

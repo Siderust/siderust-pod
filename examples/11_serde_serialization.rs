@@ -1,10 +1,33 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Serde serialization examples.
+//! # Example: serde serialization
 //!
-//! Run with: `cargo run --example 11_serde_serialization --features serde`
-
+//! ## Scientific scope
+//!
+//! This example demonstrates how `siderust` data structures serialize and
+//! deserialize when the optional `serde` feature is enabled. The scientific
+//! content is secondary: the focus is on preserving typed astronomical
+//! values across interchange boundaries.
+//!
+//! It is intended as a transport and ergonomics demonstration rather than
+//! as a statement about any particular external schema.
+//!
+//! ## Technical scope
+//!
+//! The executable shows representative values being serialized to and from
+//! JSON through Serde. It is feature-gated and prints example payloads or
+//! round-trip checks to stdout.
+//!
+//! No estimation, propagation, or observation modelling is performed in
+//! this file.
+//!
+//! ## References
+//!
+//! - Bray, T. (2017). The JavaScript Object Notation (JSON) Data
+//!   Interchange Format. RFC 8259.
+//! - Serde Project. (current release). Serde: Framework for serializing and
+//!   deserializing Rust data structures. https://serde.rs/
 #![cfg_attr(not(feature = "serde"), allow(dead_code, unused_imports))]
 
 #[cfg(feature = "serde")]

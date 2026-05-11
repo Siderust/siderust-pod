@@ -1,5 +1,31 @@
-//! `qc.json` writer — wraps grouped residual statistics with run metadata.
-
+//! # QC JSON product writer
+//!
+//! ## Scientific scope
+//!
+//! Quality-control summaries condense orbit-determination diagnostics into
+//! a machine-readable product that downstream automation can archive or
+//! render. This module defines that lightweight document shape for grouped
+//! residual and validation statistics.
+//!
+//! Its scope is descriptive rather than inferential: the statistics are
+//! assumed to have been computed upstream, and the writer only preserves
+//! them in a stable JSON layout.
+//!
+//! ## Technical scope
+//!
+//! The public items are `QcDocument` and `write_qc_json`. Callers provide
+//! serializable summary payloads and run metadata, and the module emits a
+//! deterministic JSON document suitable for REST delivery, artifact
+//! storage, or HTML rendering.
+//!
+//! No statistical aggregation or residual computation happens here.
+//!
+//! ## References
+//!
+//! - Ben-Kiki, O., Evans, C., & d'Otremont, I. (2021). YAML Ain't Markup
+//!   Language (YAML) Version 1.2.2.
+//! - Bray, T. (2017). The JavaScript Object Notation (JSON) Data
+//!   Interchange Format. RFC 8259.
 use serde::Serialize;
 use std::io::Write;
 

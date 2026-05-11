@@ -1,10 +1,32 @@
-//! `siderust-pod-products` — output product writers.
+//! # siderust-pod product writers
 //!
-//! Wraps the io-layer writers with POD-domain conveniences:
-//! * Build an SP3 record from an in-memory orbit time series.
-//! * Build an OEM file from the same series.
-//! * Emit a residuals CSV.
-//! * Emit a `qc.json` with grouped statistics.
+//! ## Scientific scope
+//!
+//! This crate turns in-memory estimation results into interchange and
+//! reporting artifacts. The scientific content is inherited from the
+//! upstream orbit solution and residual statistics; this layer focuses on
+//! packaging those results into standard or workspace-defined product
+//! shapes.
+//!
+//! Current outputs target deterministic MVP workflows: precise orbit
+//! histories, CCSDS ephemerides, grouped QC JSON, and tabular residual
+//! exports.
+//!
+//! ## Technical scope
+//!
+//! The crate re-exports helpers for writing SP3 and OEM orbit products,
+//! residual CSV tables, and the workspace `qc.json` summary. Inputs are
+//! typed orbit states, metadata, and precomputed statistics supplied by
+//! service and QC modules.
+//!
+//! No estimation, propagation, or measurement modelling is performed here.
+//!
+//! ## References
+//!
+//! - Consultative Committee for Space Data Systems. (2010). Orbit Data
+//!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
+//! - International GNSS Service. (2020). SP3-c / SP3-d Orbit Format
+//!   Specification.
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 

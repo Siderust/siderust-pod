@@ -1,17 +1,34 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Target examples.
+//! # Example: targets and trackable objects
 //!
-//! Shows how to use:
-//! - `Trackable` for dynamic sky objects (Sun, planets, Moon, stars, ICRS directions)
-//! - `Target<T>` / `CoordinateWithPM<T>` as timestamped coordinate snapshots
-//! - optional proper motion for stellar targets
-//! - target frame+center conversion through `From<&Target<_>>`
+//! ## Scientific scope
 //!
-//! Run with:
-//! `cargo run --example 08_target`
-
+//! This example shows how fixed directions, catalog stars, planets, moons,
+//! comets, and other sky objects are represented through the `Trackable`
+//! and `Target` abstractions. The scientific focus is time-tagged sky
+//! position rather than orbit determination.
+//!
+//! It mixes deterministic epochs and catalog values for demonstration
+//! purposes. The output is intended to teach the type system and target
+//! API, not to serve as a reference ephemeris comparison.
+//!
+//! ## Technical scope
+//!
+//! The program exercises target snapshots, proper-motion handling, and
+//! target conversion across frames and centres, printing the resulting
+//! coordinates to stdout. It exposes no stable API beyond being a runnable
+//! example.
+//!
+//! Observation planning and residual modelling are outside its scope.
+//!
+//! ## References
+//!
+//! - Seidelmann, P. K. (Ed.). (2006). Explanatory Supplement to the
+//!   Astronomical Almanac (3rd ed.). University Science Books.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust::astro::orbit::KeplerianOrbit;
 use siderust::astro::proper_motion::{set_proper_motion_since_j2000, ProperMotion};
 use siderust::bodies::comet::HALLEY;

@@ -1,15 +1,35 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Coordinate Operations Example
+//! # Example: coordinate operations
 //!
-//! Demonstrates what you can do with spherical/cartesian coordinate types:
-//! angular separation (Vincenty formula), cross-validation against the
-//! cartesian dot product, Euclidean 3D distance, and how type safety prevents
-//! accidentally mixing incompatible coordinate systems.
+//! ## Scientific scope
 //!
-//! Run with: `cargo run --example 13_coordinate_operations`
-
+//! This example shows operations performed on typed coordinates, such as
+//! angular separation, Cartesian distance, and cross-checks between
+//! spherical and Cartesian formulations. The scientific focus is the
+//! geometry encoded by the coordinate types rather than an external
+//! dataset.
+//!
+//! The chosen values are deterministic and pedagogical. The results are
+//! meant to illustrate API usage and type safety, not to serve as a
+//! precision benchmark.
+//!
+//! ## Technical scope
+//!
+//! The executable constructs representative coordinates, runs separation
+//! and distance helpers, and prints the resulting quantities. It also
+//! highlights the compile-time protections against mixing incompatible
+//! coordinate systems.
+//!
+//! No transforms beyond the demonstrated operations are required.
+//!
+//! ## References
+//!
+//! - Seidelmann, P. K. (Ed.). (2006). Explanatory Supplement to the
+//!   Astronomical Almanac (3rd ed.). University Science Books.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use std::f64::consts::PI;
 
 use siderust::coordinates::spherical;

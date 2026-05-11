@@ -1,14 +1,33 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Night Events Example (prefixed)
+//! # Example: night events and twilight periods
 //!
-//! Shows how to spot "night-type" crossing events and night periods in a
-//! one-week window using civil/nautical/astronomical/horizon thresholds.
+//! ## Scientific scope
 //!
-//! Run with:
-//! `cargo run --example 06_night_events -- [YYYY-MM-DD] [lat_deg] [lon_deg] [height_m]`
-
+//! This example searches for Sun altitude threshold crossings and the
+//! resulting civil, nautical, and astronomical night intervals over a one-
+//! week window. The scientific focus is solar altitude geometry as used in
+//! observability planning.
+//!
+//! The validity of the reported intervals follows the current solar
+//! ephemeris and threshold-search implementation. It is a planning
+//! demonstration, not a certified almanac product.
+//!
+//! ## Technical scope
+//!
+//! The executable accepts an optional start date and site coordinates,
+//! computes threshold crossings and night intervals, and prints the
+//! resulting events. Inputs are simple command-line scalars converted into
+//! typed site coordinates and time periods inside the example.
+//!
+//! No persistent products are written.
+//!
+//! ## References
+//!
+//! - Meeus, J. (1998). Astronomical Algorithms (2nd ed.). Willmann-Bell.
+//! - IERS Conventions Centre. (2010). IERS Conventions (2010). Verlag des
+//!   Bundesamts fur Kartographie und Geodasie.
 use chrono::{NaiveDate, NaiveDateTime, TimeZone, Utc};
 use siderust::bodies::Sun;
 use siderust::calculus::altitude::{below_threshold, crossings, CrossingDirection, SearchOpts};

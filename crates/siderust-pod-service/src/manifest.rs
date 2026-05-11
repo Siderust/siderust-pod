@@ -1,8 +1,35 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Run manifest: deterministic, hash-anchored description of a POD run.
-
+//! # Deterministic run manifest
+//!
+//! ## Scientific scope
+//!
+//! Reproducible POD requires more than an orbit solution: it also requires
+//! a stable record of which inputs, outputs, and software version produced
+//! that solution. This module defines the hash-anchored manifest used to
+//! capture that provenance for each run.
+//!
+//! The science represented by the manifest is indirect. It does not model
+//! the orbit itself; instead it records the data dependencies and artifacts
+//! from which the orbit and diagnostics can be reproduced.
+//!
+//! ## Technical scope
+//!
+//! The public items are `DatasetRef`, `RunManifest`, and `canonical_json`.
+//! Callers create dataset references from on-disk files, populate manifest
+//! fields, and serialize them into a deterministic JSON ordering suitable
+//! for hashing and regression checks.
+//!
+//! Actual estimation, file parsing, and product generation remain elsewhere
+//! in the workspace.
+//!
+//! ## References
+//!
+//! - Ben-Kiki, O., Evans, C., & d'Otremont, I. (2021). YAML Ain't Markup
+//!   Language (YAML) Version 1.2.2.
+//! - Bray, T. (2017). The JavaScript Object Notation (JSON) Data
+//!   Interchange Format. RFC 8259.
 use sha2::{Digest, Sha256};
 
 /// Reference to a single dataset consumed by a run.

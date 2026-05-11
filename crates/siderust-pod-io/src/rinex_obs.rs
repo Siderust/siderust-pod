@@ -1,12 +1,33 @@
-//! Minimal RINEX 3 OBS reader.
+//! # RINEX observation reader
 //!
-//! MVP-1 subset: a single GNSS system block, dual-frequency code/carrier
-//! observables identified by their RINEX 3 codes (e.g. `C1C`, `L1C`,
-//! `C2W`, `L2W`). The parser handles the header keys we actually use
-//! (RINEX VERSION / TYPE, MARKER NAME, APPROX POSITION XYZ, OBS TYPES
-//! per system, INTERVAL, TIME OF FIRST OBS, END OF HEADER). Other lines
-//! are skipped.
-
+//! ## Scientific scope
+//!
+//! RINEX observation files provide the time-tagged code and carrier
+//! measurements that drive GNSS POD. This module implements the compact
+//! subset needed by the current workspace: a small selection of RINEX 3
+//! header fields and dual-frequency observation values for the supported
+//! systems.
+//!
+//! It is designed for deterministic MVP pipelines rather than exhaustive
+//! archive ingestion. Unsupported observables and header records are
+//! skipped instead of being approximated.
+//!
+//! ## Technical scope
+//!
+//! The public items are `ObsEpoch`, `RinexObs`, and `read_rinex_obs`.
+//! Parsed epochs retain the file-native observation codes and scalar values
+//! while associating them with typed epoch information suitable for later
+//! observation modelling.
+//!
+//! Bias handling, ambiguity resolution, and troposphere/ionosphere
+//! modelling are beyond the scope of this parser.
+//!
+//! ## References
+//!
+//! - International GNSS Service / RTCM. (2020). RINEX: The Receiver
+//!   Independent Exchange Format, Version 3.05.
+//! - Misra, P., & Enge, P. (2012). Global Positioning System: Signals,
+//!   Measurements, and Performance (2nd ed.). Ganga-Jamuna Press.
 use crate::PodIoError;
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Read};

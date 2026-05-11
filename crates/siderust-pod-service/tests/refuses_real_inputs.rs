@@ -1,7 +1,30 @@
-//! Verifies that the runner refuses real-input runs with a structured error
-//! rather than silently propagating-and-ignoring the inputs (audit finding
-//! C-01 / fix A-03).
-
+//! # Unsupported real-input rejection test
+//!
+//! ## Scientific scope
+//!
+//! This regression test protects the current scientific contract of the
+//! service crate: until the real-data ingestion path is implemented,
+//! configurations that claim real POD inputs must be rejected explicitly.
+//! That avoids a more dangerous failure mode where real inputs are silently
+//! ignored or misinterpreted.
+//!
+//! The test therefore enforces a boundary condition on workflow validity
+//! rather than on orbit-estimation accuracy.
+//!
+//! ## Technical scope
+//!
+//! The test builds a configuration that points at nominal real inputs,
+//! invokes the runner, and asserts that a structured error is returned. It
+//! is a narrow contract test for runner validation logic.
+//!
+//! No estimation or product-writing success path is exercised here.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust_pod_service::config::{ForcesConfig, InputsConfig, RunConfig};
 use siderust_pod_service::run;
 

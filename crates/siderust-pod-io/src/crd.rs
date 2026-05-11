@@ -1,12 +1,32 @@
-//! Consolidated Laser Ranging Data (CRD) format reader — MVP subset.
+//! # CRD SLR observation reader
 //!
-//! Implements only what `siderust-pod` needs for SLR validation:
-//! station/satellite/session header lines (H1/H2/H3/H4) and normal-point
-//! ("11 ") + full-rate ("10 ") range records. All other record types are
-//! skipped so unknown but well-formed CRD files still parse.
+//! ## Scientific scope
 //!
-//! References: ILRS CRD format v1/v2.
-
+//! The Consolidated Laser Ranging Data format is the primary interchange
+//! format for SLR observations. This module reads the station, satellite,
+//! and session metadata together with full-rate and normal-point ranges
+//! needed to test the POD SLR modelling path.
+//!
+//! It intentionally stays within a validation-oriented regime. Unsupported
+//! CRD record families are skipped so the parser remains useful on real
+//! files without claiming complete implementation of the ILRS standard.
+//!
+//! ## Technical scope
+//!
+//! The public APIs are `read_crd` and `parse_crd`, which return a `CrdFile`
+//! containing metadata and `CrdRange` observations. The values remain close
+//! to the on-disk representation so later stages can choose their own
+//! modelling assumptions.
+//!
+//! Station motion, atmospheric delay, and any range residual analysis are
+//! outside this module.
+//!
+//! ## References
+//!
+//! - International Laser Ranging Service. (2022). Consolidated Laser
+//!   Ranging Data Format Specification.
+//! - Pearlman, M. R., Noll, C. E., et al. (2019). The ILRS: Current status
+//!   and future prospects. Journal of Geodesy, 93, 2161-2180.
 use crate::PodIoError;
 use std::fs;
 use std::path::Path;

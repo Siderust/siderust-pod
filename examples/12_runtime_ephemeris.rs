@@ -1,28 +1,34 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Runtime Ephemeris Example
+//! # Example: runtime ephemeris loading
 //!
-//! Demonstrates how to load a JPL DE4xx BSP file at runtime and query
-//! planetary positions using [`RuntimeEphemeris`].
+//! ## Scientific scope
 //!
-//! Unlike the compile-time backends (DE440 via the `de440` feature),
-//! DE441 and other large datasets are only supported at runtime because
-//! embedding ~1.65 GB into the binary is impractical.
+//! This example demonstrates loading a JPL-style ephemeris kernel at
+//! runtime and querying planetary positions from it. The scientific focus
+//! is the difference between compile-time bundled ephemerides and runtime-
+//! selected kernels for solar-system position work.
 //!
-//! ## Usage
+//! The quality of the resulting coordinates depends on the supplied kernel
+//! and supported bodies. The example is intended to show the runtime API,
+//! not to validate a specific DE release numerically.
 //!
-//! ```bash
-//! # Load from a local BSP file
-//! cargo run --example 12_runtime_ephemeris -- /path/to/de440.bsp
+//! ## Technical scope
 //!
-//! # With the `runtime-data` feature: uses DataManager (auto-cache)
-//! cargo run --features runtime-data --example 12_runtime_ephemeris -- /path/to/de440.bsp
+//! The program opens a runtime ephemeris, issues a few representative
+//! position queries, and prints the results. It exercises the runtime-
+//! loading seam without modifying any global model configuration.
 //!
-//! # With `runtime-data` and no path: shows how to download DE440 on first run
-//! cargo run --features runtime-data --example 12_runtime_ephemeris
-//! ```
-
+//! No POD estimation path is involved.
+//!
+//! ## References
+//!
+//! - Folkner, W. M., Williams, J. G., Boggs, D. H., Park, R. S., &
+//!   Kuchynka, P. (2014). The Planetary and Lunar Ephemerides DE430 and
+//!   DE431. IPN Progress Report 42-196.
+//! - Standish, E. M. (1998). JPL Planetary and Lunar Ephemerides,
+//!   DE405/LE405. JPL Interoffice Memorandum.
 use siderust::calculus::ephemeris::{DynEphemeris, RuntimeEphemeris};
 use siderust::time::JulianDate;
 

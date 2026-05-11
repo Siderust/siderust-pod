@@ -1,13 +1,35 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Orbit Models Example
+//! # Example: orbit models
 //!
-//! Demonstrates the four orbit propagation models: Keplerian, MeanMotion,
-//! Conic, and Prepared.
+//! ## Scientific scope
 //!
-//! Run with: `cargo run --example 15_orbit_models`
-
+//! This example compares several conic-style orbit representations exposed
+//! by `siderust`, including Keplerian, mean-motion, and prepared forms. The
+//! scientific focus is analytic orbit representation rather than force-
+//! model integration.
+//!
+//! The example uses simple deterministic orbital elements and evaluates
+//! positions at a single epoch, making it suitable as an API tour rather
+//! than as a propagator validation benchmark.
+//!
+//! ## Technical scope
+//!
+//! The executable constructs representative orbit objects, samples their
+//! positions, and prints the resulting heliocentric coordinates and radii.
+//! It demonstrates the surface API of the orbit types and their common
+//! usage pattern.
+//!
+//! No measurement models, estimation loops, or product writers are
+//! involved.
+//!
+//! ## References
+//!
+//! - Seidelmann, P. K. (Ed.). (2006). Explanatory Supplement to the
+//!   Astronomical Almanac (3rd ed.). University Science Books.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust::qtty::angular_rate::AngularRate;
 use siderust::qtty::unit::{Day, Degree};
 use siderust::qtty::AstronomicalUnits;

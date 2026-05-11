@@ -1,11 +1,33 @@
-//! SLR validation: feed an estimated orbit + station fixture + CRD ranges into
-//! the SLR range model and produce O−C residual statistics.
+//! # SLR validation summaries
 //!
-//! This is a lightweight wrapper that doesn't try to model the full SLR
-//! processing chain (no atmosphere, no relativity, no station eccentricity
-//! correction). Its purpose is to expose a typed, testable summary for QC
-//! consumers; the underlying numerics live in `pod-observations::slr`.
-
+//! ## Scientific scope
+//!
+//! SLR serves as an external geometric check on an orbit solution because
+//! it observes two-way range using instrumentation independent from GNSS
+//! tracking. This module packages SLR observed-minus-computed residuals
+//! into a compact validation report for the current workspace.
+//!
+//! Its regime is intentionally lightweight and follows the simplified SLR
+//! measurement model implemented upstream. Operational-grade bias
+//! calibration, atmospheric correction modelling, and station eccentricity
+//! handling are beyond the present scope.
+//!
+//! ## Technical scope
+//!
+//! The public types are `SlrResidual` and `SlrValidationReport`. Callers
+//! provide already modelled residual values and receive a report object
+//! ready for QC JSON output or test assertions.
+//!
+//! Numerical light-time modelling is delegated to `siderust-pod-
+//! observations::slr`.
+//!
+//! ## References
+//!
+//! - Degnan, J. J. (1993). Millimeter accuracy satellite laser ranging: a
+//!   review. Contributions of Space Geodesy to Geodynamics: Technology, 25,
+//!   133-162.
+//! - Pearlman, M. R., Noll, C. E., et al. (2019). The ILRS: Current status
+//!   and future prospects. Journal of Geodesy, 93, 2161-2180.
 use crate::residuals::ResidualStats;
 
 /// One O−C residual at an SLR observation epoch.

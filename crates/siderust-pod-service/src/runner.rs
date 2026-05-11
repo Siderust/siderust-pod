@@ -1,22 +1,31 @@
-//! Pipeline runner.
+//! # Configuration-driven pipeline runner
 //!
-//! Two execution paths are supported:
+//! ## Scientific scope
 //!
-//! * **Synthetic-arc MVP-1.** When the configuration carries no real GNSS
-//!   inputs (i.e. `inputs.sp3` and `inputs.rinex_obs` are both `None`),
-//!   the runner generates a deterministic synthetic GPS arc and runs
-//!   the full estimation pipeline through [`run_synth`]. This is the
-//!   path exercised by the headline integration test
-//!   `tests/mvp1_e2e.rs`.
+//! The runner binds a user-facing run configuration to an executable POD
+//! path. In the current workspace that mainly means selecting the
+//! deterministic synthetic-arc workflow, validating its inputs, and
+//! packaging the resulting outputs and manifest.
 //!
-//! * **Real-input ingestion.** When the configuration carries real
-//!   inputs the runner currently refuses with an
-//!   [`std::io::ErrorKind::Unsupported`] error. The pre-M9 implementation only
-//!   propagated the initial state and silently ignored the real inputs,
-//!   which made every integration test green for the wrong reason. That
-//!   dead branch was removed in the M8 audit pass; the real ingestion
-//!   path is scheduled for milestone M9 (see `plan.md` §13.3).
-
+//! No new scientific model is introduced in this layer. Its validity regime
+//! is whichever estimation path it dispatches to, with current support
+//! intentionally limited to the MVP synthetic branch.
+//!
+//! ## Technical scope
+//!
+//! The public surface is `RunReport` and `run`. Given a parsed `RunConfig`,
+//! the runner resolves output locations, selects the appropriate pipeline
+//! branch, and returns a summary of the completed run.
+//!
+//! It does not parse every underlying file format itself or solve
+//! estimation subproblems directly.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Consultative Committee for Space Data Systems. (2010). Orbit Data
+//!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
 use crate::config::RunConfig;
 use crate::pipeline::run_synth;
 use crate::synth::{generate, SyntheticArcConfig};

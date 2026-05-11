@@ -1,14 +1,33 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Nutation Model Selection Example
+//! # Example: nutation model selection
 //!
-//! Shows the two intended usage modes:
-//! - default transforms with no explicit context
-//! - custom transforms using `AstroContext::with_model::<...>()`
+//! ## Scientific scope
 //!
-//! Run with: `cargo run --example 14_nutation_models`
-
+//! This example compares the default nutation/precession path against
+//! explicitly selected alternative models. The scientific focus is how
+//! different IAU/IERS realizations perturb the apparent equatorial
+//! coordinates obtained from the same inertial direction.
+//!
+//! It is a didactic comparison between available model contexts, not an
+//! attempt to quantify the full accuracy envelope of each theory.
+//!
+//! ## Technical scope
+//!
+//! The program builds `AstroContext` values with different model markers,
+//! transforms one ICRS direction into true-of-date coordinates, and prints
+//! the resulting chord differences. It demonstrates the compile-time model-
+//! selection pattern used by the broader library.
+//!
+//! No external data files are required.
+//!
+//! ## References
+//!
+//! - IERS Conventions Centre. (2010). IERS Conventions (2010). Verlag des
+//!   Bundesamts fur Kartographie und Geodasie.
+//! - IAU SOFA Board. (current release). Standards Of Fundamental Astronomy
+//!   (SOFA) software collection and documentation. https://www.iausofa.org/
 use siderust::astro::nutation::{Iau2000B, Iau2006};
 use siderust::coordinates::cartesian::Direction;
 use siderust::coordinates::frames::{EquatorialTrueOfDate, ICRS};

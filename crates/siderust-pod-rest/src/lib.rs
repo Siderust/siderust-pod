@@ -1,5 +1,32 @@
-//! `siderust-pod-rest` — minimal REST surface for the POD service.
-
+//! # REST interface for POD jobs
+//!
+//! ## Scientific scope
+//!
+//! This module exposes a minimal HTTP surface for launching and querying
+//! POD jobs. It does not change the scientific content of the underlying
+//! pipeline; it only presents that pipeline through a network-facing
+//! control layer suited to local automation and integration tests.
+//!
+//! The current regime is intentionally narrow: in-memory job state,
+//! synthetic job execution, and JSON status payloads. It is not a
+//! distributed scheduler or a general production API.
+//!
+//! ## Technical scope
+//!
+//! The public items are `JobStatus`, `AppState`, and `router`. The router
+//! exposes health and job-submission endpoints, while the worker path
+//! delegates actual arc generation and estimation to `siderust-pod-
+//! service`.
+//!
+//! Authentication, persistent storage, and arbitrary user-supplied datasets
+//! are out of scope.
+//!
+//! ## References
+//!
+//! - Fielding, R., Nottingham, M., & Reschke, J. (2022). HTTP Semantics.
+//!   RFC 9110.
+//! - Bray, T. (2017). The JavaScript Object Notation (JSON) Data
+//!   Interchange Format. RFC 8259.
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 

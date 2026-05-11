@@ -1,9 +1,32 @@
-//! Minimal ANTEX parser — phase-centre offsets only.
+//! # ANTEX antenna phase-centre offsets
 //!
-//! Reads the PCO (north / east / up, mm) for each frequency block of every
-//! antenna in the file. PCV grid values are skipped. Sufficient to apply
-//! antenna offsets in MVP-1 GNSS observation modelling.
-
+//! ## Scientific scope
+//!
+//! ANTEX files describe antenna phase-centre offsets and variations for
+//! GNSS tracking equipment. This module focuses on the offset portion of
+//! that standard because those north-east-up offsets are the part
+//! immediately needed to model receiver and satellite antenna reference
+//! points in MVP GNSS processing.
+//!
+//! The current regime is intentionally narrow: phase-centre variation grids
+//! are ignored, so this parser is suitable for offset-driven geometry
+//! corrections but not for full antenna pattern modelling.
+//!
+//! ## Technical scope
+//!
+//! The main entry point is `read_antex`, which returns a nested catalog
+//! keyed by antenna and frequency identifiers. Offsets are exposed through
+//! `Pco` records in the millimetre convention carried by the file.
+//!
+//! This module only parses the exchange format; it does not decide how
+//! those offsets are applied inside any specific observation model.
+//!
+//! ## References
+//!
+//! - IGS MGEX/IGS. (2015). ANTEX: The Antenna Exchange Format, Version 1.4.
+//! - Montenbruck, O., Steigenberger, P., & Hauschild, A. (2015). Broadcast
+//!   versus precise ephemerides for GNSS orbit determination. GPS
+//!   Solutions, 19(2), 321-330.
 use crate::PodIoError;
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Read};

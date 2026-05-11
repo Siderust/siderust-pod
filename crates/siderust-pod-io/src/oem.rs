@@ -1,9 +1,31 @@
-//! CCSDS Orbit Ephemeris Message (OEM) writer.
+//! # CCSDS OEM writer
 //!
-//! Implements a minimal subset of CCSDS 502.0-B-3 sufficient for MVP-1
-//! deliverables: ASCII KVN format, single segment, EPHEMERIS_FORMAT = `OEM`,
-//! METADATA + DATA blocks, no covariance.
-
+//! ## Scientific scope
+//!
+//! The Orbit Ephemeris Message is a standard interchange product for
+//! spacecraft state histories. This module writes the subset needed by the
+//! current POD pipeline: a deterministic ASCII KVN ephemeris segment
+//! without covariance.
+//!
+//! Its scientific interpretation comes from the supplied state history and
+//! metadata. No interpolation, force modelling, or covariance transport is
+//! introduced during writing.
+//!
+//! ## Technical scope
+//!
+//! The public items are `OemMetadata` and `write_oem`. Callers provide a
+//! stream of `OrbitState` values already expressed in the desired frame and
+//! centre, and the writer serializes them into the CCSDS text layout.
+//!
+//! Reading OEM files and handling richer message features such as maneuver
+//! blocks or covariance segments are out of scope here.
+//!
+//! ## References
+//!
+//! - Consultative Committee for Space Data Systems. (2010). Orbit Data
+//!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use crate::PodIoError;
 use siderust::astro::dynamics::OrbitState;
 use std::io::Write;

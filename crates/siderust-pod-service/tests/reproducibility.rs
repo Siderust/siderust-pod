@@ -1,7 +1,31 @@
-//! M4 acceptance: two consecutive synthetic-arc runs must produce identical
-//! manifest hashes and identical SP3 / OEM byte content. This validates the
-//! reproducibility property promised by the run manifest.
-
+//! # Reproducibility acceptance test
+//!
+//! ## Scientific scope
+//!
+//! Reproducibility is a core scientific requirement for audit-ready POD:
+//! the same deterministic inputs should yield byte-identical artifacts and
+//! stable manifest hashes. This test checks that property on the current
+//! synthetic workflow.
+//!
+//! The scope is limited to the deterministic MVP path, where randomness and
+//! wall-clock effects are controlled tightly enough for exact artifact
+//! comparison.
+//!
+//! ## Technical scope
+//!
+//! The test runs the service twice, compares manifest hashes, and asserts
+//! byte-for-byte identity of the generated SP3, OEM, and QC products. It is
+//! a regression guard for deterministic orchestration and serialization.
+//!
+//! It does not attempt to benchmark throughput or cross-platform floating-
+//! point stability beyond the current workspace contract.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust_pod_service::{generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity};
 use std::path::PathBuf;
 

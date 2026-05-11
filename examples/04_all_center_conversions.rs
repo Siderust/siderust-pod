@@ -1,20 +1,35 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Example: all currently supported center conversions.
+//! # Example: supported centre conversions
 //!
-//! This demonstrates all center-shift pairs implemented in `providers.rs`:
-//! - Barycentric <-> Heliocentric
-//! - Barycentric <-> Geocentric
-//! - Heliocentric <-> Geocentric
-//! - Identity shifts for each center
+//! ## Scientific scope
 //!
-//! It also demonstrates:
-//! - **Bodycentric** conversions: from Barycentric, Heliocentric, and Geocentric into a
-//!   body-centric frame (Mars-centric and ISS-centric) with round-trip verification.
-//! - **Topocentric** conversions: observer-on-Earth parallax correction applied to
-//!   positions originally expressed in each of the three standard centers.
-
+//! This example surveys the implemented coordinate-origin shifts between
+//! barycentric, heliocentric, geocentric, bodycentric, and topocentric
+//! descriptions. The scientific focus is parallax and origin translation
+//! rather than frame rotation.
+//!
+//! The values are deterministic and chosen to make round-trip behaviour
+//! easy to inspect. They are not intended as an external validation against
+//! reference ephemerides.
+//!
+//! ## Technical scope
+//!
+//! The executable constructs sample positions, applies centre-shift
+//! providers, and prints the resulting coordinates and round-trip errors.
+//! It demonstrates both standard solar-system centres and observer/body-
+//! centric use cases.
+//!
+//! No file parsing, estimation, or observation residual analysis is
+//! performed.
+//!
+//! ## References
+//!
+//! - Seidelmann, P. K. (Ed.). (2006). Explanatory Supplement to the
+//!   Astronomical Almanac (3rd ed.). University Science Books.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust::astro::orbit::KeplerianOrbit;
 use siderust::coordinates::cartesian::Position;
 use siderust::coordinates::centers::{

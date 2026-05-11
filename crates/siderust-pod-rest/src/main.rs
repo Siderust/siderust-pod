@@ -1,5 +1,31 @@
-//! REST server entrypoint.
-
+//! # REST server entrypoint
+//!
+//! ## Scientific scope
+//!
+//! This binary boots the Axum-based REST wrapper around the POD service
+//! crate. The scientific behaviour is inherited completely from the
+//! underlying service path; the executable only selects bind addresses,
+//! output directories, and server lifetime.
+//!
+//! It is intended for local experimentation and integration testing with
+//! the synthetic pipeline rather than for a fully hardened production
+//! deployment.
+//!
+//! ## Technical scope
+//!
+//! The `main` function reads environment variables for bind and output
+//! paths, initializes logging, builds `AppState`, and serves the router
+//! returned by `siderust-pod-rest`. Requests and responses are JSON over
+//! HTTP.
+//!
+//! No estimation, parsing, or product logic lives in this file.
+//!
+//! ## References
+//!
+//! - Fielding, R., Nottingham, M., & Reschke, J. (2022). HTTP Semantics.
+//!   RFC 9110.
+//! - Bray, T. (2017). The JavaScript Object Notation (JSON) Data
+//!   Interchange Format. RFC 8259.
 use std::path::PathBuf;
 
 use siderust_pod_rest::{router, AppState};

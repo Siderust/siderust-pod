@@ -1,5 +1,32 @@
-//! Smoke test for the REST surface.
-
+//! # REST smoke test
+//!
+//! ## Scientific scope
+//!
+//! This acceptance test exercises the minimal REST lifecycle around a
+//! synthetic POD job. The scientific content is inherited from the
+//! underlying synthetic pipeline; the test focuses on verifying that job
+//! submission and status reporting preserve that workflow over HTTP.
+//!
+//! Its regime is intentionally small and deterministic, making it suitable
+//! as a transport-level sanity check rather than a performance or
+//! scalability benchmark.
+//!
+//! ## Technical scope
+//!
+//! The test drives the Axum router in process, submits a job, polls for
+//! completion, and asserts that the expected status transitions and
+//! manifest artifact are exposed. It does not inspect estimation internals
+//! beyond the externally visible job contract.
+//!
+//! This file is an integration test only and does not define reusable
+//! library APIs.
+//!
+//! ## References
+//!
+//! - Fielding, R., Nottingham, M., & Reschke, J. (2022). HTTP Semantics.
+//!   RFC 9110.
+//! - Bray, T. (2017). The JavaScript Object Notation (JSON) Data
+//!   Interchange Format. RFC 8259.
 use axum::body::{to_bytes, Body};
 use axum::http::Request;
 use siderust_pod_rest::{router, AppState, JobStatus};

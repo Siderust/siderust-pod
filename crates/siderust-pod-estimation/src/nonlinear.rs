@@ -1,11 +1,36 @@
-//! Gauss-Newton nonlinear iteration around an initial parameter guess.
+//! # Gauss-Newton nonlinear estimation
 //!
-//! At each iteration we ask the caller to assemble a fresh
-//! [`super::NormalEquations`] from the current best estimate, then solve
-//! and apply the update. Convergence is declared when the relative norm
-//! of the update vector falls below `tol_rel` *and* the change in
-//! reduced χ² between successive iterations falls below `tol_chi2_rel`.
-
+//! ## Scientific scope
+//!
+//! This module implements a classic Gauss-Newton outer loop for mildly
+//! nonlinear POD problems, where the design matrix must be rebuilt around
+//! the current best estimate at each iteration. It is appropriate for
+//! short-arc orbit-state corrections and similar parameter updates when the
+//! residual surface is locally well behaved.
+//!
+//! The algorithm assumes the caller can re-linearize the problem after each
+//! update. It does not perform trust-region control, robust editing, or
+//! global convergence safeguards beyond simple stopping criteria on step
+//! size and reduced chi-square change.
+//!
+//! ## Technical scope
+//!
+//! The entry points are `NonlinearOptions`, `NonlinearReport`,
+//! `NonlinearError`, and `gauss_newton`. Callers provide a closure that
+//! assembles fresh `NormalEquations` from the current parameter vector, and
+//! the solver returns an updated parameter vector plus iteration
+//! diagnostics in raw solver coordinates.
+//!
+//! This module does not own measurement units or force-model semantics.
+//! Those stay with the upstream model code that produces the normal
+//! equations.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use crate::wls::{NormalEquations, WlsResult, WlsSolverError};
 use thiserror::Error;
 

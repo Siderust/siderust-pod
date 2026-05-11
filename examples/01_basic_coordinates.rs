@@ -1,10 +1,36 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Basic Coordinates Example (prefixed)
+//! # Example: basic coordinates
 //!
-//! Run with: `cargo run --example 01_basic_coordinates`
-
+//! ## Scientific scope
+//!
+//! This example tours the core coordinate families used throughout
+//! `siderust`: Cartesian positions, spherical positions, and directions
+//! tagged by frame and centre. The scientific content is pedagogical,
+//! showing how astronomical coordinates are represented rather than
+//! validating any specific ephemeris or observation model.
+//!
+//! All values are deterministic toy examples chosen for readability. The
+//! output should therefore be read as an API demonstration, not as a
+//! benchmark against published reference data.
+//!
+//! ## Technical scope
+//!
+//! The executable constructs typed coordinates, prints derived quantities
+//! such as distances, and demonstrates conversions between position-like
+//! and direction-like forms. It writes to stdout only and exposes no
+//! reusable library surface.
+//!
+//! Frame transforms, propagation, and dataset loading are intentionally
+//! outside the scope of this example.
+//!
+//! ## References
+//!
+//! - Seidelmann, P. K. (Ed.). (2006). Explanatory Supplement to the
+//!   Astronomical Almanac (3rd ed.). University Science Books.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust::coordinates::cartesian;
 use siderust::coordinates::centers::{self, ReferenceCenter};
 use siderust::coordinates::frames::{self, ReferenceFrame};

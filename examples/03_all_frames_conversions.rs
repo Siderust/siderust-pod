@@ -1,11 +1,34 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Example: all currently supported frame conversions.
+//! # Example: supported frame conversions
 //!
-//! This demonstrates every direct frame-rotation pair implemented in
-//! `providers.rs`, plus identity rotations for each frame.
-
+//! ## Scientific scope
+//!
+//! This example enumerates the direct frame-rotation pairs currently
+//! available in the library and shows simple round-trip behaviour for each.
+//! The scientific focus is the geometry of reference-frame changes between
+//! inertial, mean, and true equatorial/ecliptic systems.
+//!
+//! Because it uses deterministic synthetic coordinates, it is best
+//! interpreted as a capability map of implemented conversions rather than
+//! as a sub-milliarcsecond validation campaign.
+//!
+//! ## Technical scope
+//!
+//! The program constructs one barycentric test position, converts it across
+//! supported frames, and prints the round-trip residuals. It is
+//! intentionally exhaustive over currently exposed conversions and
+//! intentionally lightweight in numerical analysis.
+//!
+//! No dataset access or product generation occurs here.
+//!
+//! ## References
+//!
+//! - Seidelmann, P. K. (Ed.). (2006). Explanatory Supplement to the
+//!   Astronomical Almanac (3rd ed.). University Science Books.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust::coordinates::cartesian::Position;
 use siderust::coordinates::centers::Barycentric;
 use siderust::coordinates::frames::{

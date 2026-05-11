@@ -1,15 +1,33 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Moon phase quick examples.
+//! # Example: Moon phase properties
 //!
-//! Shows:
-//! 1) how to get moon phase properties at a given instant,
-//! 2) how to find windows where illumination is in a given range.
+//! ## Scientific scope
 //!
-//! Run with:
-//! `cargo run --example 07_moon_phase -- [YYYY-MM-DD] [lat_deg] [lon_deg] [height_m]`
-
+//! This example demonstrates geocentric and topocentric lunar phase
+//! calculations together with illumination-window searches. The scientific
+//! focus is the Sun-Earth-Moon geometry that controls illuminated fraction
+//! and phase-event timing.
+//!
+//! It is intended as a concise tour of the phase APIs and uses a small set
+//! of user-supplied site and date parameters. It is not presented as a
+//! replacement for a full almanac.
+//!
+//! ## Technical scope
+//!
+//! The program parses optional command-line date and site inputs, evaluates
+//! moon-phase properties, searches for illumination windows, and prints the
+//! results. It exercises both ephemeris-backed point evaluations and
+//! interval queries.
+//!
+//! No orbit-determination or measurement-fitting code is involved.
+//!
+//! ## References
+//!
+//! - Meeus, J. (1998). Astronomical Algorithms (2nd ed.). Willmann-Bell.
+//! - IERS Conventions Centre. (2010). IERS Conventions (2010). Verlag des
+//!   Bundesamts fur Kartographie und Geodasie.
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime, TimeZone, Utc};
 use siderust::calculus::ephemeris::Vsop87Ephemeris;
 use siderust::calculus::lunar::phase::{

@@ -1,10 +1,35 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Solar System + Planets Module Tour
+//! # Example: solar-system module tour
 //!
-//! Run with: `cargo run --example 12_solar_system_example`
-
+//! ## Scientific scope
+//!
+//! This example walks through the solar-system catalog and a handful of
+//! associated orbit and ephemeris helpers. The scientific focus is on body
+//! metadata, orbital periods, and ephemeris-driven positions across the
+//! built-in planet and moon catalog.
+//!
+//! The output mixes deterministic J2000 snapshots with a current-epoch
+//! sample for illustration. It is therefore an exploratory tour rather than
+//! a fixed regression test.
+//!
+//! ## Technical scope
+//!
+//! The executable prints catalog counts, body constants, selected VSOP87
+//! positions, centre transforms, and trait-based access patterns. It is
+//! meant to show breadth of API usage rather than to define a reusable
+//! abstraction.
+//!
+//! No external ephemeris kernel is required in this example.
+//!
+//! ## References
+//!
+//! - Folkner, W. M., Williams, J. G., Boggs, D. H., Park, R. S., &
+//!   Kuchynka, P. (2014). The Planetary and Lunar Ephemerides DE430 and
+//!   DE431. IPN Progress Report 42-196.
+//! - Standish, E. M. (1998). JPL Planetary and Lunar Ephemerides,
+//!   DE405/LE405. JPL Interoffice Memorandum.
 use siderust::astro::orbit::KeplerianOrbit;
 use siderust::bodies::planets::{OrbitExt, Planet};
 use siderust::bodies::solar_system::*;

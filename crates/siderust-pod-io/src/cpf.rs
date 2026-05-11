@@ -1,9 +1,34 @@
-//! Consolidated Prediction Format (CPF) reader — MVP subset.
+//! # CPF orbit prediction reader
 //!
-//! CPF holds tabular position predictions for SLR. We parse the H1 header for
-//! reference frame metadata and the `10` records (position-only) into typed
-//! samples. Velocity records (`20`) and other extensions are ignored.
-
+//! ## Scientific scope
+//!
+//! The Consolidated Prediction Format is used in satellite laser ranging to
+//! distribute tabulated orbit predictions. This module reads the subset
+//! needed for POD-side SLR validation, namely the reference-frame metadata
+//! and sampled position records used to reconstruct predicted trajectories.
+//!
+//! Velocity records and richer optional sections are currently out of
+//! scope, so the parser is suitable for position-driven validation
+//! workflows rather than full CPF authoring or exhaustive standard
+//! coverage.
+//!
+//! ## Technical scope
+//!
+//! The public entry points are `read_cpf` and `parse_cpf`, which produce
+//! `CpfFile` values containing header metadata and `CpfPosition` samples.
+//! Samples are kept in the file-native scalar form expected by downstream
+//! SLR utilities.
+//!
+//! The module does not propagate, interpolate, or compare predictions on
+//! its own; those steps belong to service and QC code.
+//!
+//! ## References
+//!
+//! - International Laser Ranging Service. (2018). Consolidated Prediction
+//!   Format (CPF) Specification.
+//! - Pearlman, M. R., Degnan, J. J., & Bosworth, J. M. (2002). The
+//!   International Laser Ranging Service. Advances in Space Research,
+//!   30(2), 135-143.
 use crate::PodIoError;
 use std::fs;
 use std::path::Path;

@@ -1,10 +1,32 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (C) 2026 Vallés Puig, Ramon
 
-//! Star observability in altitude + azimuth ranges.
+//! # Example: star observability windows
 //!
-//! Run with: `cargo run --example 09_star_observability`
-
+//! ## Scientific scope
+//!
+//! This example intersects altitude and azimuth constraints to find when a
+//! bright star is observable from a given site. The scientific focus is
+//! classical visibility planning in the local horizon frame.
+//!
+//! It uses a deterministic site, target, and search window so the interval
+//! logic is easy to inspect. The results are illustrative and depend on the
+//! current altitude/azimuth calculation kernels.
+//!
+//! ## Technical scope
+//!
+//! The program builds altitude and azimuth queries, computes the matching
+//! periods, intersects them, and prints the observable windows. It writes
+//! to stdout only and serves as a usage example for the planning APIs.
+//!
+//! No file I/O or estimation pipeline is involved.
+//!
+//! ## References
+//!
+//! - Seidelmann, P. K. (Ed.). (2006). Explanatory Supplement to the
+//!   Astronomical Almanac (3rd ed.). University Science Books.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust::bodies::catalog::SIRIUS;
 use siderust::calculus::altitude::{AltitudePeriodsProvider, AltitudeQuery};
 use siderust::calculus::azimuth::{AzimuthProvider, AzimuthQuery};

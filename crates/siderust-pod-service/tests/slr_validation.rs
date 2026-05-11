@@ -1,10 +1,31 @@
-//! M5 acceptance: SLR validation pipeline on synthetic data.
+//! # SLR validation acceptance test
 //!
-//! Builds a noise-free SLR range time series from the synthetic truth orbit
-//! against a fictitious ground station, then runs the same range model
-//! against the same orbit and confirms residuals are zero (the model is
-//! consistent with itself) and the QC summary reports zero RMS.
-
+//! ## Scientific scope
+//!
+//! This test checks that the simplified SLR modelling and QC path is self-
+//! consistent on synthetic data. By generating ranges from the same orbit
+//! and modelling assumptions later used for validation, it verifies that
+//! the observation-minus-computed residuals collapse toward zero in the
+//! ideal case.
+//!
+//! The scope is deliberately restricted to internal consistency. It is not
+//! an external physical validation against real ILRS data or a millimetre-
+//! accuracy SLR benchmark.
+//!
+//! ## Technical scope
+//!
+//! The test synthesizes SLR observations, runs the validation path, and
+//! asserts on zero-like residual statistics and RMS summaries. It serves as
+//! a high-signal regression guard for the current SLR plumbing.
+//!
+//! No batch estimation loop is executed in this file.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use siderust_pod_service::{generate, SyntheticArcConfig, Position};
 use siderust_pod_observations::model::MeasurementModel;
 use siderust_pod_observations::SlrRangeModel;

@@ -1,5 +1,32 @@
-//! Residual statistics for QC reports.
-
+//! # Residual statistics
+//!
+//! ## Scientific scope
+//!
+//! Residual statistics provide the first compact view of whether a POD
+//! solution is fitting its measurements consistently. This module groups
+//! scalar residuals and derives summary quantities such as RMS, mean, and
+//! extrema for QC reporting.
+//!
+//! The statistics are classical descriptive measures; there is no outlier
+//! rejection or stochastic modelling in this layer. Their interpretation
+//! depends on the observation model and data editing done upstream.
+//!
+//! ## Technical scope
+//!
+//! The public types are `ResidualStats` and `ResidualsByGroup`, which
+//! organize scalar residual collections into report-friendly summaries.
+//! Callers feed already-computed residual values and group labels into this
+//! layer.
+//!
+//! Residual formation, parameter estimation, and product serialization are
+//! outside its scope.
+//!
+//! ## References
+//!
+//! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
+//!   Determination. Elsevier Academic Press.
+//! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
+//!   (4th ed.). Microcosm Press.
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
