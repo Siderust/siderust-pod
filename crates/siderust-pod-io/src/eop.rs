@@ -29,29 +29,20 @@
 //! - IERS Conventions Centre. (2010). IERS Conventions (2010). Verlag des
 //!   Bundesamts fur Kartographie und Geodasie.
 use crate::PodIoError;
-use qtty::angular::Arcseconds;
+use qtty::angular::{Arcseconds, MilliArcseconds};
 use qtty::time::Seconds;
 use qtty::Day;
+use siderust::astro::eop::EopValues;
 use std::io::{BufRead, BufReader, Read};
 use tempoch::{ModifiedJulianDate, UTC};
 
 /// A single Earth-orientation record from IERS C04.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy)]
 pub struct EopRecord {
     /// Modified Julian Date (UTC).
     pub mjd: ModifiedJulianDate<UTC>,
-    /// Polar motion x.
-    pub x: Arcseconds,
-    /// Polar motion y.
-    pub y: Arcseconds,
-    /// UT1 − UTC.
-    pub ut1_utc: Seconds,
-    /// Length-of-day excess.
-    pub lod: Seconds,
-    /// Nutation correction dψ.
-    pub dpsi: Arcseconds,
-    /// Nutation correction dε.
-    pub deps: Arcseconds,
+    /// Earth orientation parameters (polar motion, UT1-UTC, LOD, celestial pole offsets).
+    pub eop: EopValues,
 }
 
 /// Parse a C04-style EOP file.
@@ -92,12 +83,14 @@ pub fn read_eop_c04<R: Read>(rdr: R) -> Result<Vec<EopRecord>, PodIoError> {
         let deps = parts[9].parse().unwrap_or(0.0);
         out.push(EopRecord {
             mjd,
-            x: Arcseconds::new(x),
-            y: Arcseconds::new(y),
-            ut1_utc: Seconds::new(ut1),
-            lod: Seconds::new(lod),
-            dpsi: Arcseconds::new(dpsi),
-            deps: Arcseconds::new(deps),
+            eop: EopValues {
+                xp: Arcseconds::new(x),
+                yp: Arcseconds::new(y),
+                dut1: Seconds::new(ut1),
+                lod: Seconds::new(lod),
+                dx: MilliArcseconds::new(dpsi * 1000.0),
+                dy: MilliArcseconds::new(deps * 1000.0),
+            },
         });
     }
     Ok(out)
@@ -136,12 +129,20 @@ pub fn interpolate(records: &[EopRecord], mjd: ModifiedJulianDate<UTC>) -> Optio
     let f = (t_val - a_val) / (b_val - a_val);
     Some(EopRecord {
         mjd,
-        x: Arcseconds::new(a.x.value() + f * (b.x.value() - a.x.value())),
-        y: Arcseconds::new(a.y.value() + f * (b.y.value() - a.y.value())),
-        ut1_utc: Seconds::new(a.ut1_utc.value() + f * (b.ut1_utc.value() - a.ut1_utc.value())),
-        lod: Seconds::new(a.lod.value() + f * (b.lod.value() - a.lod.value())),
-        dpsi: Arcseconds::new(a.dpsi.value() + f * (b.dpsi.value() - a.dpsi.value())),
-        deps: Arcseconds::new(a.deps.value() + f * (b.deps.value() - a.deps.value())),
+        eop: EopValues {
+            xp: Arcseconds::new(a.eop.xp.value() + f * (b.eop.xp.value() - a.eop.xp.value())),
+            yp: Arcseconds::new(a.eop.yp.value() + f * (b.eop.yp.value() - a.eop.yp.value())),
+            dut1: Seconds::new(
+                a.eop.dut1.value() + f * (b.eop.dut1.value() - a.eop.dut1.value()),
+            ),
+            lod: Seconds::new(a.eop.lod.value() + f * (b.eop.lod.value() - a.eop.lod.value())),
+            dx: MilliArcseconds::new(
+                a.eop.dx.value() + f * (b.eop.dx.value() - a.eop.dx.value()),
+            ),
+            dy: MilliArcseconds::new(
+                a.eop.dy.value() + f * (b.eop.dy.value() - a.eop.dy.value()),
+            ),
+        },
     })
 }
 
@@ -171,6 +172,6 @@ mod tests {
         )
         .unwrap();
         let expect = (0.123456 + 0.124000) / 2.0;
-        assert!((mid.x.value() - expect).abs() < 1e-9);
+        assert!((mid.eop.xp.value() - expect).abs() < 1e-9);
     }
 }

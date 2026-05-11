@@ -39,12 +39,13 @@ fn eop_last_mjd() {
 #[test]
 fn eop_first_record_fields() {
     let r0 = load()[0];
-    assert_approx(r0.x.value(), 0.123_456, 1e-9, "record[0].x [arcsec]");
-    assert_approx(r0.y.value(), 0.234_567, 1e-9, "record[0].y [arcsec]");
-    assert_approx(r0.ut1_utc.value(), 0.012_345, 1e-9, "record[0].ut1_utc [s]");
-    assert_approx(r0.lod.value(), 0.001_234, 1e-9, "record[0].lod [s]");
-    assert_approx(r0.dpsi.value(), 0.000_123, 1e-9, "record[0].dpsi [arcsec]");
-    assert_approx(r0.deps.value(), 0.000_234, 1e-9, "record[0].deps [arcsec]");
+    assert_approx(r0.eop.xp.value(), 0.123_456, 1e-9, "record[0].xp [arcsec]");
+    assert_approx(r0.eop.yp.value(), 0.234_567, 1e-9, "record[0].yp [arcsec]");
+    assert_approx(r0.eop.dut1.value(), 0.012_345, 1e-9, "record[0].dut1 [s]");
+    assert_approx(r0.eop.lod.value(), 0.001_234, 1e-9, "record[0].lod [s]");
+    // dpsi/deps in C04 are in arcsec; stored as dx/dy in mas (×1000).
+    assert_approx(r0.eop.dx.value(), 0.000_123 * 1000.0, 1e-6, "record[0].dx [mas]");
+    assert_approx(r0.eop.dy.value(), 0.000_234 * 1000.0, 1e-6, "record[0].dy [mas]");
 }
 
 #[test]
@@ -60,12 +61,12 @@ fn eop_interpolate_exact_node() {
     // Requesting an exact tabulated MJD should return that record's values.
     let recs = load();
     let result = interpolate(&recs, mjd(60_310.0)).expect("interpolate should succeed");
-    assert_approx(result.x.value(), 0.123_456, 1e-9, "exact node x");
+    assert_approx(result.eop.xp.value(), 0.123_456, 1e-9, "exact node xp");
     assert_approx(
-        result.ut1_utc.value(),
+        result.eop.dut1.value(),
         0.012_345,
         1e-9,
-        "exact node ut1_utc",
+        "exact node dut1",
     );
 }
 
@@ -75,13 +76,13 @@ fn eop_interpolate_midpoint() {
     let recs = load();
     let result = interpolate(&recs, mjd(60_310.5)).expect("midpoint interpolate");
     let expected_x = (0.123_456 + 0.124_000) / 2.0;
-    assert_approx(result.x.value(), expected_x, 1e-9, "midpoint x");
+    assert_approx(result.eop.xp.value(), expected_x, 1e-9, "midpoint xp");
     let expected_ut1 = (0.012_345 + 0.012_200) / 2.0;
     assert_approx(
-        result.ut1_utc.value(),
+        result.eop.dut1.value(),
         expected_ut1,
         1e-9,
-        "midpoint ut1_utc",
+        "midpoint dut1",
     );
 }
 
@@ -90,8 +91,8 @@ fn eop_interpolate_clamps_before_first() {
     let recs = load();
     let result = interpolate(&recs, mjd(60_000.0)).expect("clamp before first");
     assert_approx(
-        result.x.value(),
-        recs[0].x.value(),
+        result.eop.xp.value(),
+        recs[0].eop.xp.value(),
         1e-12,
         "clamped to first record",
     );
@@ -102,7 +103,7 @@ fn eop_interpolate_clamps_after_last() {
     let recs = load();
     let last = recs[recs.len() - 1];
     let result = interpolate(&recs, mjd(70_000.0)).expect("clamp after last");
-    assert_approx(result.x.value(), last.x.value(), 1e-12, "clamped to last");
+    assert_approx(result.eop.xp.value(), last.eop.xp.value(), 1e-12, "clamped to last");
 }
 
 #[test]

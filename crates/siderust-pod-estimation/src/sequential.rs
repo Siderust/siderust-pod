@@ -29,6 +29,11 @@
 //!   Determination. Elsevier Academic Press.
 //! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
 //!   (4th ed.). Microcosm Press.
+use affn::matrix3::{FrameMatrix3, SymmetricFrameMatrix3};
+use siderust::astro::dynamics::covariance::StateCovariance;
+use siderust::astro::dynamics::{OrbitState, Position, Velocity};
+use siderust::coordinates::frames::GCRS;
+use siderust::time::JulianDate;
 use thiserror::Error;
 
 /// EKF error type.
@@ -170,6 +175,49 @@ impl Ekf {
             variance: s,
             nis,
         })
+    }
+
+    /// Return the orbit state covariance as a typed [`StateCovariance<GCRS>`]
+    /// when `n == 6` (position + velocity state).
+    ///
+    /// Returns `None` for any other state dimension.
+    pub fn state_covariance(&self) -> Option<StateCovariance<GCRS>> {
+        if self.n != 6 {
+            return None;
+        }
+        let n = self.n;
+        let p = &self.p;
+        let rr = SymmetricFrameMatrix3::<GCRS>::from_upper([
+            [p[0 * n + 0], p[0 * n + 1], p[0 * n + 2]],
+            [p[1 * n + 0], p[1 * n + 1], p[1 * n + 2]],
+            [p[2 * n + 0], p[2 * n + 1], p[2 * n + 2]],
+        ]);
+        let rv = FrameMatrix3::<GCRS>::from_array([
+            [p[0 * n + 3], p[0 * n + 4], p[0 * n + 5]],
+            [p[1 * n + 3], p[1 * n + 4], p[1 * n + 5]],
+            [p[2 * n + 3], p[2 * n + 4], p[2 * n + 5]],
+        ]);
+        let vv = SymmetricFrameMatrix3::<GCRS>::from_upper([
+            [p[3 * n + 3], p[3 * n + 4], p[3 * n + 5]],
+            [p[4 * n + 3], p[4 * n + 4], p[4 * n + 5]],
+            [p[5 * n + 3], p[5 * n + 4], p[5 * n + 5]],
+        ]);
+        Some(StateCovariance::<GCRS>::from_blocks(rr, rv, vv))
+    }
+
+    /// Return a typed orbit state at a given epoch when `n == 6`.
+    ///
+    /// The state vector is assumed to contain `[x, y, z, vx, vy, vz]`
+    /// in kilometres and km/s respectively.
+    ///
+    /// Returns `None` for any other state dimension.
+    pub fn orbit_state(&self, epoch: JulianDate) -> Option<OrbitState> {
+        if self.n != 6 {
+            return None;
+        }
+        let pos = Position::<GCRS>::new(self.x[0], self.x[1], self.x[2]);
+        let vel = Velocity::<GCRS>::new(self.x[3], self.x[4], self.x[5]);
+        Some(OrbitState::new(epoch, pos, vel))
     }
 }
 

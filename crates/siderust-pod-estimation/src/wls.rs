@@ -29,8 +29,11 @@
 //!   Determination. Elsevier Academic Press.
 //! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
 //!   (4th ed.). Microcosm Press.
+use affn::matrix3::{FrameMatrix3, SymmetricFrameMatrix3};
 use faer::linalg::solvers::Solve;
 use faer::{Mat, Side};
+use siderust::astro::dynamics::covariance::StateCovariance;
+use siderust::coordinates::frames::GCRS;
 use thiserror::Error;
 
 /// Errors emerging from WLS assembly or solve.
@@ -184,6 +187,33 @@ impl WlsResult {
     pub fn reduced_chi2(&self) -> f64 {
         let dof = self.n_obs.saturating_sub(self.n_params).max(1) as f64;
         self.chi2 / dof
+    }
+
+    /// Return the posterior covariance as a typed [`StateCovariance<GCRS>`]
+    /// when `n_params == 6` (position + velocity solution).
+    ///
+    /// Returns `None` for any other parameter count.
+    pub fn to_state_covariance(&self) -> Option<StateCovariance<GCRS>> {
+        if self.n_params != 6 {
+            return None;
+        }
+        let c = &self.covariance;
+        let rr = SymmetricFrameMatrix3::<GCRS>::from_upper([
+            [c[0][0], c[0][1], c[0][2]],
+            [c[1][0], c[1][1], c[1][2]],
+            [c[2][0], c[2][1], c[2][2]],
+        ]);
+        let rv = FrameMatrix3::<GCRS>::from_array([
+            [c[0][3], c[0][4], c[0][5]],
+            [c[1][3], c[1][4], c[1][5]],
+            [c[2][3], c[2][4], c[2][5]],
+        ]);
+        let vv = SymmetricFrameMatrix3::<GCRS>::from_upper([
+            [c[3][3], c[3][4], c[3][5]],
+            [c[4][3], c[4][4], c[4][5]],
+            [c[5][3], c[5][4], c[5][5]],
+        ]);
+        Some(StateCovariance::<GCRS>::from_blocks(rr, rv, vv))
     }
 }
 

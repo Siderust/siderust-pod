@@ -69,6 +69,11 @@ tempoch  = { path = "../tempoch/tempoch" }
 affn     = { path = "../affn" }
 siderust = { path = "../siderust" }
 
+# Redirect the git source of `affn` used by `siderust` to the same local path
+# so both the workspace crates and siderust share a single `affn` instance.
+[patch."https://github.com/Siderust/affn.git"]
+affn = { path = "../affn" }
+
 [profile.release]
 opt-level = 3
 lto       = "thin"

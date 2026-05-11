@@ -43,10 +43,12 @@ fn crd_satellite_norad() {
 
 #[test]
 fn crd_session_date() {
+    use chrono::Datelike;
     let f = load();
-    assert_eq!(f.year, 2024, "session year");
-    assert_eq!(f.month, 1, "session month");
-    assert_eq!(f.day, 1, "session day");
+    let d = f.session_date.unwrap().try_to_chrono().unwrap();
+    assert_eq!(d.year(), 2024, "session year");
+    assert_eq!(d.month(), 1, "session month");
+    assert_eq!(d.day(), 1, "session day");
 }
 
 // ── observation tests ─────────────────────────────────────────────────────────

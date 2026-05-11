@@ -32,13 +32,16 @@ fn rinex_nav_g05_prn() {
 
 #[test]
 fn rinex_nav_g01_toc() {
+    use chrono::Timelike;
     let r = &load().gps[0];
-    assert_eq!(r.year, 2024, "G01 TOC year");
-    assert_eq!(r.month, 1, "G01 TOC month");
-    assert_eq!(r.day, 1, "G01 TOC day");
-    assert_eq!(r.hour, 0, "G01 TOC hour");
-    assert_eq!(r.minute, 0, "G01 TOC minute");
-    assert_approx(r.second.value(), 0.0, 1e-9, "G01 TOC second");
+    let dt = r.toc.try_to_chrono().expect("toc to chrono");
+    use chrono::Datelike;
+    assert_eq!(dt.year(), 2024, "G01 TOC year");
+    assert_eq!(dt.month(), 1, "G01 TOC month");
+    assert_eq!(dt.day(), 1, "G01 TOC day");
+    assert_eq!(dt.hour(), 0, "G01 TOC hour");
+    assert_eq!(dt.minute(), 0, "G01 TOC minute");
+    assert_approx(dt.second() as f64, 0.0, 1.0, "G01 TOC second");
 }
 
 #[test]

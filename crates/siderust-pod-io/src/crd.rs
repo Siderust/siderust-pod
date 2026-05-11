@@ -28,9 +28,11 @@
 //! - Pearlman, M. R., Noll, C. E., et al. (2019). The ILRS: Current status
 //!   and future prospects. Journal of Geodesy, 93, 2161-2180.
 use crate::PodIoError;
+use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
 use qtty::time::Seconds;
 use std::fs;
 use std::path::Path;
+use tempoch::{Time, UTC};
 
 /// One SLR range observation in CRD ("11" normal point) or ("10" full rate).
 #[derive(Debug, Clone)]
@@ -58,12 +60,8 @@ pub struct CrdFile {
     pub satellite_sic: i32,
     /// COSPAR/NORAD-style ID, kept as string.
     pub satellite_norad: String,
-    /// Year of session (H4).
-    pub year: i32,
-    /// Month of session (H4).
-    pub month: u32,
-    /// Day of session (H4).
-    pub day: u32,
+    /// Session date from H4 record (UTC midnight).
+    pub session_date: Option<Time<UTC>>,
     /// Range observations.
     pub ranges: Vec<CrdRange>,
 }
@@ -115,14 +113,14 @@ pub fn parse_crd(text: &str) -> Result<CrdFile, PodIoError> {
             "H4" => {
                 // H4 type year month day hour min sec ...
                 let _ = tokens.next();
-                if let Some(s) = tokens.next() {
-                    out.year = s.parse().unwrap_or(0);
-                }
-                if let Some(s) = tokens.next() {
-                    out.month = s.parse().unwrap_or(0);
-                }
-                if let Some(s) = tokens.next() {
-                    out.day = s.parse().unwrap_or(0);
+                let year: i32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
+                let month: u32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
+                let day: u32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
+                if let Some(naive) = NaiveDate::from_ymd_opt(year, month, day)
+                    .and_then(|d| d.and_hms_opt(0, 0, 0))
+                {
+                    let dt = DateTime::from_naive_utc_and_offset(naive, ChronoUtc);
+                    out.session_date = Time::<UTC>::try_from_chrono(dt).ok();
                 }
             }
             "C0" => {
@@ -176,7 +174,11 @@ H8\n";
         let f = parse_crd(txt).expect("parse");
         assert_eq!(f.station_name, "7090");
         assert_eq!(f.satellite_name, "lageos1");
-        assert_eq!(f.year, 2024);
+        use chrono::Datelike;
+        let d = f.session_date.unwrap().try_to_chrono().unwrap();
+        assert_eq!(d.year(), 2024);
+        assert_eq!(d.month(), 1);
+        assert_eq!(d.day(), 1);
         assert_eq!(f.ranges.len(), 2);
         assert!((f.ranges[0].time_of_flight.value() - 0.05123456789).abs() < 1e-15);
         assert_eq!(f.ranges[0].record_type, 11);

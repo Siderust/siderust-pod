@@ -13,6 +13,7 @@ qtty.workspace = true
 tempoch.workspace = true
 affn.workspace = true
 faer.workspace = true
+siderust.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]

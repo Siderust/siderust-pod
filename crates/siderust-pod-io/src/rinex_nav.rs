@@ -28,6 +28,7 @@
 //! - IS-GPS-200. (current revision). Navstar GPS Space Segment / Navigation
 //!   User Interfaces.
 use crate::PodIoError;
+use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
 use qtty::angular::Radians;
 use qtty::angular_rate::AngularRate;
 use qtty::length::Meters;
@@ -35,24 +36,15 @@ use qtty::time::Seconds;
 use qtty::unit::{Radian, Second};
 use std::fs;
 use std::path::Path;
+use tempoch::{Time, UTC};
 
 /// One GPS broadcast navigation record (subset).
 #[derive(Debug, Clone)]
 pub struct GpsNavRecord {
     /// PRN identifier (e.g. `G01` → 1).
     pub prn: u8,
-    /// TOC year (4-digit).
-    pub year: i32,
-    /// TOC month.
-    pub month: u32,
-    /// TOC day.
-    pub day: u32,
-    /// TOC hour.
-    pub hour: u32,
-    /// TOC minute.
-    pub minute: u32,
-    /// TOC seconds.
-    pub second: Seconds,
+    /// Time of clock (UTC).
+    pub toc: Time<UTC>,
     /// SV clock bias.
     pub af0: Seconds,
     /// SV clock drift (s/s — dimensionless rate; kept as scalar).
@@ -97,14 +89,14 @@ pub struct GpsNavRecord {
 
 impl Default for GpsNavRecord {
     fn default() -> Self {
+        let naive = NaiveDate::from_ymd_opt(2000, 1, 1)
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap();
+        let dt = DateTime::from_naive_utc_and_offset(naive, ChronoUtc);
         Self {
             prn: 0,
-            year: 0,
-            month: 0,
-            day: 0,
-            hour: 0,
-            minute: 0,
-            second: Seconds::new(0.0),
+            toc: Time::<UTC>::try_from_chrono(dt).unwrap(),
             af0: Seconds::new(0.0),
             af1: 0.0,
             af2: 0.0,
@@ -181,12 +173,33 @@ pub fn parse_rinex_nav(text: &str) -> Result<RinexNavFile, PodIoError> {
         }
         let mut rec = GpsNavRecord {
             prn,
-            year: toc_tokens[0].parse().unwrap_or(0),
-            month: toc_tokens[1].parse().unwrap_or(0),
-            day: toc_tokens[2].parse().unwrap_or(0),
-            hour: toc_tokens[3].parse().unwrap_or(0),
-            minute: toc_tokens[4].parse().unwrap_or(0),
-            second: Seconds::new(toc_tokens[5].parse().unwrap_or(0.0)),
+            toc: {
+                let y: i32 = toc_tokens[0].parse().unwrap_or(2000);
+                let mo: u32 = toc_tokens[1].parse().unwrap_or(1);
+                let d: u32 = toc_tokens[2].parse().unwrap_or(1);
+                let h: u32 = toc_tokens[3].parse().unwrap_or(0);
+                let mi: u32 = toc_tokens[4].parse().unwrap_or(0);
+                let sec_f: f64 = toc_tokens[5].parse().unwrap_or(0.0);
+                let sec_i = sec_f as u32;
+                let nanos = ((sec_f - sec_i as f64) * 1e9).round() as u32;
+                NaiveDate::from_ymd_opt(y, mo, d)
+                    .and_then(|d| d.and_hms_nano_opt(h, mi, sec_i, nanos))
+                    .map(|naive| {
+                        let dt = DateTime::from_naive_utc_and_offset(naive, ChronoUtc);
+                        Time::<UTC>::try_from_chrono(dt).ok()
+                    })
+                    .flatten()
+                    .unwrap_or_else(|| {
+                        let naive = NaiveDate::from_ymd_opt(2000, 1, 1)
+                            .unwrap()
+                            .and_hms_opt(0, 0, 0)
+                            .unwrap();
+                        Time::<UTC>::try_from_chrono(
+                            DateTime::from_naive_utc_and_offset(naive, ChronoUtc),
+                        )
+                        .unwrap()
+                    })
+            },
             af0: Seconds::new(parse_d(toc_tokens[6])),
             af1: parse_d(toc_tokens[7]),
             af2: parse_d(toc_tokens[8]),

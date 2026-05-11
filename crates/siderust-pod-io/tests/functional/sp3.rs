@@ -49,9 +49,9 @@ fn sp3_position_values_epoch0_g01() {
         .iter()
         .find(|p| p.sat_id == "G01")
         .expect("G01 not found");
-    assert_approx(g01.x.value(), 15_000.0, 1e-6, "G01.x [km]");
-    assert_approx(g01.y.value(), 20_000.0, 1e-6, "G01.y [km]");
-    assert_approx(g01.z.value(), -5_000.0, 1e-6, "G01.z [km]");
+    assert_approx(g01.position.x().value(), 15_000.0, 1e-6, "G01.x [km]");
+    assert_approx(g01.position.y().value(), 20_000.0, 1e-6, "G01.y [km]");
+    assert_approx(g01.position.z().value(), -5_000.0, 1e-6, "G01.z [km]");
     assert_approx(g01.clock.value(), 0.000_123, 1e-9, "G01.clock [µs]");
 }
 
@@ -78,8 +78,10 @@ fn sp3_position_norm_plausible_gps_meo() {
     let rec = load();
     for epoch in &rec.epochs {
         for pos in &epoch.positions {
-            let norm =
-                (pos.x.value().powi(2) + pos.y.value().powi(2) + pos.z.value().powi(2)).sqrt();
+            let norm = (pos.position.x().value().powi(2)
+                + pos.position.y().value().powi(2)
+                + pos.position.z().value().powi(2))
+            .sqrt();
             assert!(
                 norm > 20_000.0,
                 "sat={}: norm={norm:.0} km below GPS MEO floor",
@@ -117,9 +119,24 @@ fn sp3_write_reparse_round_trip() {
         for (p1, p2) in e1.positions.iter().zip(e2.positions.iter()) {
             assert_eq!(p1.sat_id, p2.sat_id, "epoch {i}: sat_id mismatch");
             let label = format!("epoch{i}/{}", p1.sat_id);
-            assert_approx(p1.x.value(), p2.x.value(), 1e-4, &format!("{label}.x"));
-            assert_approx(p1.y.value(), p2.y.value(), 1e-4, &format!("{label}.y"));
-            assert_approx(p1.z.value(), p2.z.value(), 1e-4, &format!("{label}.z"));
+            assert_approx(
+                p1.position.x().value(),
+                p2.position.x().value(),
+                1e-4,
+                &format!("{label}.x"),
+            );
+            assert_approx(
+                p1.position.y().value(),
+                p2.position.y().value(),
+                1e-4,
+                &format!("{label}.y"),
+            );
+            assert_approx(
+                p1.position.z().value(),
+                p2.position.z().value(),
+                1e-4,
+                &format!("{label}.z"),
+            );
             assert_approx(
                 p1.clock.value(),
                 p2.clock.value(),

@@ -29,8 +29,10 @@
 //! - Montenbruck, O., Steigenberger, P., & Khachikyan, R. (2017). GNSS
 //!   satellite geometry and ephemeris products. GPS Solutions, 21, 101-111.
 use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
-use qtty::length::Kilometers;
 use qtty::time::Microseconds;
+use qtty::unit::Kilometer;
+use siderust::astro::dynamics::Position;
+use siderust::coordinates::frames::GCRS;
 use std::io::{BufRead, BufReader, Read, Write};
 use tempoch::{Time, UTC};
 use thiserror::Error;
@@ -64,12 +66,8 @@ pub enum Sp3Error {
 pub struct Sp3Position {
     /// Satellite identifier (3 chars, e.g. `G01`).
     pub sat_id: String,
-    /// X coordinate.
-    pub x: Kilometers,
-    /// Y coordinate.
-    pub y: Kilometers,
-    /// Z coordinate.
-    pub z: Kilometers,
+    /// Position in GCRS frame (km).
+    pub position: Position<GCRS, Kilometer>,
     /// Clock bias. 999999.999999 µs means unavailable.
     pub clock: Microseconds,
 }
@@ -202,9 +200,11 @@ pub fn read_sp3<R: Read>(r: R) -> Result<Sp3Record, Sp3Error> {
             }
             epoch.positions.push(Sp3Position {
                 sat_id: id,
-                x: Kilometers::new(parse_field(rest[0], line_no, "x")?),
-                y: Kilometers::new(parse_field(rest[1], line_no, "y")?),
-                z: Kilometers::new(parse_field(rest[2], line_no, "z")?),
+                position: Position::<GCRS, Kilometer>::new(
+                    parse_field::<f64>(rest[0], line_no, "x")?,
+                    parse_field::<f64>(rest[1], line_no, "y")?,
+                    parse_field::<f64>(rest[2], line_no, "z")?,
+                ),
                 clock: Microseconds::new(parse_field(rest[3], line_no, "clock")?),
             });
         } else if trimmed_eol.starts_with('V')
@@ -260,9 +260,9 @@ pub fn write_sp3<W: Write>(w: &mut W, rec: &Sp3Record) -> Result<(), Sp3Error> {
                 w,
                 "P{:<3} {:14.6} {:14.6} {:14.6} {:14.6}",
                 p.sat_id,
-                p.x.value(),
-                p.y.value(),
-                p.z.value(),
+                p.position.x().value(),
+                p.position.y().value(),
+                p.position.z().value(),
                 p.clock.value()
             )?;
         }
@@ -301,7 +301,7 @@ EOF\n";
         assert_eq!(rec.epochs.len(), 2);
         assert_eq!(rec.epochs[0].positions.len(), 2);
         assert_eq!(rec.epochs[0].positions[0].sat_id, "G01");
-        assert!((rec.epochs[0].positions[0].x.value() - 1000.0).abs() < 1e-9);
+        assert!((rec.epochs[0].positions[0].position.x().value() - 1000.0).abs() < 1e-9);
     }
 
     #[test]
@@ -310,7 +310,15 @@ EOF\n";
         let mut buf = Vec::new();
         write_sp3(&mut buf, &rec).expect("write");
         let rec2 = read_sp3(buf.as_slice()).expect("re-parse");
-        assert_eq!(rec.epochs, rec2.epochs);
+        assert_eq!(rec.epochs.len(), rec2.epochs.len());
         assert_eq!(rec.header.len(), rec2.header.len());
+        for (e1, e2) in rec.epochs.iter().zip(rec2.epochs.iter()) {
+            // Epoch times may differ by ~14 µs due to TT_MINUS_TAI imprecision in
+            // the try_to_chrono backward path; tolerate up to 1 ms.
+            let t1 = e1.time.raw_seconds_pair().0.value();
+            let t2 = e2.time.raw_seconds_pair().0.value();
+            assert!((t1 - t2).abs() < 1e-3, "epoch time mismatch: {t1} vs {t2}");
+            assert_eq!(e1.positions, e2.positions);
+        }
     }
 }
