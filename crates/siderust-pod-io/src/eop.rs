@@ -165,7 +165,11 @@ mod tests {
     #[test]
     fn interpolates_midpoint() {
         let r = read_eop_c04(SAMPLE.as_bytes()).unwrap();
-        let mid = interpolate(&r, ModifiedJulianDate::<UTC>::try_new(Day::new(60310.5)).unwrap()).unwrap();
+        let mid = interpolate(
+            &r,
+            ModifiedJulianDate::<UTC>::try_new(Day::new(60310.5)).unwrap(),
+        )
+        .unwrap();
         let expect = (0.123456 + 0.124000) / 2.0;
         assert!((mid.x.value() - expect).abs() < 1e-9);
     }

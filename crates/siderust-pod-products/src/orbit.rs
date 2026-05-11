@@ -33,8 +33,9 @@ use siderust_pod_io::sp3::{write_sp3, Sp3Epoch, Sp3Position, Sp3Record};
 use siderust_pod_io::PodIoError;
 use qtty::length::Kilometers;
 use qtty::time::Microseconds;
+use qtty::Day;
 use std::io::Write;
-use tempoch::{Time, UTC};
+use tempoch::{JulianDate, Time, TT, UTC};
 
 /// Build an SP3 record from an in-memory state series and write it to `w`.
 pub fn write_sp3_from_states<W: Write>(
@@ -62,7 +63,12 @@ pub fn write_sp3_from_states<W: Write>(
     let epochs = states
         .iter()
         .map(|s| {
-            let epoch_utc: Time<UTC> = s.epoch_tt.to_time().to_scale::<UTC>();
+            // Bridge the two tempoch versions (siderust uses crates.io tempoch,
+            // siderust-pod-io uses the local path version) via the raw f64 JD.
+            let epoch_utc: Time<UTC> = JulianDate::<TT>::try_new(Day::new(s.epoch_tt.jd_value()))
+                .expect("OrbitState epoch must be finite")
+                .to_time()
+                .to_scale::<UTC>();
             Sp3Epoch {
                 time: epoch_utc,
                 positions: vec![Sp3Position {

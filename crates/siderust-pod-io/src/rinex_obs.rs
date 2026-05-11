@@ -86,11 +86,19 @@ pub fn read_rinex_obs<R: Read>(rdr: R) -> Result<RinexObs, PodIoError> {
                     .filter_map(|s| s.parse().ok())
                     .collect();
                 if parts.len() == 3 {
-                    approx_xyz_m = Some([Meters::new(parts[0]), Meters::new(parts[1]), Meters::new(parts[2])]);
+                    approx_xyz_m = Some([
+                        Meters::new(parts[0]),
+                        Meters::new(parts[1]),
+                        Meters::new(parts[2]),
+                    ]);
                 }
             }
             "INTERVAL" => {
-                interval_s = body.split_whitespace().next().and_then(|s| s.parse().ok()).map(Seconds::new);
+                interval_s = body
+                    .split_whitespace()
+                    .next()
+                    .and_then(|s| s.parse().ok())
+                    .map(Seconds::new);
             }
             "SYS / # / OBS TYPES" => {
                 let bytes = body.as_bytes();

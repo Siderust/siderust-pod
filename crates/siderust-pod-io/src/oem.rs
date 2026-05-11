@@ -83,8 +83,12 @@ pub fn write_oem<W: Write>(
             w,
             "{} {:.6} {:.6} {:.6} {:.9} {:.9} {:.9}",
             jd_to_iso8601(s.epoch_tt.jd_value()),
-            s.position.x().value(), s.position.y().value(), s.position.z().value(),
-            s.velocity.x().value(), s.velocity.y().value(), s.velocity.z().value(),
+            s.position.x().value(),
+            s.position.y().value(),
+            s.position.z().value(),
+            s.velocity.x().value(),
+            s.velocity.y().value(),
+            s.velocity.z().value(),
         )?;
     }
     Ok(())
@@ -122,8 +126,8 @@ fn jd_to_iso8601(jd: f64) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use siderust::time::JulianDate;
     use siderust::astro::dynamics::{Position, Velocity};
+    use siderust::time::JulianDate;
 
     #[test]
     fn writes_header_and_data_lines() {

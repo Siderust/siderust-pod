@@ -117,7 +117,8 @@ fn civil_to_time_utc(
 }
 
 /// Parse an SP3 file from a reader.
-pub fn read_sp3<R: Read>(r: R) -> Result<Sp3Record, Sp3Error> {    let mut buf = BufReader::new(r);
+pub fn read_sp3<R: Read>(r: R) -> Result<Sp3Record, Sp3Error> {
+    let mut buf = BufReader::new(r);
     let mut header = Vec::new();
     let mut epochs = Vec::new();
     let mut line_no = 0usize;
@@ -258,7 +259,11 @@ pub fn write_sp3<W: Write>(w: &mut W, rec: &Sp3Record) -> Result<(), Sp3Error> {
             writeln!(
                 w,
                 "P{:<3} {:14.6} {:14.6} {:14.6} {:14.6}",
-                p.sat_id, p.x.value(), p.y.value(), p.z.value(), p.clock.value()
+                p.sat_id,
+                p.x.value(),
+                p.y.value(),
+                p.z.value(),
+                p.clock.value()
             )?;
         }
     }
