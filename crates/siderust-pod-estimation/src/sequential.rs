@@ -14,14 +14,9 @@
 //!
 //! ## Technical scope
 //!
-//! The main public items are `Ekf`, `EkfError`, and `InnovationRecord`. The
-//! filter operates on a caller-owned state vector and covariance matrix,
-//! accepts a propagated mean plus state-transition matrix, and applies
-//! scalar observation updates using predicted values, partial derivatives,
-//! and sigmas returned by the caller.
-//!
-//! This module stays generic on purpose: it does not depend on orbit-state
-//! types, measurement-format structs, or specific force models.
+//! The main public items are `OrbitEkf`, `EkfError`, and `InnovationRecord`.
+//! `OrbitEkf` is specialised for 6D orbit POD and stores [`OrbitState`] and
+//! [`StateCovariance<GCRS>`] as first-class fields.
 //!
 //! ## References
 //!
@@ -30,6 +25,7 @@
 //! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
 //!   (4th ed.). Microcosm Press.
 use affn::matrix3::{FrameMatrix3, SymmetricFrameMatrix3};
+use faer::Mat;
 use siderust::astro::dynamics::covariance::StateCovariance;
 use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 use siderust::coordinates::frames::GCRS;
@@ -55,120 +51,125 @@ pub struct InnovationRecord {
     pub nis: f64,
 }
 
-/// EKF state container.
+/// Typed 6D orbit EKF specialised for position + velocity state.
+///
+/// Stores the filter state directly as siderust/affn types:
+///
+/// - [`OrbitState`] for the mean (position, velocity, epoch)
+/// - [`StateCovariance<GCRS>`] for the 6×6 covariance split into typed 3×3
+///   blocks
+///
+/// All internal linear algebra is performed on a `faer::Mat<f64>` extracted
+/// from the typed containers via [`StateCovariance::to_row_major`] and packed
+/// back with [`StateCovariance::from_blocks`].
 #[derive(Debug, Clone)]
-pub struct Ekf {
-    /// State vector x.
-    pub x: Vec<f64>,
-    /// Covariance matrix P, row-major.
-    pub p: Vec<f64>,
-    /// State dimension n.
-    pub n: usize,
+pub struct OrbitEkf {
+    state: OrbitState,
+    cov: StateCovariance<GCRS>,
 }
 
-impl Ekf {
-    /// New filter with initial state and diagonal covariance built from `sigma`.
-    pub fn new_diag(x0: Vec<f64>, sigma: &[f64]) -> Self {
-        let n = x0.len();
-        assert_eq!(sigma.len(), n, "sigma must match state dim");
-        let mut p = vec![0.0; n * n];
-        for i in 0..n {
-            p[i * n + i] = sigma[i] * sigma[i];
-        }
-        Self { x: x0, p, n }
+impl OrbitEkf {
+    /// New filter with explicit typed state and covariance.
+    pub fn new(state: OrbitState, cov: StateCovariance<GCRS>) -> Self {
+        Self { state, cov }
     }
 
-    /// New filter with explicit row-major covariance.
-    pub fn new(x0: Vec<f64>, p0: Vec<f64>) -> Self {
-        let n = x0.len();
-        assert_eq!(p0.len(), n * n, "P must be n×n");
-        Self { x: x0, p: p0, n }
+    /// New filter with diagonal covariance built from position and velocity
+    /// standard deviations (same units as [`OrbitState`]: km and km/s).
+    pub fn from_stddevs(
+        state: OrbitState,
+        sigma_pos: [f64; 3],
+        sigma_vel: [f64; 3],
+    ) -> Self {
+        Self {
+            state,
+            cov: StateCovariance::<GCRS>::from_stddevs(sigma_pos, sigma_vel),
+        }
     }
 
-    /// Time update: replace the mean with `x_pred` and propagate covariance
-    /// as `P ← Φ P Φᵀ + Q`. Caller supplies `phi` row-major and an optional
-    /// process-noise matrix `q` row-major (skipped if `None`).
-    pub fn predict(&mut self, x_pred: Vec<f64>, phi: &[f64], q: Option<&[f64]>) {
-        assert_eq!(x_pred.len(), self.n);
-        assert_eq!(phi.len(), self.n * self.n);
-        let n = self.n;
-        let pp = matmul(phi, &self.p, n, n, n);
-        let phi_t = transpose(phi, n);
-        let mut p_next = matmul(&pp, &phi_t, n, n, n);
-        if let Some(qmat) = q {
-            assert_eq!(qmat.len(), n * n);
-            for k in 0..n * n {
-                p_next[k] += qmat[k];
-            }
+    /// Current orbit state (position + velocity + epoch).
+    pub fn state(&self) -> &OrbitState {
+        &self.state
+    }
+
+    /// Current 6×6 covariance in GCRS.
+    pub fn covariance(&self) -> &StateCovariance<GCRS> {
+        &self.cov
+    }
+
+    /// Time update: replace the mean with `state_pred` and propagate covariance
+    /// as `P ← Φ P Φᵀ + Q`.
+    ///
+    /// `phi` is the 6×6 state-transition matrix in row-major order.
+    /// `q` is an optional process-noise covariance added after the propagation.
+    pub fn predict(
+        &mut self,
+        state_pred: OrbitState,
+        phi: [[f64; 6]; 6],
+        q: Option<StateCovariance<GCRS>>,
+    ) {
+        let phi_m = flat6x6(&phi);
+        let p_m = flat6x6(&self.cov.to_row_major());
+        // P ← Φ P Φᵀ (+ Q)
+        let phi_p = &phi_m * &p_m;
+        let mut p_next = &phi_p * phi_m.transpose();
+        if let Some(q_cov) = q {
+            let q_m = flat6x6(&q_cov.to_row_major());
+            p_next = p_next + q_m;
         }
-        self.x = x_pred;
-        self.p = p_next;
+        self.state = state_pred;
+        self.cov = mat6x6_to_cov(&p_next);
     }
 
     /// Scalar measurement update.
     ///
-    /// `h_sparse` is the row of partial derivatives ∂y/∂x as
-    /// `(state_index, value)` pairs (zeros may be omitted).
-    /// `r` is the measurement variance σ². Returns the innovation record.
+    /// `h` is the 6-element row of partial derivatives ∂y/∂x.
+    /// `r` is the measurement variance σ².
+    /// Returns the innovation record or an error if the innovation variance
+    /// is not strictly positive.
     pub fn update_scalar(
         &mut self,
+        h: [f64; 6],
         innovation: f64,
-        h_sparse: &[(usize, f64)],
         r: f64,
     ) -> Result<InnovationRecord, EkfError> {
-        let n = self.n;
-        let mut h = vec![0.0; n];
-        for &(i, v) in h_sparse {
-            if i < n {
-                h[i] = v;
-            }
-        }
+        let p_m = flat6x6(&self.cov.to_row_major());
+        let h_col: Mat<f64> = Mat::from_fn(6, 1, |i, _| h[i]);
+
         // P h
-        let mut ph = vec![0.0; n];
-        for i in 0..n {
-            let mut s = 0.0;
-            for j in 0..n {
-                s += self.p[i * n + j] * h[j];
-            }
-            ph[i] = s;
-        }
-        // S = h^T P h + R
+        let ph = &p_m * &h_col;
+
+        // S = hᵀ P h + R
         let mut s = r;
-        for j in 0..n {
-            s += h[j] * ph[j];
+        for i in 0..6 {
+            s += h[i] * ph[(i, 0)];
         }
         if s.partial_cmp(&0.0) != Some(std::cmp::Ordering::Greater) {
             return Err(EkfError::Singular(s));
         }
+
         // K = P h / S
-        let k: Vec<f64> = ph.iter().map(|v| v / s).collect();
+        let k: Mat<f64> = Mat::from_fn(6, 1, |i, _| ph[(i, 0)] / s);
+
         // x ← x + K * innovation
-        for i in 0..n {
-            self.x[i] += k[i] * innovation;
-        }
-        // P ← (I − K h^T) P (Joseph form for symmetry preservation)
-        // Simpler P ← P − K (h^T P) is fine for an MVP.
-        let mut htp = vec![0.0; n];
-        for j in 0..n {
-            let mut acc = 0.0;
-            for i in 0..n {
-                acc += h[i] * self.p[i * n + j];
-            }
-            htp[j] = acc;
-        }
-        for i in 0..n {
-            for j in 0..n {
-                self.p[i * n + j] -= k[i] * htp[j];
-            }
-        }
-        // Symmetrize.
-        for i in 0..n {
-            for j in (i + 1)..n {
-                let v = 0.5 * (self.p[i * n + j] + self.p[j * n + i]);
-                self.p[i * n + j] = v;
-                self.p[j * n + i] = v;
+        let x = orbit_state_to_vec(&self.state);
+        let x_new: [f64; 6] = std::array::from_fn(|i| x[i] + k[(i, 0)] * innovation);
+        self.state = vec6_to_orbit_state(x_new, self.state.epoch_tt);
+
+        // P ← P − K (hᵀ P)  then symmetrise
+        let htp: Mat<f64> = Mat::from_fn(1, 6, |_, j| {
+            (0..6).map(|i| h[i] * p_m[(i, j)]).sum::<f64>()
+        });
+        let mut p_next = p_m - &k * &htp;
+        // Symmetrise
+        for i in 0..6 {
+            for j in (i + 1)..6 {
+                let v = 0.5 * (p_next[(i, j)] + p_next[(j, i)]);
+                p_next[(i, j)] = v;
+                p_next[(j, i)] = v;
             }
         }
+        self.cov = mat6x6_to_cov(&p_next);
         let nis = innovation * innovation / s;
         Ok(InnovationRecord {
             innovation,
@@ -176,95 +177,101 @@ impl Ekf {
             nis,
         })
     }
-
-    /// Return the orbit state covariance as a typed [`StateCovariance<GCRS>`]
-    /// when `n == 6` (position + velocity state).
-    ///
-    /// Returns `None` for any other state dimension.
-    pub fn state_covariance(&self) -> Option<StateCovariance<GCRS>> {
-        if self.n != 6 {
-            return None;
-        }
-        let n = self.n;
-        let p = &self.p;
-        let rr = SymmetricFrameMatrix3::<GCRS>::from_upper([
-            [p[0 * n + 0], p[0 * n + 1], p[0 * n + 2]],
-            [p[1 * n + 0], p[1 * n + 1], p[1 * n + 2]],
-            [p[2 * n + 0], p[2 * n + 1], p[2 * n + 2]],
-        ]);
-        let rv = FrameMatrix3::<GCRS>::from_array([
-            [p[0 * n + 3], p[0 * n + 4], p[0 * n + 5]],
-            [p[1 * n + 3], p[1 * n + 4], p[1 * n + 5]],
-            [p[2 * n + 3], p[2 * n + 4], p[2 * n + 5]],
-        ]);
-        let vv = SymmetricFrameMatrix3::<GCRS>::from_upper([
-            [p[3 * n + 3], p[3 * n + 4], p[3 * n + 5]],
-            [p[4 * n + 3], p[4 * n + 4], p[4 * n + 5]],
-            [p[5 * n + 3], p[5 * n + 4], p[5 * n + 5]],
-        ]);
-        Some(StateCovariance::<GCRS>::from_blocks(rr, rv, vv))
-    }
-
-    /// Return a typed orbit state at a given epoch when `n == 6`.
-    ///
-    /// The state vector is assumed to contain `[x, y, z, vx, vy, vz]`
-    /// in kilometres and km/s respectively.
-    ///
-    /// Returns `None` for any other state dimension.
-    pub fn orbit_state(&self, epoch: JulianDate) -> Option<OrbitState> {
-        if self.n != 6 {
-            return None;
-        }
-        let pos = Position::<GCRS>::new(self.x[0], self.x[1], self.x[2]);
-        let vel = Velocity::<GCRS>::new(self.x[3], self.x[4], self.x[5]);
-        Some(OrbitState::new(epoch, pos, vel))
-    }
 }
 
-fn matmul(a: &[f64], b: &[f64], rows_a: usize, cols_a: usize, cols_b: usize) -> Vec<f64> {
-    let mut out = vec![0.0; rows_a * cols_b];
-    for i in 0..rows_a {
-        for k in 0..cols_a {
-            let aik = a[i * cols_a + k];
-            for j in 0..cols_b {
-                out[i * cols_b + j] += aik * b[k * cols_b + j];
-            }
-        }
-    }
-    out
+/// Build a 6×6 faer matrix from a row-major `[[f64;6];6]` array.
+fn flat6x6(a: &[[f64; 6]; 6]) -> Mat<f64> {
+    Mat::from_fn(6, 6, |i, j| a[i][j])
 }
 
-fn transpose(m: &[f64], n: usize) -> Vec<f64> {
-    let mut t = vec![0.0; n * n];
-    for i in 0..n {
-        for j in 0..n {
-            t[j * n + i] = m[i * n + j];
-        }
-    }
-    t
+/// Pack a 6×6 faer matrix back into a typed [`StateCovariance<GCRS>`].
+fn mat6x6_to_cov(m: &Mat<f64>) -> StateCovariance<GCRS> {
+    let rr = SymmetricFrameMatrix3::<GCRS>::from_upper([
+        [m[(0, 0)], m[(0, 1)], m[(0, 2)]],
+        [m[(1, 0)], m[(1, 1)], m[(1, 2)]],
+        [m[(2, 0)], m[(2, 1)], m[(2, 2)]],
+    ]);
+    let rv = FrameMatrix3::<GCRS>::from_array([
+        [m[(0, 3)], m[(0, 4)], m[(0, 5)]],
+        [m[(1, 3)], m[(1, 4)], m[(1, 5)]],
+        [m[(2, 3)], m[(2, 4)], m[(2, 5)]],
+    ]);
+    let vv = SymmetricFrameMatrix3::<GCRS>::from_upper([
+        [m[(3, 3)], m[(3, 4)], m[(3, 5)]],
+        [m[(4, 3)], m[(4, 4)], m[(4, 5)]],
+        [m[(5, 3)], m[(5, 4)], m[(5, 5)]],
+    ]);
+    StateCovariance::<GCRS>::from_blocks(rr, rv, vv)
+}
+
+fn orbit_state_to_vec(s: &OrbitState) -> [f64; 6] {
+    [
+        s.position.x().value(),
+        s.position.y().value(),
+        s.position.z().value(),
+        s.velocity.x().value(),
+        s.velocity.y().value(),
+        s.velocity.z().value(),
+    ]
+}
+
+fn vec6_to_orbit_state(v: [f64; 6], epoch: JulianDate) -> OrbitState {
+    let pos = Position::<GCRS>::new(v[0], v[1], v[2]);
+    let vel = Velocity::<GCRS>::new(v[3], v[4], v[5]);
+    OrbitState::new(epoch, pos, vel)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use siderust::time::JulianDate;
 
-    #[test]
-    fn scalar_update_reduces_variance() {
-        let mut f = Ekf::new_diag(vec![0.0], &[1.0]);
-        let rec = f.update_scalar(0.5, &[(0, 1.0)], 0.01).unwrap();
-        assert!(f.p[0] < 1.0);
-        assert!(rec.nis > 0.0);
-        // Posterior mean should move toward 0.5.
-        assert!(f.x[0] > 0.0 && f.x[0] < 0.5);
+    fn make_orbit_state() -> OrbitState {
+        let epoch = JulianDate::new(2_451_545.0);
+        let pos = Position::<GCRS>::new(7000.0, 0.0, 0.0);
+        let vel = Velocity::<GCRS>::new(0.0, 7.5, 0.0);
+        OrbitState::new(epoch, pos, vel)
     }
 
     #[test]
-    fn predict_inflates_with_q() {
-        let mut f = Ekf::new_diag(vec![1.0, 2.0], &[0.1, 0.1]);
-        let identity = vec![1.0, 0.0, 0.0, 1.0];
-        let q = vec![0.04, 0.0, 0.0, 0.04];
-        f.predict(vec![1.0, 2.0], &identity, Some(&q));
-        assert!(f.p[0] > 0.01);
-        assert!(f.p[3] > 0.01);
+    fn orbit_ekf_update_reduces_variance() {
+        let s0 = make_orbit_state();
+        let mut f =
+            OrbitEkf::from_stddevs(s0, [1.0, 1.0, 1.0], [1e-3, 1e-3, 1e-3]);
+        let p_before = f.covariance().to_row_major();
+        // Observe x-component directly (h = [1,0,0,0,0,0]).
+        let rec = f.update_scalar([1.0, 0.0, 0.0, 0.0, 0.0, 0.0], 0.5, 0.01).unwrap();
+        let p_after = f.covariance().to_row_major();
+        assert!(p_after[0][0] < p_before[0][0], "pos variance must shrink");
+        assert!(rec.nis > 0.0);
+        // State should move toward measurement.
+        assert!(f.state().position.x().value() > 7000.0);
+    }
+
+    #[test]
+    fn orbit_ekf_predict_propagates_covariance() {
+        let s0 = make_orbit_state();
+        let mut f =
+            OrbitEkf::from_stddevs(s0.clone(), [0.1, 0.1, 0.1], [1e-4, 1e-4, 1e-4]);
+        let p_before = f.covariance().to_row_major();
+        // Identity STM: covariance stays the same without Q.
+        let mut phi = [[0.0f64; 6]; 6];
+        for i in 0..6 {
+            phi[i][i] = 1.0;
+        }
+        f.predict(s0.clone(), phi, None);
+        let p_after_no_q = f.covariance().to_row_major();
+        for i in 0..6 {
+            assert!(
+                (p_after_no_q[i][i] - p_before[i][i]).abs() < 1e-12,
+                "identity phi should leave diagonal unchanged"
+            );
+        }
+        // Add process noise: diagonal must inflate.
+        let q = StateCovariance::<GCRS>::from_stddevs([0.01, 0.01, 0.01], [1e-5, 1e-5, 1e-5]);
+        f.predict(s0, phi, Some(q));
+        let p_inflated = f.covariance().to_row_major();
+        assert!(p_inflated[0][0] > p_after_no_q[0][0], "Q must inflate pos variance");
+        assert!(p_inflated[3][3] > p_after_no_q[3][3], "Q must inflate vel variance");
     }
 }

@@ -29,9 +29,10 @@
 //!   Specification.
 use siderust::astro::dynamics::OrbitState;
 use siderust_pod_io::oem::{write_oem, OemMetadata};
+use qtty::unit::Kilometer;
+use siderust::coordinates::frames::GCRS;
 use siderust_pod_io::sp3::{write_sp3, Sp3Epoch, Sp3Position, Sp3Record};
 use siderust_pod_io::PodIoError;
-use qtty::length::Kilometers;
 use qtty::time::Microseconds;
 use qtty::Day;
 use std::io::Write;
@@ -73,9 +74,11 @@ pub fn write_sp3_from_states<W: Write>(
                 time: epoch_utc,
                 positions: vec![Sp3Position {
                     sat_id: sat_id.to_string(),
-                    x: Kilometers::new(s.position.x().value()),
-                    y: Kilometers::new(s.position.y().value()),
-                    z: Kilometers::new(s.position.z().value()),
+                    position: siderust::astro::dynamics::Position::<GCRS, Kilometer>::new(
+                        s.position.x().value(),
+                        s.position.y().value(),
+                        s.position.z().value(),
+                    ),
                     clock: Microseconds::new(999_999.999_999),
                 }],
             }

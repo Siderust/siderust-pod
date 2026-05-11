@@ -16,7 +16,7 @@
 //!
 //! ## Technical scope
 //!
-//! The crate re-exports `gauss_newton`, `NormalEquations`, `Ekf`, and the
+//! The crate re-exports `gauss_newton`, `NormalEquations`, `OrbitEkf`, and the
 //! parameter descriptors that define estimator-state ordering. Public APIs
 //! mainly consume scalar residuals, Jacobians, and covariance-like matrices
 //! in solver space, while typed orbital and temporal quantities remain
@@ -42,5 +42,5 @@ pub mod wls;
 
 pub use nonlinear::{gauss_newton, NonlinearError, NonlinearOptions, NonlinearReport};
 pub use parameter::{Parameter, ParameterKind};
-pub use sequential::{Ekf, EkfError, InnovationRecord};
+pub use sequential::{EkfError, InnovationRecord, OrbitEkf};
 pub use wls::{NormalEquations, WlsResult, WlsSolverError};
