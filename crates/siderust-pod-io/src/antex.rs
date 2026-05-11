@@ -16,7 +16,9 @@
 //!
 //! The main entry point is `read_antex`, which returns a nested catalog
 //! keyed by antenna and frequency identifiers. Offsets are exposed through
-//! `Pco` records in the millimetre convention carried by the file.
+//! `Pco` displacement vectors in the millimetre convention carried by the
+//! file. ANTEX orders the components as north, east, up; this module maps that
+//! ordering to `x`, `y`, `z`.
 //!
 //! This module only parses the exchange format; it does not decide how
 //! those offsets are applied inside any specific observation model.
@@ -28,20 +30,33 @@
 //!   versus precise ephemerides for GNSS orbit determination. GPS
 //!   Solutions, 19(2), 321-330.
 use crate::PodIoError;
-use qtty::length::Millimeters;
+use affn::cartesian::Displacement;
+use affn::frames::ReferenceFrame;
+use qtty::length::Millimeter;
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Read};
 
-/// PCO entry for one antenna and one frequency.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Pco {
-    /// North offset.
-    pub north: Millimeters,
-    /// East offset.
-    pub east: Millimeters,
-    /// Up offset.
-    pub up: Millimeters,
+/// ANTEX local north-east-up component frame.
+///
+/// Component mapping for Cartesian vectors in this frame is:
+///
+/// - `x`: north
+/// - `y`: east
+/// - `z`: up
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub struct AntexNeu;
+
+impl ReferenceFrame for AntexNeu {
+    fn frame_name() -> &'static str {
+        "ANTEX NEU"
+    }
 }
+
+/// PCO entry for one antenna and one frequency.
+///
+/// ANTEX stores phase-centre offsets as north/east/up millimetres. This type
+/// is a free displacement vector with `x/y/z = north/east/up`.
+pub type Pco = Displacement<AntexNeu, Millimeter>;
 
 /// Per-antenna PCO data, keyed by frequency identifier (e.g. "G01" for GPS L1).
 pub type AntennaPco = HashMap<String, Pco>;
@@ -80,14 +95,7 @@ pub fn read_antex<R: Read>(rdr: R) -> Result<AntexCatalog, PodIoError> {
                         .filter_map(|s| s.parse().ok())
                         .collect();
                     if parts.len() == 3 {
-                        current_pcos.insert(
-                            freq.clone(),
-                            Pco {
-                                north: Millimeters::new(parts[0]),
-                                east: Millimeters::new(parts[1]),
-                                up: Millimeters::new(parts[2]),
-                            },
-                        );
+                        current_pcos.insert(freq.clone(), Pco::new(parts[0], parts[1], parts[2]));
                     }
                 }
             }
@@ -126,8 +134,8 @@ TEST-ANTENNA   ABC                                          TYPE / SERIAL NO
         let cat = read_antex(SAMPLE.as_bytes()).unwrap();
         let ant = &cat["TEST-ANTENNA   ABC"];
         let g01 = ant["G01"];
-        assert!((g01.up.value() - 90.0).abs() < 1e-9);
+        assert!((g01.z().value() - 90.0).abs() < 1e-9);
         let g02 = ant["G02"];
-        assert!((g02.east.value() + 0.3).abs() < 1e-9);
+        assert!((g02.y().value() + 0.3).abs() < 1e-9);
     }
 }

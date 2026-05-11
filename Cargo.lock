@@ -283,6 +283,13 @@ checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
 [[package]]
 name = "cheby"
 version = "0.2.0"
+dependencies = [
+ "qtty",
+]
+
+[[package]]
+name = "cheby"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "409383f88b63b5c7267b52adbef8fd3a216beb265a14fcbc775f4fe2ec85624a"
 dependencies = [
@@ -1718,7 +1725,7 @@ dependencies = [
  "affn 0.7.0",
  "anyhow",
  "approx",
- "cheby",
+ "cheby 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono",
  "paste",
  "qtty",
@@ -1738,6 +1745,37 @@ dependencies = [
  "env_logger",
  "log",
  "siderust-pod-service",
+]
+
+[[package]]
+name = "siderust-pod-core"
+version = "0.0.0"
+dependencies = [
+ "affn 0.7.0",
+ "approx",
+ "cheby 0.2.0",
+ "hex",
+ "qtty",
+ "serde",
+ "serde_json",
+ "sha2 0.10.9",
+ "siderust",
+ "tempoch 0.4.3",
+ "thiserror",
+]
+
+[[package]]
+name = "siderust-pod-dynamics"
+version = "0.0.0"
+dependencies = [
+ "affn 0.7.0",
+ "approx",
+ "cheby 0.2.0",
+ "qtty",
+ "siderust",
+ "siderust-pod-core",
+ "tempoch 0.4.3",
+ "thiserror",
 ]
 
 [[package]]

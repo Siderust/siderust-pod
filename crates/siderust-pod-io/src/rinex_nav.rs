@@ -194,9 +194,9 @@ pub fn parse_rinex_nav(text: &str) -> Result<RinexNavFile, PodIoError> {
                             .unwrap()
                             .and_hms_opt(0, 0, 0)
                             .unwrap();
-                        Time::<UTC>::try_from_chrono(
-                            DateTime::from_naive_utc_and_offset(naive, ChronoUtc),
-                        )
+                        Time::<UTC>::try_from_chrono(DateTime::from_naive_utc_and_offset(
+                            naive, ChronoUtc,
+                        ))
                         .unwrap()
                     })
             },

@@ -1,0 +1,28 @@
+[package]
+name = "siderust-pod-core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Core POD domain primitives: error taxonomy, RunManifest, DatasetRef, ParameterKind/ParameterCovariance, provider trait re-exports."
+
+[dependencies]
+qtty.workspace = true
+tempoch.workspace = true
+affn.workspace = true
+cheby.workspace = true
+siderust.workspace = true
+serde = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
+sha2.workspace = true
+hex.workspace = true
+thiserror.workspace = true
+
+[features]
+default = ["serde"]
+serde = ["dep:serde", "dep:serde_json"]
+
+[dev-dependencies]
+approx.workspace = true

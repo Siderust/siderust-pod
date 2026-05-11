@@ -30,16 +30,13 @@
 //! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
 //!   Determination. Elsevier Academic Press.
 use crate::model::{MeasurementModel, Partials, Prediction};
+use qtty::velocity::C;
+use qtty::unit::{Kilometer, Second};
+use qtty::Per;
+use siderust::astro::dynamics::forces::OMEGA_EARTH_RAD_S;
 use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 use siderust::astro::dynamics::state::VelocityUnit;
 use siderust::coordinates::frames::GCRS;
-
-/// Speed of light, m/s.
-pub const C_M_S: f64 = 299_792_458.0;
-/// Speed of light, km/s.
-pub const C_KM_S: f64 = C_M_S / 1_000.0;
-/// Earth rotation rate, rad/s.
-pub const OMEGA_EARTH_RAD_S: f64 = 7.292_115_146_706_979e-5;
 
 /// Pseudorange observation between a LEO receiver and a GPS satellite.
 #[derive(Debug, Clone, Copy)]
@@ -90,17 +87,18 @@ pub struct GnssCarrierModel {
 }
 
 fn sagnac_km(gps_pos_km: Position<GCRS>, rx_pos_km: Position<GCRS>) -> f64 {
+    let c_km_s = C.to::<Per<Kilometer, Second>>().value();
     OMEGA_EARTH_RAD_S
         * (gps_pos_km.x().value() * rx_pos_km.y().value()
             - gps_pos_km.y().value() * rx_pos_km.x().value())
-        / C_KM_S
+        / c_km_s
 }
 
 fn relativistic_gps_clock_m(pos_km: Position<GCRS>, vel_km_s: Velocity<GCRS, VelocityUnit>) -> f64 {
     let dot = pos_km.x().value() * vel_km_s.x().value()
         + pos_km.y().value() * vel_km_s.y().value()
         + pos_km.z().value() * vel_km_s.z().value();
-    -2.0 * dot * 1_000.0 / C_M_S
+    -2.0 * dot * 1_000.0 / C.value()
 }
 
 /// Predict a pseudorange in metres given the current LEO state and clock bias.

@@ -27,7 +27,7 @@ forbidden() {
 fail=0
 
 # pod-core MUST NOT depend on any other pod-* crate
-for d in dynamics io observations estimation qc products service cli; do
+for d in dynamics io observations estimation qc products service cli rest; do
   forbidden siderust-pod-core "siderust-pod-$d" || fail=1
 done
 
@@ -50,6 +50,19 @@ forbidden siderust-pod-qc siderust-pod-estimation || fail=1
 # pod-cli MUST NOT depend on the compute crates directly
 for d in core dynamics io observations estimation qc products; do
   forbidden siderust-pod-cli "siderust-pod-$d" || fail=1
+done
+
+# Reusable foundational crates MUST NOT depend on any siderust-pod-* crate.
+# Enforced for the canonical foundational crates that may be present as
+# sibling checkouts under ../<crate>.
+for crate_dir in qtty tempoch affn cheby siderust; do
+  toml="../$crate_dir/Cargo.toml"
+  if [[ -f "$toml" ]]; then
+    if grep -E "^\s*siderust-pod-[a-z]+\b" "$toml" >/dev/null; then
+      echo "FORBIDDEN edge: foundational crate $crate_dir depends on a siderust-pod-* crate ($toml)"
+      fail=1
+    fi
+  fi
 done
 
 if [[ "$fail" == "1" ]]; then

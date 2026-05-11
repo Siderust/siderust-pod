@@ -44,8 +44,18 @@ fn eop_first_record_fields() {
     assert_approx(r0.eop.dut1.value(), 0.012_345, 1e-9, "record[0].dut1 [s]");
     assert_approx(r0.eop.lod.value(), 0.001_234, 1e-9, "record[0].lod [s]");
     // dpsi/deps in C04 are in arcsec; stored as dx/dy in mas (×1000).
-    assert_approx(r0.eop.dx.value(), 0.000_123 * 1000.0, 1e-6, "record[0].dx [mas]");
-    assert_approx(r0.eop.dy.value(), 0.000_234 * 1000.0, 1e-6, "record[0].dy [mas]");
+    assert_approx(
+        r0.eop.dx.value(),
+        0.000_123 * 1000.0,
+        1e-6,
+        "record[0].dx [mas]",
+    );
+    assert_approx(
+        r0.eop.dy.value(),
+        0.000_234 * 1000.0,
+        1e-6,
+        "record[0].dy [mas]",
+    );
 }
 
 #[test]
@@ -62,12 +72,7 @@ fn eop_interpolate_exact_node() {
     let recs = load();
     let result = interpolate(&recs, mjd(60_310.0)).expect("interpolate should succeed");
     assert_approx(result.eop.xp.value(), 0.123_456, 1e-9, "exact node xp");
-    assert_approx(
-        result.eop.dut1.value(),
-        0.012_345,
-        1e-9,
-        "exact node dut1",
-    );
+    assert_approx(result.eop.dut1.value(), 0.012_345, 1e-9, "exact node dut1");
 }
 
 #[test]
@@ -78,12 +83,7 @@ fn eop_interpolate_midpoint() {
     let expected_x = (0.123_456 + 0.124_000) / 2.0;
     assert_approx(result.eop.xp.value(), expected_x, 1e-9, "midpoint xp");
     let expected_ut1 = (0.012_345 + 0.012_200) / 2.0;
-    assert_approx(
-        result.eop.dut1.value(),
-        expected_ut1,
-        1e-9,
-        "midpoint dut1",
-    );
+    assert_approx(result.eop.dut1.value(), expected_ut1, 1e-9, "midpoint dut1");
 }
 
 #[test]
@@ -103,7 +103,12 @@ fn eop_interpolate_clamps_after_last() {
     let recs = load();
     let last = recs[recs.len() - 1];
     let result = interpolate(&recs, mjd(70_000.0)).expect("clamp after last");
-    assert_approx(result.eop.xp.value(), last.eop.xp.value(), 1e-12, "clamped to last");
+    assert_approx(
+        result.eop.xp.value(),
+        last.eop.xp.value(),
+        1e-12,
+        "clamped to last",
+    );
 }
 
 #[test]

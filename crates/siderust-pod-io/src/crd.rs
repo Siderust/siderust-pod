@@ -116,8 +116,8 @@ pub fn parse_crd(text: &str) -> Result<CrdFile, PodIoError> {
                 let year: i32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
                 let month: u32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
                 let day: u32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
-                if let Some(naive) = NaiveDate::from_ymd_opt(year, month, day)
-                    .and_then(|d| d.and_hms_opt(0, 0, 0))
+                if let Some(naive) =
+                    NaiveDate::from_ymd_opt(year, month, day).and_then(|d| d.and_hms_opt(0, 0, 0))
                 {
                     let dt = DateTime::from_naive_utc_and_offset(naive, ChronoUtc);
                     out.session_date = Time::<UTC>::try_from_chrono(dt).ok();

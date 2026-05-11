@@ -9,6 +9,34 @@ crate (independent versioning).
 
 ### Added
 
+* Reserved sibling reusable crates under `rust/`:
+  `siderust-dynamics` (variational/STM, force-model composition,
+  thrust-arc physics), `siderust-sgp4` (SGP4 propagator producing typed
+  TEME states), `siderust-tle` (TLE/3LE/OMM parser),
+  `siderust-spice` (DAF/SPK reader extending `siderust::data::{daf,spk}`
+  to Type 3/9/13), and `siderust-lambert` (0/N-revolution Lambert
+  solver). Each crate ships with a README defining ownership boundaries
+  and a `CHANGELOG.md`. Implementation lands in plan Phases 3–5; the
+  scaffolds today only declare crate identity, dependencies on `qtty` /
+  `tempoch` / `affn[astro]` / `cheby` / `siderust`, an `AGPL-3.0-or-later`
+  license, and `#![forbid(unsafe_code)]`. None of these crates depend on
+  `siderust-pod-*`.
+* `siderust-pod-core`: new crate scaffolding the POD domain primitives
+  referenced by the existing design plan (`error::PodError`,
+  `dataset::DatasetRef`, `manifest::RunManifest` with deterministic JSON,
+  `parameter::{ParameterKind, Parameter, ParameterOrdering}`,
+  `covariance::ParameterCovariance` with symmetry/diagonal validators,
+  `providers::{EphemerisProvider, EarthOrientationProvider,
+  FrameTransformProvider}` traits). Closes the long-standing gap where
+  the workspace plan and changelog referenced this crate but it did not
+  exist on disk.
+* `siderust-pod-dynamics`: new crate scaffolding the POD-specific
+  dynamics composition layer (`force_config::ForceModelConfig`,
+  `thrust_arc::ThrustArcConfig` emitting estimable parameters,
+  `process_noise::ProcessNoiseConfig`). Numerical propagation and
+  analytic STM remain in `siderust` (today) and the future reusable
+  `siderust-dynamics` crate; this layer only owns POD-specific
+  composition.
 * `siderust-pod-dynamics`: cannonball solar-radiation-pressure force
   (`forces::CannonballSrp`) and exponential-density atmospheric drag
   (`forces::ExponentialDrag`). (audit fixes A-09, A-10)
@@ -33,6 +61,10 @@ crate (independent versioning).
 
 ### Documentation
 
+* `siderust-pod/docs/architecture/dependency-rules.md`: extended forbidden
+  edges to include reusable foundational crates (`qtty`, `tempoch`,
+  `affn`, `cheby`, `siderust`) which must not depend on any
+  `siderust-pod-*` crate. Enforced by `scripts/check_dep_graph.sh`.
 * `plan.md` §13 records the post-M7 technical audit (six 🔴 critical,
   nine 🟠 high, ten 🟡 medium, five 🟢 low findings) and the M8–M12
   remediation roadmap.

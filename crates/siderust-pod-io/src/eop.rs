@@ -132,16 +132,10 @@ pub fn interpolate(records: &[EopRecord], mjd: ModifiedJulianDate<UTC>) -> Optio
         eop: EopValues {
             xp: Arcseconds::new(a.eop.xp.value() + f * (b.eop.xp.value() - a.eop.xp.value())),
             yp: Arcseconds::new(a.eop.yp.value() + f * (b.eop.yp.value() - a.eop.yp.value())),
-            dut1: Seconds::new(
-                a.eop.dut1.value() + f * (b.eop.dut1.value() - a.eop.dut1.value()),
-            ),
+            dut1: Seconds::new(a.eop.dut1.value() + f * (b.eop.dut1.value() - a.eop.dut1.value())),
             lod: Seconds::new(a.eop.lod.value() + f * (b.eop.lod.value() - a.eop.lod.value())),
-            dx: MilliArcseconds::new(
-                a.eop.dx.value() + f * (b.eop.dx.value() - a.eop.dx.value()),
-            ),
-            dy: MilliArcseconds::new(
-                a.eop.dy.value() + f * (b.eop.dy.value() - a.eop.dy.value()),
-            ),
+            dx: MilliArcseconds::new(a.eop.dx.value() + f * (b.eop.dx.value() - a.eop.dx.value())),
+            dy: MilliArcseconds::new(a.eop.dy.value() + f * (b.eop.dy.value() - a.eop.dy.value())),
         },
     })
 }

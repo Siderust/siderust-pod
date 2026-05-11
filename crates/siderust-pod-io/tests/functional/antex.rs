@@ -41,10 +41,10 @@ fn antex_block_iia_g01_pco_values() {
     let cat = load();
     let ant = cat.get("BLOCK IIA           001").expect("BLOCK IIA");
     let pco = ant.get("G01").expect("G01 frequency block in BLOCK IIA");
-    // Values are in millimetres as stored in the file.
-    assert_approx(pco.north.value(), 279.00, 1e-6, "BLOCK IIA G01 north [mm]");
-    assert_approx(pco.east.value(), -2.00, 1e-6, "BLOCK IIA G01 east [mm]");
-    assert_approx(pco.up.value(), 1_023.40, 1e-6, "BLOCK IIA G01 up [mm]");
+    // Values are in millimetres as stored in the file; ANTEX NEU maps to x/y/z.
+    assert_approx(pco.x().value(), 279.00, 1e-6, "BLOCK IIA G01 north [mm]");
+    assert_approx(pco.y().value(), -2.00, 1e-6, "BLOCK IIA G01 east [mm]");
+    assert_approx(pco.z().value(), 1_023.40, 1e-6, "BLOCK IIA G01 up [mm]");
 }
 
 #[test]
@@ -52,9 +52,9 @@ fn antex_block_iia_g02_pco_values() {
     let cat = load();
     let ant = cat.get("BLOCK IIA           001").expect("BLOCK IIA");
     let pco = ant.get("G02").expect("G02 frequency block in BLOCK IIA");
-    assert_approx(pco.north.value(), 279.00, 1e-6, "BLOCK IIA G02 north [mm]");
-    assert_approx(pco.east.value(), -2.00, 1e-6, "BLOCK IIA G02 east [mm]");
-    assert_approx(pco.up.value(), 856.10, 1e-6, "BLOCK IIA G02 up [mm]");
+    assert_approx(pco.x().value(), 279.00, 1e-6, "BLOCK IIA G02 north [mm]");
+    assert_approx(pco.y().value(), -2.00, 1e-6, "BLOCK IIA G02 east [mm]");
+    assert_approx(pco.z().value(), 856.10, 1e-6, "BLOCK IIA G02 up [mm]");
 }
 
 #[test]
@@ -62,9 +62,9 @@ fn antex_trm_receiver_g01_pco_values() {
     let cat = load();
     let ant = cat.get("TRM59800.00     NONE").expect("TRM59800.00");
     let pco = ant.get("G01").expect("G01 block in TRM59800.00");
-    assert_approx(pco.north.value(), 0.00, 1e-6, "TRM G01 north [mm]");
-    assert_approx(pco.east.value(), 0.00, 1e-6, "TRM G01 east [mm]");
-    assert_approx(pco.up.value(), 68.90, 1e-6, "TRM G01 up [mm]");
+    assert_approx(pco.x().value(), 0.00, 1e-6, "TRM G01 north [mm]");
+    assert_approx(pco.y().value(), 0.00, 1e-6, "TRM G01 east [mm]");
+    assert_approx(pco.z().value(), 68.90, 1e-6, "TRM G01 up [mm]");
 }
 
 #[test]
@@ -87,9 +87,9 @@ fn antex_unit_values_are_millimetres() {
     let cat = load();
     let pco = cat["BLOCK IIA           001"]["G01"];
     assert!(
-        pco.up.value() > 100.0,
+        pco.z().value() > 100.0,
         "up PCO {:.3} mm looks like it was converted to metres",
-        pco.up.value()
+        pco.z().value()
     );
 }
 

@@ -74,12 +74,14 @@ Supported subset:
 
 Exported types:
 
-- `Pco`
-  Purpose: one phase-centre offset triple for one antenna at one frequency.
-  Fields:
-  - `n_mm`: north offset in millimetres.
-  - `e_mm`: east offset in millimetres.
-  - `u_mm`: up offset in millimetres.
+- `AntexNeu`
+  Purpose: local ANTEX north-east-up frame marker.
+- `Pco = affn::cartesian::Displacement<AntexNeu, qtty::length::Millimeter>`
+  Purpose: one phase-centre offset displacement for one antenna at one frequency.
+  Components:
+  - `x()`: north offset in millimetres.
+  - `y()`: east offset in millimetres.
+  - `z()`: up offset in millimetres.
 - `AntennaPco = HashMap<String, Pco>`
   Purpose: per-antenna frequency map keyed by frequency identifier such as `G01`.
 - `AntexCatalog = HashMap<String, AntennaPco>`

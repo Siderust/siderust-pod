@@ -1,6 +1,8 @@
 [workspace]
 resolver = "2"
 members = [
+    "crates/siderust-pod-core",
+    "crates/siderust-pod-dynamics",
     "crates/siderust-pod-io",
     "crates/siderust-pod-observations",
     "crates/siderust-pod-estimation",
@@ -32,6 +34,8 @@ cheby    = { version = "0.2", path = "../cheby" }
 siderust = { version = "0.7", path = "../siderust" }
 
 # POD-internal crates referenced from siblings.
+siderust-pod-core         = { path = "crates/siderust-pod-core",         version = "0.0.0" }
+siderust-pod-dynamics     = { path = "crates/siderust-pod-dynamics",     version = "0.0.0" }
 siderust-pod-io           = { path = "crates/siderust-pod-io",           version = "0.0.0" }
 siderust-pod-observations = { path = "crates/siderust-pod-observations", version = "0.0.0" }
 siderust-pod-estimation   = { path = "crates/siderust-pod-estimation",   version = "0.0.0" }
