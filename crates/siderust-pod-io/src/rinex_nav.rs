@@ -28,11 +28,16 @@
 //! - IS-GPS-200. (current revision). Navstar GPS Space Segment / Navigation
 //!   User Interfaces.
 use crate::PodIoError;
+use qtty::angular::Radians;
+use qtty::angular_rate::AngularRate;
+use qtty::length::Meters;
+use qtty::time::Seconds;
+use qtty::unit::{Radian, Second};
 use std::fs;
 use std::path::Path;
 
 /// One GPS broadcast navigation record (subset).
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct GpsNavRecord {
     /// PRN identifier (e.g. `G01` → 1).
     pub prn: u8,
@@ -47,47 +52,81 @@ pub struct GpsNavRecord {
     /// TOC minute.
     pub minute: u32,
     /// TOC seconds.
-    pub second: f64,
-    /// SV clock bias (s).
-    pub af0: f64,
-    /// SV clock drift (s/s).
+    pub second: Seconds,
+    /// SV clock bias.
+    pub af0: Seconds,
+    /// SV clock drift (s/s — dimensionless rate; kept as scalar).
     pub af1: f64,
-    /// SV clock drift rate (s/s²).
+    /// SV clock drift rate (s/s² — kept as scalar).
     pub af2: f64,
-    /// IODE.
+    /// IODE (dimensionless index).
     pub iode: f64,
-    /// Crs (m).
-    pub crs: f64,
-    /// Δn (rad/s).
-    pub delta_n: f64,
-    /// M0 (rad).
-    pub m0: f64,
-    /// Cuc (rad).
-    pub cuc: f64,
-    /// Eccentricity.
+    /// Crs amplitude correction.
+    pub crs: Meters,
+    /// Δn — mean motion correction.
+    pub delta_n: AngularRate<Radian, Second>,
+    /// M0 — mean anomaly at reference time.
+    pub m0: Radians,
+    /// Cuc — argument-of-latitude correction (cosine).
+    pub cuc: Radians,
+    /// Eccentricity (dimensionless).
     pub e: f64,
-    /// Cus (rad).
-    pub cus: f64,
-    /// √a (m^½).
+    /// Cus — argument-of-latitude correction (sine).
+    pub cus: Radians,
+    /// √a (m^½ — composite dimension; kept as scalar).
     pub sqrt_a: f64,
-    /// Toe (s of GPS week).
-    pub toe: f64,
-    /// Cic (rad).
-    pub cic: f64,
-    /// Ω0 (rad).
-    pub omega0: f64,
-    /// Cis (rad).
-    pub cis: f64,
-    /// i0 (rad).
-    pub i0: f64,
-    /// Crc (m).
-    pub crc: f64,
-    /// ω (rad).
-    pub omega: f64,
-    /// Ω̇ (rad/s).
-    pub omega_dot: f64,
-    /// IDOT (rad/s).
-    pub idot: f64,
+    /// Toe — reference time of ephemeris.
+    pub toe: Seconds,
+    /// Cic — inclination correction (cosine).
+    pub cic: Radians,
+    /// Ω0 — longitude of ascending node at weekly epoch.
+    pub omega0: Radians,
+    /// Cis — inclination correction (sine).
+    pub cis: Radians,
+    /// i0 — inclination angle at reference time.
+    pub i0: Radians,
+    /// Crc amplitude correction.
+    pub crc: Meters,
+    /// ω — argument of perigee.
+    pub omega: Radians,
+    /// Ω̇ — rate of right ascension.
+    pub omega_dot: AngularRate<Radian, Second>,
+    /// IDOT — rate of inclination angle.
+    pub idot: AngularRate<Radian, Second>,
+}
+
+impl Default for GpsNavRecord {
+    fn default() -> Self {
+        Self {
+            prn: 0,
+            year: 0,
+            month: 0,
+            day: 0,
+            hour: 0,
+            minute: 0,
+            second: Seconds::new(0.0),
+            af0: Seconds::new(0.0),
+            af1: 0.0,
+            af2: 0.0,
+            iode: 0.0,
+            crs: Meters::new(0.0),
+            delta_n: AngularRate::new(0.0),
+            m0: Radians::new(0.0),
+            cuc: Radians::new(0.0),
+            e: 0.0,
+            cus: Radians::new(0.0),
+            sqrt_a: 0.0,
+            toe: Seconds::new(0.0),
+            cic: Radians::new(0.0),
+            omega0: Radians::new(0.0),
+            cis: Radians::new(0.0),
+            i0: Radians::new(0.0),
+            crc: Meters::new(0.0),
+            omega: Radians::new(0.0),
+            omega_dot: AngularRate::new(0.0),
+            idot: AngularRate::new(0.0),
+        }
+    }
 }
 
 /// Parsed RINEX NAV file.
@@ -147,8 +186,8 @@ pub fn parse_rinex_nav(text: &str) -> Result<RinexNavFile, PodIoError> {
             day: toc_tokens[2].parse().unwrap_or(0),
             hour: toc_tokens[3].parse().unwrap_or(0),
             minute: toc_tokens[4].parse().unwrap_or(0),
-            second: toc_tokens[5].parse().unwrap_or(0.0),
-            af0: parse_d(toc_tokens[6]),
+            second: Seconds::new(toc_tokens[5].parse().unwrap_or(0.0)),
+            af0: Seconds::new(parse_d(toc_tokens[6])),
             af1: parse_d(toc_tokens[7]),
             af2: parse_d(toc_tokens[8]),
             ..Default::default()
@@ -166,30 +205,30 @@ pub fn parse_rinex_nav(text: &str) -> Result<RinexNavFile, PodIoError> {
 
         if v1.len() >= 4 {
             rec.iode = v1[0];
-            rec.crs = v1[1];
-            rec.delta_n = v1[2];
-            rec.m0 = v1[3];
+            rec.crs = Meters::new(v1[1]);
+            rec.delta_n = AngularRate::new(v1[2]);
+            rec.m0 = Radians::new(v1[3]);
         }
         if v2.len() >= 4 {
-            rec.cuc = v2[0];
+            rec.cuc = Radians::new(v2[0]);
             rec.e = v2[1];
-            rec.cus = v2[2];
+            rec.cus = Radians::new(v2[2]);
             rec.sqrt_a = v2[3];
         }
         if v3.len() >= 4 {
-            rec.toe = v3[0];
-            rec.cic = v3[1];
-            rec.omega0 = v3[2];
-            rec.cis = v3[3];
+            rec.toe = Seconds::new(v3[0]);
+            rec.cic = Radians::new(v3[1]);
+            rec.omega0 = Radians::new(v3[2]);
+            rec.cis = Radians::new(v3[3]);
         }
         if v4.len() >= 4 {
-            rec.i0 = v4[0];
-            rec.crc = v4[1];
-            rec.omega = v4[2];
-            rec.omega_dot = v4[3];
+            rec.i0 = Radians::new(v4[0]);
+            rec.crc = Meters::new(v4[1]);
+            rec.omega = Radians::new(v4[2]);
+            rec.omega_dot = AngularRate::new(v4[3]);
         }
         if !v5.is_empty() {
-            rec.idot = v5[0];
+            rec.idot = AngularRate::new(v5[0]);
         }
         let _ = v6;
         let _ = v7;
@@ -232,6 +271,6 @@ G01 2024 01 01 00 00 00 1.234567E-04 5.678E-12 0.000E+00\n\
         assert_eq!(r.prn, 1);
         assert!((r.sqrt_a - 5_153.651).abs() < 1e-3);
         assert!((r.e - 1e-3).abs() < 1e-9);
-        assert!((r.toe - 518_400.0).abs() < 1e-3);
+        assert!((r.toe.value() - 518_400.0).abs() < 1e-3);
     }
 }

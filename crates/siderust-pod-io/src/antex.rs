@@ -28,18 +28,19 @@
 //!   versus precise ephemerides for GNSS orbit determination. GPS
 //!   Solutions, 19(2), 321-330.
 use crate::PodIoError;
+use qtty::length::Millimeters;
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Read};
 
 /// PCO entry for one antenna and one frequency.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Pco {
-    /// North offset, millimetres.
-    pub n_mm: f64,
-    /// East offset, millimetres.
-    pub e_mm: f64,
-    /// Up offset, millimetres.
-    pub u_mm: f64,
+    /// North offset.
+    pub north: Millimeters,
+    /// East offset.
+    pub east: Millimeters,
+    /// Up offset.
+    pub up: Millimeters,
 }
 
 /// Per-antenna PCO data, keyed by frequency identifier (e.g. "G01" for GPS L1).
@@ -82,9 +83,9 @@ pub fn read_antex<R: Read>(rdr: R) -> Result<AntexCatalog, PodIoError> {
                         current_pcos.insert(
                             freq.clone(),
                             Pco {
-                                n_mm: parts[0],
-                                e_mm: parts[1],
-                                u_mm: parts[2],
+                                north: Millimeters::new(parts[0]),
+                                east: Millimeters::new(parts[1]),
+                                up: Millimeters::new(parts[2]),
                             },
                         );
                     }
@@ -125,8 +126,8 @@ TEST-ANTENNA   ABC                                          TYPE / SERIAL NO
         let cat = read_antex(SAMPLE.as_bytes()).unwrap();
         let ant = &cat["TEST-ANTENNA   ABC"];
         let g01 = ant["G01"];
-        assert!((g01.u_mm - 90.0).abs() < 1e-9);
+        assert!((g01.up.value() - 90.0).abs() < 1e-9);
         let g02 = ant["G02"];
-        assert!((g02.e_mm + 0.3).abs() < 1e-9);
+        assert!((g02.east.value() + 0.3).abs() < 1e-9);
     }
 }

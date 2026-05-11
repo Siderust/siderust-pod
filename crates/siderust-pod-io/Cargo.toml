@@ -9,8 +9,9 @@ repository.workspace = true
 description = "Parsers and writers for POD/geodesy formats: SP3, RINEX, ANTEX, OEM, EOP."
 
 [dependencies]
-qtty.workspace = true
+qtty = { workspace = true, features = ["astro"] }
 tempoch.workspace = true
+chrono.workspace = true
 affn.workspace = true
 siderust.workspace = true
 thiserror.workspace = true

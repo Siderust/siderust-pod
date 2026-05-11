@@ -29,16 +29,18 @@
 //! - Misra, P., & Enge, P. (2012). Global Positioning System: Signals,
 //!   Measurements, and Performance (2nd ed.). Ganga-Jamuna Press.
 use crate::PodIoError;
+use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
+use qtty::length::Meters;
+use qtty::time::Seconds;
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader, Read};
+use tempoch::{Time, UTC};
 
 /// One observation epoch.
 #[derive(Debug, Clone, PartialEq)]
 pub struct ObsEpoch {
-    /// Year, month, day.
-    pub date: (i32, u32, u32),
-    /// Hour, minute, second.
-    pub time: (u32, u32, f64),
+    /// UTC epoch.
+    pub time: Time<UTC>,
     /// Per-satellite observations: `sat -> {obs_code -> value}`.
     pub satellites: HashMap<String, HashMap<String, f64>>,
 }
@@ -49,9 +51,9 @@ pub struct RinexObs {
     /// Marker name (station name).
     pub marker: String,
     /// Approximate XYZ in metres (ITRF).
-    pub approx_xyz_m: Option<[f64; 3]>,
-    /// Sampling interval in seconds, if declared.
-    pub interval_s: Option<f64>,
+    pub approx_xyz_m: Option<[Meters; 3]>,
+    /// Sampling interval, if declared.
+    pub interval_s: Option<Seconds>,
     /// Per-system observation type list.
     pub obs_types: HashMap<char, Vec<String>>,
     /// Epoch records.
@@ -64,8 +66,8 @@ pub fn read_rinex_obs<R: Read>(rdr: R) -> Result<RinexObs, PodIoError> {
     let mut line = String::new();
 
     let mut marker = String::new();
-    let mut approx_xyz_m: Option<[f64; 3]> = None;
-    let mut interval_s: Option<f64> = None;
+    let mut approx_xyz_m: Option<[Meters; 3]> = None;
+    let mut interval_s: Option<Seconds> = None;
     let mut obs_types: HashMap<char, Vec<String>> = HashMap::new();
 
     // Header.
@@ -84,11 +86,11 @@ pub fn read_rinex_obs<R: Read>(rdr: R) -> Result<RinexObs, PodIoError> {
                     .filter_map(|s| s.parse().ok())
                     .collect();
                 if parts.len() == 3 {
-                    approx_xyz_m = Some([parts[0], parts[1], parts[2]]);
+                    approx_xyz_m = Some([Meters::new(parts[0]), Meters::new(parts[1]), Meters::new(parts[2])]);
                 }
             }
             "INTERVAL" => {
-                interval_s = body.split_whitespace().next().and_then(|s| s.parse().ok());
+                interval_s = body.split_whitespace().next().and_then(|s| s.parse().ok()).map(Seconds::new);
             }
             "SYS / # / OBS TYPES" => {
                 let bytes = body.as_bytes();
@@ -135,16 +137,20 @@ pub fn read_rinex_obs<R: Read>(rdr: R) -> Result<RinexObs, PodIoError> {
         if parts.len() < 9 {
             continue;
         }
-        let date = (
-            parts[1].parse().unwrap_or(0),
-            parts[2].parse().unwrap_or(0),
-            parts[3].parse().unwrap_or(0),
-        );
-        let time = (
-            parts[4].parse().unwrap_or(0),
-            parts[5].parse().unwrap_or(0),
-            parts[6].parse().unwrap_or(0.0),
-        );
+        let year: i32 = parts[1].parse().unwrap_or(0);
+        let month: u32 = parts[2].parse().unwrap_or(0);
+        let day: u32 = parts[3].parse().unwrap_or(0);
+        let hour: u32 = parts[4].parse().unwrap_or(0);
+        let minute: u32 = parts[5].parse().unwrap_or(0);
+        let second_f: f64 = parts[6].parse().unwrap_or(0.0);
+        let second_int = second_f as u32;
+        let nanos = ((second_f - second_int as f64) * 1e9).round() as u32;
+        let naive = NaiveDate::from_ymd_opt(year, month, day)
+            .and_then(|d| d.and_hms_nano_opt(hour, minute, second_int, nanos))
+            .ok_or_else(|| PodIoError::Format("rinex_obs: invalid epoch date".into()))?;
+        let epoch_time =
+            Time::<UTC>::try_from_chrono(DateTime::from_naive_utc_and_offset(naive, ChronoUtc))
+                .map_err(|e| PodIoError::Format(format!("rinex_obs: epoch UTC conversion: {e}")))?;
         let n_sat: usize = parts[8].parse().unwrap_or(0);
 
         let mut sats = HashMap::new();
@@ -184,8 +190,7 @@ pub fn read_rinex_obs<R: Read>(rdr: R) -> Result<RinexObs, PodIoError> {
             sats.insert(sat, vals);
         }
         epochs.push(ObsEpoch {
-            date,
-            time,
+            time: epoch_time,
             satellites: sats,
         });
     }
@@ -220,7 +225,7 @@ G01  20124000.000         123457000.000
     fn parses_header_and_epochs() {
         let r = read_rinex_obs(SAMPLE.as_bytes()).unwrap();
         assert_eq!(r.marker, "TEST-MARK");
-        assert_eq!(r.interval_s, Some(30.0));
+        assert_eq!(r.interval_s.map(|s| s.value()), Some(30.0));
         assert_eq!(r.obs_types[&'G'], vec!["C1C", "L1C"]);
         assert_eq!(r.epochs.len(), 2);
         let e0 = &r.epochs[0];

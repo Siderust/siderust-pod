@@ -29,25 +29,29 @@
 //! - IERS Conventions Centre. (2010). IERS Conventions (2010). Verlag des
 //!   Bundesamts fur Kartographie und Geodasie.
 use crate::PodIoError;
+use qtty::angular::Arcseconds;
+use qtty::time::Seconds;
+use qtty::Day;
 use std::io::{BufRead, BufReader, Read};
+use tempoch::{ModifiedJulianDate, UTC};
 
 /// A single Earth-orientation record from IERS C04.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct EopRecord {
     /// Modified Julian Date (UTC).
-    pub mjd: f64,
-    /// Polar motion x, arcseconds.
-    pub x_arcsec: f64,
-    /// Polar motion y, arcseconds.
-    pub y_arcsec: f64,
-    /// UT1 − UTC, seconds.
-    pub ut1_utc_s: f64,
-    /// Length-of-day excess, seconds.
-    pub lod_s: f64,
-    /// Nutation correction dψ, arcseconds.
-    pub dpsi_arcsec: f64,
-    /// Nutation correction dε, arcseconds.
-    pub deps_arcsec: f64,
+    pub mjd: ModifiedJulianDate<UTC>,
+    /// Polar motion x.
+    pub x: Arcseconds,
+    /// Polar motion y.
+    pub y: Arcseconds,
+    /// UT1 − UTC.
+    pub ut1_utc: Seconds,
+    /// Length-of-day excess.
+    pub lod: Seconds,
+    /// Nutation correction dψ.
+    pub dpsi: Arcseconds,
+    /// Nutation correction dε.
+    pub deps: Arcseconds,
 }
 
 /// Parse a C04-style EOP file.
@@ -72,8 +76,12 @@ pub fn read_eop_c04<R: Read>(rdr: R) -> Result<Vec<EopRecord>, PodIoError> {
         {
             continue;
         }
-        let mjd: f64 = match parts[3].parse() {
+        let mjd_raw: f64 = match parts[3].parse() {
             Ok(v) => v,
+            Err(_) => continue,
+        };
+        let mjd = match ModifiedJulianDate::<UTC>::try_new(Day::new(mjd_raw)) {
+            Ok(m) => m,
             Err(_) => continue,
         };
         let x = parts[4].parse().unwrap_or(0.0);
@@ -84,12 +92,12 @@ pub fn read_eop_c04<R: Read>(rdr: R) -> Result<Vec<EopRecord>, PodIoError> {
         let deps = parts[9].parse().unwrap_or(0.0);
         out.push(EopRecord {
             mjd,
-            x_arcsec: x,
-            y_arcsec: y,
-            ut1_utc_s: ut1,
-            lod_s: lod,
-            dpsi_arcsec: dpsi,
-            deps_arcsec: deps,
+            x: Arcseconds::new(x),
+            y: Arcseconds::new(y),
+            ut1_utc: Seconds::new(ut1),
+            lod: Seconds::new(lod),
+            dpsi: Arcseconds::new(dpsi),
+            deps: Arcseconds::new(deps),
         });
     }
     Ok(out)
@@ -99,7 +107,7 @@ pub fn read_eop_c04<R: Read>(rdr: R) -> Result<Vec<EopRecord>, PodIoError> {
 ///
 /// Returns `None` if the table is empty; clamps to the endpoints when the
 /// requested epoch lies outside the table range.
-pub fn interpolate(records: &[EopRecord], mjd: f64) -> Option<EopRecord> {
+pub fn interpolate(records: &[EopRecord], mjd: ModifiedJulianDate<UTC>) -> Option<EopRecord> {
     if records.is_empty() {
         return None;
     }
@@ -122,15 +130,18 @@ pub fn interpolate(records: &[EopRecord], mjd: f64) -> Option<EopRecord> {
     }
     let a = records[lo];
     let b = records[hi];
-    let f = (mjd - a.mjd) / (b.mjd - a.mjd);
+    let a_val = a.mjd.raw().value();
+    let b_val = b.mjd.raw().value();
+    let t_val = mjd.raw().value();
+    let f = (t_val - a_val) / (b_val - a_val);
     Some(EopRecord {
         mjd,
-        x_arcsec: a.x_arcsec + f * (b.x_arcsec - a.x_arcsec),
-        y_arcsec: a.y_arcsec + f * (b.y_arcsec - a.y_arcsec),
-        ut1_utc_s: a.ut1_utc_s + f * (b.ut1_utc_s - a.ut1_utc_s),
-        lod_s: a.lod_s + f * (b.lod_s - a.lod_s),
-        dpsi_arcsec: a.dpsi_arcsec + f * (b.dpsi_arcsec - a.dpsi_arcsec),
-        deps_arcsec: a.deps_arcsec + f * (b.deps_arcsec - a.deps_arcsec),
+        x: Arcseconds::new(a.x.value() + f * (b.x.value() - a.x.value())),
+        y: Arcseconds::new(a.y.value() + f * (b.y.value() - a.y.value())),
+        ut1_utc: Seconds::new(a.ut1_utc.value() + f * (b.ut1_utc.value() - a.ut1_utc.value())),
+        lod: Seconds::new(a.lod.value() + f * (b.lod.value() - a.lod.value())),
+        dpsi: Arcseconds::new(a.dpsi.value() + f * (b.dpsi.value() - a.dpsi.value())),
+        deps: Arcseconds::new(a.deps.value() + f * (b.deps.value() - a.deps.value())),
     })
 }
 
@@ -148,14 +159,14 @@ mod tests {
     fn parses_two_records() {
         let r = read_eop_c04(SAMPLE.as_bytes()).unwrap();
         assert_eq!(r.len(), 2);
-        assert!((r[0].mjd - 60310.0).abs() < 1e-9);
+        assert!((r[0].mjd.raw().value() - 60310.0).abs() < 1e-9);
     }
 
     #[test]
     fn interpolates_midpoint() {
         let r = read_eop_c04(SAMPLE.as_bytes()).unwrap();
-        let mid = interpolate(&r, 60310.5).unwrap();
+        let mid = interpolate(&r, ModifiedJulianDate::<UTC>::try_new(Day::new(60310.5)).unwrap()).unwrap();
         let expect = (0.123456 + 0.124000) / 2.0;
-        assert!((mid.x_arcsec - expect).abs() < 1e-9);
+        assert!((mid.x.value() - expect).abs() < 1e-9);
     }
 }

@@ -28,7 +28,11 @@
 //!   Specification.
 //! - Montenbruck, O., Steigenberger, P., & Khachikyan, R. (2017). GNSS
 //!   satellite geometry and ephemeris products. GPS Solutions, 21, 101-111.
+use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
+use qtty::length::Kilometers;
+use qtty::time::Microseconds;
 use std::io::{BufRead, BufReader, Read, Write};
+use tempoch::{Time, UTC};
 use thiserror::Error;
 
 /// SP3 parse / write errors.
@@ -60,31 +64,21 @@ pub enum Sp3Error {
 pub struct Sp3Position {
     /// Satellite identifier (3 chars, e.g. `G01`).
     pub sat_id: String,
-    /// X (km).
-    pub x_km: f64,
-    /// Y (km).
-    pub y_km: f64,
-    /// Z (km).
-    pub z_km: f64,
-    /// Clock bias (µs). 999999.999999 means unavailable.
-    pub clock_us: f64,
+    /// X coordinate.
+    pub x: Kilometers,
+    /// Y coordinate.
+    pub y: Kilometers,
+    /// Z coordinate.
+    pub z: Kilometers,
+    /// Clock bias. 999999.999999 µs means unavailable.
+    pub clock: Microseconds,
 }
 
 /// One epoch with all satellite records.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Sp3Epoch {
-    /// Year.
-    pub year: i32,
-    /// Month (1-12).
-    pub month: u32,
-    /// Day (1-31).
-    pub day: u32,
-    /// Hour (0-23).
-    pub hour: u32,
-    /// Minute (0-59).
-    pub minute: u32,
-    /// Second (0.0-60.0).
-    pub second: f64,
+    /// UTC epoch.
+    pub time: Time<UTC>,
     /// Position records.
     pub positions: Vec<Sp3Position>,
 }
@@ -98,9 +92,32 @@ pub struct Sp3Record {
     pub epochs: Vec<Sp3Epoch>,
 }
 
+fn civil_to_time_utc(
+    year: i32,
+    month: u32,
+    day: u32,
+    hour: u32,
+    minute: u32,
+    second: f64,
+    line: usize,
+) -> Result<Time<UTC>, Sp3Error> {
+    let second_int = second as u32;
+    let nanos = ((second - second_int as f64) * 1e9).round() as u32;
+    let naive = NaiveDate::from_ymd_opt(year, month, day)
+        .and_then(|d| d.and_hms_nano_opt(hour, minute, second_int, nanos))
+        .ok_or_else(|| Sp3Error::Record {
+            line,
+            message: "invalid epoch date/time".into(),
+        })?;
+    let dt: DateTime<ChronoUtc> = DateTime::from_naive_utc_and_offset(naive, ChronoUtc);
+    Time::<UTC>::try_from_chrono(dt).map_err(|e| Sp3Error::Record {
+        line,
+        message: format!("epoch UTC conversion: {e}"),
+    })
+}
+
 /// Parse an SP3 file from a reader.
-pub fn read_sp3<R: Read>(r: R) -> Result<Sp3Record, Sp3Error> {
-    let mut buf = BufReader::new(r);
+pub fn read_sp3<R: Read>(r: R) -> Result<Sp3Record, Sp3Error> {    let mut buf = BufReader::new(r);
     let mut header = Vec::new();
     let mut epochs = Vec::new();
     let mut line_no = 0usize;
@@ -148,12 +165,15 @@ pub fn read_sp3<R: Read>(r: R) -> Result<Sp3Record, Sp3Error> {
                 });
             }
             current = Some(Sp3Epoch {
-                year: parse_field(fields[0], line_no, "year")?,
-                month: parse_field(fields[1], line_no, "month")?,
-                day: parse_field(fields[2], line_no, "day")?,
-                hour: parse_field(fields[3], line_no, "hour")?,
-                minute: parse_field(fields[4], line_no, "minute")?,
-                second: parse_field(fields[5], line_no, "second")?,
+                time: civil_to_time_utc(
+                    parse_field(fields[0], line_no, "year")?,
+                    parse_field(fields[1], line_no, "month")?,
+                    parse_field(fields[2], line_no, "day")?,
+                    parse_field(fields[3], line_no, "hour")?,
+                    parse_field(fields[4], line_no, "minute")?,
+                    parse_field(fields[5], line_no, "second")?,
+                    line_no,
+                )?,
                 positions: Vec::new(),
             });
         } else if trimmed_eol.starts_with('P') {
@@ -181,10 +201,10 @@ pub fn read_sp3<R: Read>(r: R) -> Result<Sp3Record, Sp3Error> {
             }
             epoch.positions.push(Sp3Position {
                 sat_id: id,
-                x_km: parse_field(rest[0], line_no, "x")?,
-                y_km: parse_field(rest[1], line_no, "y")?,
-                z_km: parse_field(rest[2], line_no, "z")?,
-                clock_us: parse_field(rest[3], line_no, "clock")?,
+                x: Kilometers::new(parse_field(rest[0], line_no, "x")?),
+                y: Kilometers::new(parse_field(rest[1], line_no, "y")?),
+                z: Kilometers::new(parse_field(rest[2], line_no, "z")?),
+                clock: Microseconds::new(parse_field(rest[3], line_no, "clock")?),
             });
         } else if trimmed_eol.starts_with('V')
             || trimmed_eol.starts_with("EP")
@@ -214,20 +234,31 @@ where
 /// Write an SP3 record. The header lines are emitted verbatim, then each
 /// epoch as `* YYYY MM DD HH MM SS.SS...` followed by `PXXX X Y Z CLK` lines.
 pub fn write_sp3<W: Write>(w: &mut W, rec: &Sp3Record) -> Result<(), Sp3Error> {
+    use chrono::{Datelike, Timelike};
     for h in &rec.header {
         writeln!(w, "{h}")?;
     }
     for e in &rec.epochs {
+        let dt = e.time.try_to_chrono().map_err(|err| Sp3Error::Record {
+            line: 0,
+            message: format!("epoch to chrono: {err}"),
+        })?;
+        let second = dt.second() as f64 + dt.nanosecond() as f64 / 1e9;
         writeln!(
             w,
             "*  {:4} {:>2} {:>2} {:>2} {:>2} {:11.8}",
-            e.year, e.month, e.day, e.hour, e.minute, e.second
+            dt.year(),
+            dt.month(),
+            dt.day(),
+            dt.hour(),
+            dt.minute(),
+            second
         )?;
         for p in &e.positions {
             writeln!(
                 w,
                 "P{:<3} {:14.6} {:14.6} {:14.6} {:14.6}",
-                p.sat_id, p.x_km, p.y_km, p.z_km, p.clock_us
+                p.sat_id, p.x.value(), p.y.value(), p.z.value(), p.clock.value()
             )?;
         }
     }
@@ -265,7 +296,7 @@ EOF\n";
         assert_eq!(rec.epochs.len(), 2);
         assert_eq!(rec.epochs[0].positions.len(), 2);
         assert_eq!(rec.epochs[0].positions[0].sat_id, "G01");
-        assert!((rec.epochs[0].positions[0].x_km - 1000.0).abs() < 1e-9);
+        assert!((rec.epochs[0].positions[0].x.value() - 1000.0).abs() < 1e-9);
     }
 
     #[test]

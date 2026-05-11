@@ -28,6 +28,7 @@
 //! - Pearlman, M. R., Noll, C. E., et al. (2019). The ILRS: Current status
 //!   and future prospects. Journal of Geodesy, 93, 2161-2180.
 use crate::PodIoError;
+use qtty::time::Seconds;
 use std::fs;
 use std::path::Path;
 
@@ -35,9 +36,9 @@ use std::path::Path;
 #[derive(Debug, Clone)]
 pub struct CrdRange {
     /// Seconds of day (UTC) at the epoch of the range observation.
-    pub seconds_of_day: f64,
-    /// Two-way time-of-flight, seconds.
-    pub time_of_flight_s: f64,
+    pub seconds_of_day: Seconds,
+    /// Two-way time-of-flight.
+    pub time_of_flight: Seconds,
     /// System configuration ID (often "std" or numeric code).
     pub system_config_id: String,
     /// `10` for full-rate, `11` for normal-point.
@@ -142,8 +143,8 @@ pub fn parse_crd(text: &str) -> Result<CrdFile, PodIoError> {
                     .and_then(|s| s.parse().ok())
                     .ok_or_else(|| PodIoError::Format("CRD range: missing TOF".into()))?;
                 out.ranges.push(CrdRange {
-                    seconds_of_day: sod,
-                    time_of_flight_s: tof,
+                    seconds_of_day: Seconds::new(sod),
+                    time_of_flight: Seconds::new(tof),
                     system_config_id: current_sys.clone(),
                     record_type: kind,
                 });
@@ -177,7 +178,7 @@ H8\n";
         assert_eq!(f.satellite_name, "lageos1");
         assert_eq!(f.year, 2024);
         assert_eq!(f.ranges.len(), 2);
-        assert!((f.ranges[0].time_of_flight_s - 0.05123456789).abs() < 1e-15);
+        assert!((f.ranges[0].time_of_flight.value() - 0.05123456789).abs() < 1e-15);
         assert_eq!(f.ranges[0].record_type, 11);
     }
 }

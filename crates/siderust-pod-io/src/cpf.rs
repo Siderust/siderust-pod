@@ -30,18 +30,22 @@
 //!   International Laser Ranging Service. Advances in Space Research,
 //!   30(2), 135-143.
 use crate::PodIoError;
+use qtty::length::Meters;
+use qtty::time::Seconds;
+use qtty::Day;
 use std::fs;
 use std::path::Path;
+use tempoch::{ModifiedJulianDate, UTC};
 
 /// One CPF position sample (record type "10").
 #[derive(Debug, Clone)]
 pub struct CpfPosition {
-    /// Modified Julian Day of sample.
-    pub mjd: i32,
+    /// Modified Julian Date of sample (UTC).
+    pub mjd: ModifiedJulianDate<UTC>,
     /// Seconds of day (UTC).
-    pub seconds_of_day: f64,
+    pub seconds_of_day: Seconds,
     /// Position in metres, ITRF (per CPF convention).
-    pub r_m: [f64; 3],
+    pub position_m: [Meters; 3],
 }
 
 /// Parsed CPF file.
@@ -105,10 +109,12 @@ pub fn parse_cpf(text: &str) -> Result<CpfFile, PodIoError> {
             "10" => {
                 // 10 dir mjd sod leap x y z
                 let _dir = tokens.next();
-                let mjd: i32 = tokens
+                let mjd_int: i32 = tokens
                     .next()
                     .and_then(|s| s.parse().ok())
                     .ok_or_else(|| PodIoError::Format("CPF 10: missing MJD".into()))?;
+                let mjd = ModifiedJulianDate::<UTC>::try_new(Day::new(mjd_int as f64))
+                    .map_err(|_| PodIoError::Format("CPF 10: invalid MJD".into()))?;
                 let sod: f64 = tokens
                     .next()
                     .and_then(|s| s.parse().ok())
@@ -128,8 +134,8 @@ pub fn parse_cpf(text: &str) -> Result<CpfFile, PodIoError> {
                     .ok_or_else(|| PodIoError::Format("CPF 10: missing Z".into()))?;
                 out.positions.push(CpfPosition {
                     mjd,
-                    seconds_of_day: sod,
-                    r_m: [x, y, z],
+                    seconds_of_day: Seconds::new(sod),
+                    position_m: [Meters::new(x), Meters::new(y), Meters::new(z)],
                 });
             }
             _ => {}
@@ -154,7 +160,7 @@ H2 1234567 1155 7603901 2024 01 01 00 00 00 0 0 ITRF2014\n\
         assert_eq!(f.version, "2");
         assert_eq!(f.reference_frame, "ITRF2014");
         assert_eq!(f.positions.len(), 2);
-        assert_eq!(f.positions[1].mjd, 60310);
-        assert!((f.positions[1].r_m[0] - 7_000_100.0).abs() < 1e-9);
+        assert!((f.positions[1].mjd.raw().value() - 60310.0).abs() < 1e-9);
+        assert!((f.positions[1].position_m[0].value() - 7_000_100.0).abs() < 1e-9);
     }
 }

@@ -31,30 +31,10 @@ use siderust::astro::dynamics::OrbitState;
 use siderust_pod_io::oem::{write_oem, OemMetadata};
 use siderust_pod_io::sp3::{write_sp3, Sp3Epoch, Sp3Position, Sp3Record};
 use siderust_pod_io::PodIoError;
+use qtty::length::Kilometers;
+use qtty::time::Microseconds;
 use std::io::Write;
-
-/// Convert a Julian Date to a (year, month, day, hour, minute, second) tuple
-/// using a proleptic Gregorian calendar. No leap-second handling.
-fn jd_to_calendar(jd: f64) -> (i32, u32, u32, u32, u32, f64) {
-    let jd_int = (jd + 0.5).floor() as i64;
-    let frac = jd + 0.5 - jd_int as f64;
-
-    let a = jd_int + 32_044;
-    let b = (4 * a + 3) / 146_097;
-    let c = a - (146_097 * b) / 4;
-    let d = (4 * c + 3) / 1_461;
-    let e = c - (1_461 * d) / 4;
-    let m = (5 * e + 2) / 153;
-    let day = (e - (153 * m + 2) / 5 + 1) as u32;
-    let month = (m + 3 - 12 * (m / 10)) as u32;
-    let year = (100 * b + d - 4_800 + (m / 10)) as i32;
-
-    let total_seconds = frac * 86_400.0;
-    let hours = (total_seconds / 3600.0).floor() as u32 % 24;
-    let mins = ((total_seconds % 3600.0) / 60.0).floor() as u32;
-    let secs = total_seconds % 60.0;
-    (year, month, day, hours, mins, secs)
-}
+use tempoch::{Time, UTC};
 
 /// Build an SP3 record from an in-memory state series and write it to `w`.
 pub fn write_sp3_from_states<W: Write>(
@@ -82,20 +62,15 @@ pub fn write_sp3_from_states<W: Write>(
     let epochs = states
         .iter()
         .map(|s| {
-            let (y, mo, d, h, mi, sec) = jd_to_calendar(s.epoch_tt.jd_value());
+            let epoch_utc: Time<UTC> = s.epoch_tt.to_time().to_scale::<UTC>();
             Sp3Epoch {
-                year: y,
-                month: mo,
-                day: d,
-                hour: h,
-                minute: mi,
-                second: sec,
+                time: epoch_utc,
                 positions: vec![Sp3Position {
                     sat_id: sat_id.to_string(),
-                    x_km: s.position.x().value(),
-                    y_km: s.position.y().value(),
-                    z_km: s.position.z().value(),
-                    clock_us: 999_999.999_999,
+                    x: Kilometers::new(s.position.x().value()),
+                    y: Kilometers::new(s.position.y().value()),
+                    z: Kilometers::new(s.position.z().value()),
+                    clock: Microseconds::new(999_999.999_999),
                 }],
             }
         })
