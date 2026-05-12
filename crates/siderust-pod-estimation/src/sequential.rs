@@ -26,6 +26,8 @@
 //!   (4th ed.). Microcosm Press.
 use affn::Displacement;
 use faer::Mat;
+use qtty::dynamics::KmPerSeconds;
+use qtty::length::Kilometers;
 use qtty::unit::Kilometer;
 use siderust::astro::dynamics::covariance::StateCovariance;
 use siderust::astro::dynamics::{OrbitState, Velocity};
@@ -74,16 +76,26 @@ impl OrbitEkf {
         Self { state, cov }
     }
 
-    /// New filter with diagonal covariance built from position and velocity
-    /// standard deviations (same units as [`OrbitState`]: km and km/s).
+    /// New filter with diagonal covariance built from per-axis 1-σ position
+    /// (km) and velocity (km/s) standard deviations.
     pub fn from_stddevs(
         state: OrbitState,
         sigma_pos: [f64; 3],
         sigma_vel: [f64; 3],
     ) -> Self {
+        let sigma_pos_typed = [
+            Kilometers::new(sigma_pos[0]),
+            Kilometers::new(sigma_pos[1]),
+            Kilometers::new(sigma_pos[2]),
+        ];
+        let sigma_vel_typed = [
+            KmPerSeconds::new(sigma_vel[0]),
+            KmPerSeconds::new(sigma_vel[1]),
+            KmPerSeconds::new(sigma_vel[2]),
+        ];
         Self {
             state,
-            cov: StateCovariance::<GCRS>::from_stddevs(sigma_pos, sigma_vel),
+            cov: StateCovariance::<GCRS>::diagonal_from_sigmas(sigma_pos_typed, sigma_vel_typed),
         }
     }
 
@@ -169,7 +181,7 @@ impl OrbitEkf {
         );
         let new_pos = self.state.position + pos_delta;
         let new_vel = self.state.velocity + vel_delta;
-        self.state = OrbitState::new(self.state.epoch_tt, new_pos, new_vel);
+        self.state = OrbitState::new(self.state.epoch, new_pos, new_vel);
 
         // P ← P − K (hᵀ P)  then symmetrise
         let htp: Mat<f64> = Mat::from_fn(1, 6, |_, j| {
@@ -206,7 +218,7 @@ mod tests {
         let epoch = JulianDate::new(2_451_545.0);
         let pos = Position::<GCRS>::new(7000.0, 0.0, 0.0);
         let vel = Velocity::<GCRS>::new(0.0, 7.5, 0.0);
-        OrbitState::new(epoch, pos, vel)
+        OrbitState::new_at_jd(epoch, pos, vel)
     }
 
     #[test]
@@ -244,7 +256,17 @@ mod tests {
             );
         }
         // Add process noise: diagonal must inflate.
-        let q = StateCovariance::<GCRS>::from_stddevs([0.01, 0.01, 0.01], [1e-5, 1e-5, 1e-5]);
+        let q_pos = [
+            Kilometers::new(0.01),
+            Kilometers::new(0.01),
+            Kilometers::new(0.01),
+        ];
+        let q_vel = [
+            KmPerSeconds::new(1e-5),
+            KmPerSeconds::new(1e-5),
+            KmPerSeconds::new(1e-5),
+        ];
+        let q = StateCovariance::<GCRS>::diagonal_from_sigmas(q_pos, q_vel);
         f.predict(s0, phi, Some(q));
         let p_inflated = f.covariance().to_row_major();
         assert!(p_inflated[0][0] > p_after_no_q[0][0], "Q must inflate pos variance");

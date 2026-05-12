@@ -69,12 +69,12 @@ pub fn write_oem<W: Write>(
     writeln!(
         w,
         "START_TIME           = {}",
-        jd_to_iso8601(states[0].epoch_tt.jd_value())
+        jd_to_iso8601(states[0].epoch_jd().jd_value())
     )?;
     writeln!(
         w,
         "STOP_TIME            = {}",
-        jd_to_iso8601(states.last().unwrap().epoch_tt.jd_value())
+        jd_to_iso8601(states.last().unwrap().epoch_jd().jd_value())
     )?;
     writeln!(w, "META_STOP")?;
     writeln!(w)?;
@@ -82,7 +82,7 @@ pub fn write_oem<W: Write>(
         writeln!(
             w,
             "{} {:.6} {:.6} {:.6} {:.9} {:.9} {:.9}",
-            jd_to_iso8601(s.epoch_tt.jd_value()),
+            jd_to_iso8601(s.epoch_jd().jd_value()),
             s.position.x().value(),
             s.position.y().value(),
             s.position.z().value(),
@@ -132,12 +132,12 @@ mod tests {
     #[test]
     fn writes_header_and_data_lines() {
         let states = vec![
-            OrbitState::new(
+            OrbitState::new_at_jd(
                 JulianDate::new(2_451_545.0),
                 Position::new(7000.0, 0.0, 0.0),
                 Velocity::new(0.0, 7.5, 0.0),
             ),
-            OrbitState::new(
+            OrbitState::new_at_jd(
                 JulianDate::new(2_451_545.0 + 30.0 / 86_400.0),
                 Position::new(6999.0, 225.0, 0.0),
                 Velocity::new(-0.24, 7.49, 0.0),

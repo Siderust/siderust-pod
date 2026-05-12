@@ -41,7 +41,7 @@ fn mvp1_synth_pipeline_recovers_truth() {
     // Initial guess: truth perturbed by 50 m position, 0.05 m/s velocity.
     let t0 = arc.truth_states[0];
     let init = OrbitState::new(
-        t0.epoch_tt,
+        t0.epoch,
         Position::new(
             t0.position.x().value() + 0.05,
             t0.position.y().value() - 0.05,
@@ -53,7 +53,7 @@ fn mvp1_synth_pipeline_recovers_truth() {
             t0.velocity.z().value() + 5e-5,
         ),
     );
-    let _ = init.epoch_tt; // silence unused variant
+    let _ = init.epoch; // silence unused variant
     let _ = JulianDate::new(2_451_545.0);
 
     let out = std::env::temp_dir().join(format!("siderust_pod_mvp1_{}", std::process::id()));

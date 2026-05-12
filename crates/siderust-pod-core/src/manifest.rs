@@ -48,6 +48,19 @@ impl RunManifest {
     }
 }
 
+/// Embedded JSON-Schema (draft-07) for a v1 [`RunManifest`].
+///
+/// The schema lives next to this source file under `schema/run_manifest.v1.json`
+/// and is included verbatim at build time so the crate ships a single source
+/// of truth without filesystem access at runtime.
+#[cfg(feature = "serde")]
+pub const RUN_MANIFEST_SCHEMA_V1: &str =
+    include_str!("../schema/run_manifest.v1.json");
+
+/// Embedded JSON-Schema (draft-07) for a v1 QC report (`qc.v1`).
+#[cfg(feature = "serde")]
+pub const QC_SCHEMA_V1: &str = include_str!("../schema/qc.v1.json");
+
 #[cfg(all(test, feature = "serde"))]
 mod tests {
     use super::*;
@@ -87,4 +100,42 @@ mod tests {
         let parsed: RunManifest = serde_json::from_str(&s1).unwrap();
         assert_eq!(parsed.inputs[0].path.to_str().unwrap(), "/in/a.sp3");
     }
+
+    /// The embedded schema must parse as a JSON object and declare the keys
+    /// the manifest serialises into; this prevents silent drift between
+    /// `RunManifest` and `schema/run_manifest.v1.json`.
+    #[test]
+    fn embedded_schema_lists_all_required_fields() {
+        let schema: serde_json::Value =
+            serde_json::from_str(RUN_MANIFEST_SCHEMA_V1).expect("schema is JSON");
+        let req = schema["required"].as_array().expect("required is array");
+        let req: Vec<&str> = req.iter().map(|v| v.as_str().unwrap()).collect();
+        for k in [
+            "run_id",
+            "tool_version",
+            "config_sha256",
+            "inputs",
+            "outputs",
+            "started_at",
+            "finished_at",
+        ] {
+            assert!(req.contains(&k), "schema missing required field {k}");
+        }
+        let serialised = sample().to_json_pretty().unwrap();
+        let v: serde_json::Value = serde_json::from_str(&serialised).unwrap();
+        for k in &req {
+            assert!(v.get(*k).is_some(), "manifest missing schema-required field {k}");
+        }
+    }
+
+    #[test]
+    fn qc_schema_is_well_formed_v1() {
+        let schema: serde_json::Value = serde_json::from_str(QC_SCHEMA_V1).unwrap();
+        assert_eq!(schema["properties"]["schema"]["const"].as_str(), Some("qc.v1"));
+        let req = schema["required"].as_array().unwrap();
+        let req: Vec<&str> = req.iter().map(|v| v.as_str().unwrap()).collect();
+        assert!(req.contains(&"schema"));
+        assert!(req.contains(&"rtn"));
+    }
 }
+

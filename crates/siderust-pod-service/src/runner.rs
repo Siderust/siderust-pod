@@ -65,7 +65,7 @@ pub fn run(cfg: &RunConfig, _config_path: &str) -> std::io::Result<RunReport> {
     let arc = generate(&synth_cfg);
     let t0 = arc.truth_states[0];
     let init = OrbitState::new(
-        t0.epoch_tt,
+        t0.epoch,
         Position::new(
             t0.position.x().value() + 0.05,
             t0.position.y().value() - 0.05,

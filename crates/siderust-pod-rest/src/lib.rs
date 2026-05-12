@@ -134,7 +134,7 @@ fn run_job(state: AppState, id: String, enable_j2: bool) {
     let arc = generate(&cfg);
     let t0 = arc.truth_states[0];
     let init = OrbitState::new(
-        t0.epoch_tt,
+        t0.epoch,
         Position::new(
             t0.position.x().value() + 0.05,
             t0.position.y().value() - 0.05,

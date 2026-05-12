@@ -66,7 +66,7 @@ pub fn write_sp3_from_states<W: Write>(
         .map(|s| {
             // Bridge the two tempoch versions (siderust uses crates.io tempoch,
             // siderust-pod-io uses the local path version) via the raw f64 JD.
-            let epoch_utc: Time<UTC> = JulianDate::<TT>::try_new(Day::new(s.epoch_tt.jd_value()))
+            let epoch_utc: Time<UTC> = JulianDate::<TT>::try_new(Day::new(s.epoch_jd().jd_value()))
                 .expect("OrbitState epoch must be finite")
                 .to_time()
                 .to_scale::<UTC>();
@@ -114,7 +114,7 @@ mod tests {
     fn fake_states() -> Vec<OrbitState> {
         (0..5)
             .map(|i| {
-                OrbitState::new(
+                OrbitState::new_at_jd(
                     JulianDate::new(2_451_545.0 + i as f64 * 30.0 / 86_400.0),
                     Position::new(7000.0 + i as f64, 0.0, 0.0),
                     Velocity::new(0.0, 7.5, 0.0),

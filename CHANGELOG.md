@@ -9,6 +9,26 @@ crate (independent versioning).
 
 ### Added
 
+* `siderust-pod-core::manifest`: shipped JSON-Schema (draft-07) for the
+  `RunManifest` and QC report formats as `schema/run_manifest.v1.json` and
+  `schema/qc.v1.json`, embedded at compile time as `RUN_MANIFEST_SCHEMA_V1`
+  and `QC_SCHEMA_V1` constants. Two new tests assert the embedded manifest
+  schema matches the actual serialised field set and that the QC schema
+  declares `schema = "qc.v1"`. Total `siderust-pod-core` test count: 8.
+* `siderust-pod-qc::orbit_compare`: RTN comparison adapter migrated to the
+  `siderust 0.7` API (`OrbitState::epoch_jd()`, `LocalOrbitalFrame::try_from_state`).
+  Existing tests still pass.
+
+### Changed
+
+* `siderust-pod-{io,observations,estimation,qc,products}`: migrated to the
+  upstream `siderust` API rename (`OrbitState.epoch_tt → epoch`,
+  `OrbitState::new(JulianDate, …) → OrbitState::new_at_jd(JulianDate, …)`,
+  `StateCovariance::from_stddevs([f64;3], [f64;3]) →
+  StateCovariance::diagonal_from_sigmas([Kilometers;3], [KmPerSeconds;3])`,
+  `LocalOrbitalFrame::from_state → try_from_state`). Public APIs of pod
+  crates unchanged.
+
 * Reserved sibling reusable crates under `rust/`:
   `siderust-dynamics` (variational/STM, force-model composition,
   thrust-arc physics), `siderust-sgp4` (SGP4 propagator producing typed

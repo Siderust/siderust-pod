@@ -34,7 +34,7 @@ fn run_once(label: &str) -> (PathBuf, Vec<u8>, Vec<u8>, Vec<u8>) {
     let arc = generate(&cfg);
     let t0 = arc.truth_states[0];
     let init = OrbitState::new(
-        t0.epoch_tt,
+        t0.epoch,
         Position::new(
             t0.position.x().value() + 0.05,
             t0.position.y().value() - 0.05,

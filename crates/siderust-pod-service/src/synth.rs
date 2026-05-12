@@ -67,7 +67,7 @@ impl Default for SyntheticArcConfig {
         let r0 = 6_378.137 + 500.0;
         let v0 = (398_600.441_8_f64 / r0).sqrt();
         Self {
-            truth_initial: OrbitState::new(
+            truth_initial: OrbitState::new_at_jd(
                 JulianDate::new(2_451_545.0),
                 Position::new(r0, 0.0, 0.0),
                 Velocity::new(0.0, v0, 0.0),
@@ -154,7 +154,7 @@ pub fn generate(cfg: &SyntheticArcConfig) -> SyntheticArc {
         let mut code = Vec::new();
         let mut carrier = Vec::new();
         for sat in &gps_sats {
-            let (gps_pos, gps_vel) = gps_state_at(s.epoch_tt, sat.slot, cfg.n_gps_sats);
+            let (gps_pos, gps_vel) = gps_state_at(s.epoch, sat.slot, cfg.n_gps_sats);
             // Use the analytic prediction at *truth* state and add noise +
             // truth clock bias to obtain the synthetic measurement.
             let geom = code_truth_m(s, gps_pos, gps_vel) + cfg.clock_bias_m;

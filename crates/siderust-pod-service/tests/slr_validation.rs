@@ -42,7 +42,7 @@ fn slr_validation_self_consistent() {
     for s in &arc.truth_states {
         let pred = model.predict(s, &[]).value;
         // Observation = truth-model prediction → residual = 0.
-        residuals.push((s.epoch_tt.jd_value(), pred - pred));
+        residuals.push((s.epoch_jd().jd_value(), pred - pred));
     }
     let report = SlrValidationReport::from_pairs(residuals);
     assert_eq!(report.residuals.len(), arc.truth_states.len());

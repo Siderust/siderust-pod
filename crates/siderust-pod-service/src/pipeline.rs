@@ -148,7 +148,7 @@ pub fn run_synth(
     )?;
 
     let estimated_initial = OrbitState::new(
-        initial_guess.epoch_tt,
+        initial_guess.epoch,
         Position::new(report.parameters[0], report.parameters[1], report.parameters[2]),
         Velocity::new(report.parameters[3], report.parameters[4], report.parameters[5]),
     );
@@ -260,7 +260,7 @@ fn step_size(arc: &SyntheticArc) -> f64 {
     if arc.truth_states.len() < 2 {
         return 30.0;
     }
-    let dt_jd = arc.truth_states[1].epoch_tt.jd_value() - arc.truth_states[0].epoch_tt.jd_value();
+    let dt_jd = arc.truth_states[1].epoch_jd().jd_value() - arc.truth_states[0].epoch_jd().jd_value();
     dt_jd * 86_400.0
 }
 
@@ -272,7 +272,7 @@ fn assemble_normal_equations<F: ForceModel>(
     force: &F,
 ) -> Result<NormalEquations, siderust_pod_estimation::WlsSolverError> {
     let s0 = OrbitState::new(
-        arc.truth_states[0].epoch_tt,
+        arc.truth_states[0].epoch,
         Position::new(params[0], params[1], params[2]),
         Velocity::new(params[3], params[4], params[5]),
     );
@@ -352,7 +352,7 @@ fn postfit_residuals(
             };
             let p = model.predict(s, extras);
             out.push(ResidualRow {
-                jd_tt: s.epoch_tt.jd_value(),
+                jd_tt: s.epoch_jd().jd_value(),
                 kind: format!("code-{}", sat.id),
                 measured_m: obs.measured_m,
                 predicted_m: p.value,
@@ -368,7 +368,7 @@ fn postfit_residuals(
             };
             let p = model.predict(s, extras);
             out.push(ResidualRow {
-                jd_tt: s.epoch_tt.jd_value(),
+                jd_tt: s.epoch_jd().jd_value(),
                 kind: format!("phase-{}", sat.id),
                 measured_m: obs.measured_m,
                 predicted_m: p.value,

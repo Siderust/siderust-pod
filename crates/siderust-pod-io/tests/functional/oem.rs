@@ -23,12 +23,12 @@ fn sample_meta() -> OemMetadata {
 /// Two states spaced 30 seconds around J2000.
 fn two_states() -> Vec<OrbitState> {
     vec![
-        OrbitState::new(
+        OrbitState::new_at_jd(
             JulianDate::new(2_451_545.0),
             Position::new(7_000.0, 0.0, 0.0),
             Velocity::new(0.0, 7.5, 0.0),
         ),
-        OrbitState::new(
+        OrbitState::new_at_jd(
             JulianDate::new(2_451_545.0 + 30.0 / 86_400.0),
             Position::new(6_999.0, 225.0, 0.0),
             Velocity::new(-0.24, 7.49, 0.0),
@@ -196,7 +196,7 @@ fn oem_multi_segment_two_meta_blocks() {
         time_system: "TT".into(),
         center_name: "EARTH".into(),
     };
-    let states2 = vec![OrbitState::new(
+    let states2 = vec![OrbitState::new_at_jd(
         JulianDate::new(2_451_546.0),
         Position::new(-7_000.0, 100.0, 0.0),
         Velocity::new(0.1, -7.5, 0.0),
