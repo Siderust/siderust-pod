@@ -1,6 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
+    "crates/siderust-dynamics",
+    "crates/siderust-lambert",
+    "crates/siderust-sgp4",
+    "crates/siderust-spice",
+    "crates/siderust-tle",
     "crates/siderust-pod-core",
     "crates/siderust-pod-dynamics",
     "crates/siderust-pod-io",
@@ -10,7 +15,7 @@ members = [
     "crates/siderust-pod-products",
     "crates/siderust-pod-service",
     "crates/siderust-pod-cli",
-    "crates/siderust-pod-rest",
+    "crates/siderust-pod-rest", "target-sgp4-test/probe",
 ]
 
 [workspace.package]
@@ -27,11 +32,19 @@ categories = ["science", "aerospace"]
 [workspace.dependencies]
 # Foundational crates (read-only to this workspace).
 # Pinned by path during local dev; published versions are fine for crates.io builds.
-qtty     = { version = "0.7", path = "../qtty/qtty" }
+qtty-core = { version = "0.8", path = "../qtty/qtty-core" }
+qtty     = { version = "0.8", path = "../qtty/qtty" }
 tempoch  = { version = "0.4", path = "../tempoch/tempoch" }
 affn     = { version = "0.7", path = "../affn", features = ["astro"] }
 cheby    = { version = "0.2", path = "../cheby" }
 siderust = { version = "0.7", path = "../siderust" }
+
+# Satellite mechanics / propagation crates (now members of this workspace).
+siderust-dynamics = { path = "crates/siderust-dynamics", version = "0.0.0" }
+siderust-lambert  = { path = "crates/siderust-lambert",  version = "0.0.0" }
+siderust-sgp4     = { path = "crates/siderust-sgp4",     version = "0.0.0" }
+siderust-spice    = { path = "crates/siderust-spice",    version = "0.0.0" }
+siderust-tle      = { path = "crates/siderust-tle",      version = "0.0.0" }
 
 # POD-internal crates referenced from siblings.
 siderust-pod-core         = { path = "crates/siderust-pod-core",         version = "0.0.0" }
@@ -68,6 +81,8 @@ uuid        = { version = "1.10", features = ["v4"] }
 # crates.io in its own Cargo.toml) would get a *different* affn instance than the
 # local path dep, causing type-level incompatibilities at crate boundaries.
 [patch.crates-io]
+qtty-core = { path = "../qtty/qtty-core" }
+tempoch-core = { path = "../tempoch/tempoch-core" }
 qtty     = { path = "../qtty/qtty" }
 tempoch  = { path = "../tempoch/tempoch" }
 affn     = { path = "../affn" }
@@ -77,6 +92,21 @@ siderust = { path = "../siderust" }
 # so both the workspace crates and siderust share a single `affn` instance.
 [patch."https://github.com/Siderust/affn.git"]
 affn = { path = "../affn" }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+todo = "deny"
+unimplemented = "deny"
+dbg_macro = "deny"
+print_stdout = "warn"
+
+[workspace.lints.rustdoc]
+broken_intra_doc_links = "deny"
 
 [profile.release]
 opt-level = 3

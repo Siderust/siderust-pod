@@ -25,9 +25,9 @@ fn rinex_obs_approx_xyz_present_and_correct() {
     let xyz = load()
         .approx_xyz_m
         .expect("APPROX POSITION XYZ should be parsed");
-    assert_approx(xyz[0].value(), 3_837_086.1234, 1e-3, "approx_xyz[0] (X)");
-    assert_approx(xyz[1].value(), -765_588.5678, 1e-3, "approx_xyz[1] (Y)");
-    assert_approx(xyz[2].value(), 5_082_259.9012, 1e-3, "approx_xyz[2] (Z)");
+    assert_approx(xyz[0].value(), 3_837_086.123_4, 1e-3, "approx_xyz[0] (X)");
+    assert_approx(xyz[1].value(), -765_588.567_8, 1e-3, "approx_xyz[1] (Y)");
+    assert_approx(xyz[2].value(), 5_082_259.901_2, 1e-3, "approx_xyz[2] (Z)");
 }
 
 #[test]

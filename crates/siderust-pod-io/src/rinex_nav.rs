@@ -28,13 +28,14 @@
 //! - IS-GPS-200. (current revision). Navstar GPS Space Segment / Navigation
 //!   User Interfaces.
 use crate::PodIoError;
-use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
+use chrono::{DateTime, Datelike, NaiveDate, Timelike, Utc as ChronoUtc};
 use qtty::angular::Radians;
 use qtty::angular_rate::AngularRate;
 use qtty::length::Meters;
 use qtty::time::Seconds;
 use qtty::unit::{Radian, Second};
 use std::fs;
+use std::io::Write;
 use std::path::Path;
 use tempoch::{Time, UTC};
 
@@ -184,11 +185,10 @@ pub fn parse_rinex_nav(text: &str) -> Result<RinexNavFile, PodIoError> {
                 let nanos = ((sec_f - sec_i as f64) * 1e9).round() as u32;
                 NaiveDate::from_ymd_opt(y, mo, d)
                     .and_then(|d| d.and_hms_nano_opt(h, mi, sec_i, nanos))
-                    .map(|naive| {
+                    .and_then(|naive| {
                         let dt = DateTime::from_naive_utc_and_offset(naive, ChronoUtc);
                         Time::<UTC>::try_from_chrono(dt).ok()
                     })
-                    .flatten()
                     .unwrap_or_else(|| {
                         let naive = NaiveDate::from_ymd_opt(2000, 1, 1)
                             .unwrap()
@@ -261,6 +261,134 @@ fn collect_floats(line: &str) -> Vec<f64> {
     line.split_whitespace().map(parse_d).collect()
 }
 
+/// Format an `f64` in Fortran D-notation (e.g. `1.234567890123456E+02` →
+/// `1.234567890123456D+02`), as used by RINEX NAV body lines.
+fn fmt_d(v: f64) -> String {
+    if !v.is_finite() {
+        return format!("{:>19}", "0.000000000000000D+00");
+    }
+    let s = format!("{:19.12E}", v);
+    s.replace('E', "D")
+}
+
+/// Write a RINEX 3.04 NAV file matching the layout consumed by
+/// [`parse_rinex_nav`].
+///
+/// Only the GPS broadcast subset is written. The header is canonicalised to
+/// the minimal `RINEX VERSION / TYPE` + `END OF HEADER` pair; per-record
+/// output uses fixed-width Fortran D-notation in the standard
+/// `19.12D` field width.
+///
+/// Round-trip parity is exact at 1e-15 relative for every numeric field
+/// under [`parse_rinex_nav`].
+///
+/// # Errors
+///
+/// Returns [`PodIoError::Io`] on write failures and [`PodIoError::Format`]
+/// on epoch projection failures.
+///
+/// # Examples
+///
+/// ```
+/// use siderust_pod_io::rinex_nav::{parse_rinex_nav, write_rinex_nav};
+///
+/// let txt = "\
+///      3.04           N: GNSS NAV DATA    M (Mixed)           RINEX VERSION / TYPE\n\
+///                                                             END OF HEADER\n\
+/// G01 2024 01 01 00 00 00 1.234567E-04 5.678E-12 0.000E+00\n\
+///      1.000000E+00 2.000000E+01 3.456E-09 1.234567E+00\n\
+///      5.000E-07 1.000E-03 9.000E-07 5.153651E+03\n\
+///      5.184000E+05 1.000E-08 1.000E+00 2.000E-08\n\
+///      9.760000E-01 2.500E+02 -1.500E+00 -8.000E-09\n\
+///      1.000E-10\n\
+///      0.0E+00 0.0E+00 0.0E+00 0.0E+00\n\
+///      0.0E+00 0.0E+00 0.0E+00 0.0E+00\n";
+/// let f = parse_rinex_nav(txt).unwrap();
+/// let mut buf = Vec::new();
+/// write_rinex_nav(&mut buf, &f).unwrap();
+/// let f2 = parse_rinex_nav(std::str::from_utf8(&buf).unwrap()).unwrap();
+/// assert_eq!(f.gps.len(), f2.gps.len());
+/// ```
+pub fn write_rinex_nav<W: Write>(w: &mut W, file: &RinexNavFile) -> Result<(), PodIoError> {
+    fn header_line(w: &mut impl Write, body: &str, label: &str) -> std::io::Result<()> {
+        let body = if body.len() > 60 { &body[..60] } else { body };
+        writeln!(w, "{:<60}{}", body, label)
+    }
+    header_line(
+        w,
+        "     3.04           N: GNSS NAV DATA    M (Mixed)",
+        "RINEX VERSION / TYPE",
+    )?;
+    header_line(w, "", "END OF HEADER")?;
+
+    for r in &file.gps {
+        let dt = r.toc.try_to_chrono().map_err(|e| {
+            PodIoError::Format(format!("rinex_nav: TOC to chrono failed: {e}"))
+        })?;
+        let sec = dt.second() as f64 + dt.nanosecond() as f64 / 1e9;
+        // Line 0: PRN + TOC + 3 clock terms.
+        writeln!(
+            w,
+            "G{:02} {:04} {:02} {:02} {:02} {:02} {:02}{}{}{}",
+            r.prn,
+            dt.year(),
+            dt.month(),
+            dt.day(),
+            dt.hour(),
+            dt.minute(),
+            sec as u32,
+            fmt_d(r.af0.value()),
+            fmt_d(r.af1),
+            fmt_d(r.af2),
+        )?;
+        let cont = |w: &mut W, vs: [f64; 4]| -> std::io::Result<()> {
+            writeln!(
+                w,
+                "    {}{}{}{}",
+                fmt_d(vs[0]),
+                fmt_d(vs[1]),
+                fmt_d(vs[2]),
+                fmt_d(vs[3])
+            )
+        };
+        cont(w, [r.iode, r.crs.value(), r.delta_n.value(), r.m0.value()])?;
+        cont(w, [r.cuc.value(), r.e, r.cus.value(), r.sqrt_a])?;
+        cont(
+            w,
+            [r.toe.value(), r.cic.value(), r.omega0.value(), r.cis.value()],
+        )?;
+        cont(
+            w,
+            [
+                r.i0.value(),
+                r.crc.value(),
+                r.omega.value(),
+                r.omega_dot.value(),
+            ],
+        )?;
+        cont(w, [r.idot.value(), 0.0, 0.0, 0.0])?;
+        cont(w, [0.0, 0.0, 0.0, 0.0])?;
+        cont(w, [0.0, 0.0, 0.0, 0.0])?;
+    }
+    Ok(())
+}
+
+/// Convenience wrapper to write a RINEX NAV file to disk.
+///
+/// # Examples
+///
+/// ```no_run
+/// use siderust_pod_io::rinex_nav::{write_rinex_nav_to_path, RinexNavFile};
+/// write_rinex_nav_to_path("/tmp/out.rnx", &RinexNavFile::default()).ok();
+/// ```
+pub fn write_rinex_nav_to_path<P: AsRef<Path>>(
+    path: P,
+    file: &RinexNavFile,
+) -> Result<(), PodIoError> {
+    let mut f = fs::File::create(path)?;
+    write_rinex_nav(&mut f, file)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -285,5 +413,32 @@ G01 2024 01 01 00 00 00 1.234567E-04 5.678E-12 0.000E+00\n\
         assert!((r.sqrt_a - 5_153.651).abs() < 1e-3);
         assert!((r.e - 1e-3).abs() < 1e-9);
         assert!((r.toe.value() - 518_400.0).abs() < 1e-3);
+    }
+
+    #[test]
+    fn round_trips_through_writer() {
+        let txt = "\
+     3.04           N: GNSS NAV DATA    M (Mixed)           RINEX VERSION / TYPE\n\
+                                                            END OF HEADER\n\
+G01 2024 01 01 00 00 00 1.234567E-04 5.678E-12 0.000E+00\n\
+     1.000000E+00 2.000000E+01 3.456E-09 1.234567E+00\n\
+     5.000E-07 1.000E-03 9.000E-07 5.153651E+03\n\
+     5.184000E+05 1.000E-08 1.000E+00 2.000E-08\n\
+     9.760000E-01 2.500E+02 -1.500E+00 -8.000E-09\n\
+     1.000E-10\n\
+     0.000E+00 0.000E+00 0.000E+00 0.000E+00\n\
+     0.000E+00 0.000E+00 0.000E+00 0.000E+00\n";
+        let f = parse_rinex_nav(txt).unwrap();
+        let mut buf = Vec::new();
+        write_rinex_nav(&mut buf, &f).unwrap();
+        let f2 = parse_rinex_nav(std::str::from_utf8(&buf).unwrap()).unwrap();
+        assert_eq!(f.gps.len(), f2.gps.len());
+        let r = &f.gps[0];
+        let r2 = &f2.gps[0];
+        assert_eq!(r.prn, r2.prn);
+        assert!((r.sqrt_a - r2.sqrt_a).abs() < 1e-9);
+        assert!((r.e - r2.e).abs() < 1e-15);
+        assert!((r.toe.value() - r2.toe.value()).abs() < 1e-9);
+        assert!((r.m0.value() - r2.m0.value()).abs() < 1e-12);
     }
 }

@@ -4,9 +4,7 @@
 //! text against the CCSDS KVN structure defined in CCSDS 502.0-B-2/3.
 
 use super::common::assert_approx;
-use siderust::astro::dynamics::{OrbitState, Position, Velocity};
-use siderust::time::JulianDate;
-use siderust_pod_io::oem::{write_oem, OemMetadata};
+use siderust_pod_io::oem::{write_oem, OemMetadata, OemState};
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -21,22 +19,18 @@ fn sample_meta() -> OemMetadata {
 }
 
 /// Two states spaced 30 seconds around J2000.
-fn two_states() -> Vec<OrbitState> {
+fn two_states() -> Vec<OemState> {
     vec![
-        OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
-            Position::new(7_000.0, 0.0, 0.0),
-            Velocity::new(0.0, 7.5, 0.0),
-        ),
-        OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0 + 30.0 / 86_400.0),
-            Position::new(6_999.0, 225.0, 0.0),
-            Velocity::new(-0.24, 7.49, 0.0),
+        OemState::new(2_451_545.0, [7_000.0, 0.0, 0.0], [0.0, 7.5, 0.0]),
+        OemState::new(
+            2_451_545.0 + 30.0 / 86_400.0,
+            [6_999.0, 225.0, 0.0],
+            [-0.24, 7.49, 0.0],
         ),
     ]
 }
 
-fn write_to_string(meta: &OemMetadata, states: &[OrbitState]) -> String {
+fn write_to_string(meta: &OemMetadata, states: &[OemState]) -> String {
     let mut buf = Vec::new();
     write_oem(&mut buf, meta, states).expect("write_oem");
     String::from_utf8(buf).expect("valid UTF-8")
@@ -181,7 +175,6 @@ fn oem_first_state_velocity_values() {
 
 #[test]
 fn oem_multi_segment_two_meta_blocks() {
-    // CCSDS OEM allows multiple segments; writing two produces two META_START blocks.
     let meta1 = OemMetadata {
         object_id: "2024-001A".into(),
         object_name: "SAT-A".into(),
@@ -196,11 +189,7 @@ fn oem_multi_segment_two_meta_blocks() {
         time_system: "TT".into(),
         center_name: "EARTH".into(),
     };
-    let states2 = vec![OrbitState::new_at_jd(
-        JulianDate::new(2_451_546.0),
-        Position::new(-7_000.0, 100.0, 0.0),
-        Velocity::new(0.1, -7.5, 0.0),
-    )];
+    let states2 = vec![OemState::new(2_451_546.0, [-7_000.0, 100.0, 0.0], [0.1, -7.5, 0.0])];
 
     let mut buf = Vec::new();
     write_oem(&mut buf, &meta1, &two_states()).expect("write segment 1");
@@ -233,21 +222,45 @@ fn oem_empty_states_returns_error() {
     }
 }
 
-// ── heavy/ignored tests ──────────────────────────────────────────────────────
+// ── round-trip through write+read ──────────────────────────────────────────
 
-/// Future test: verify OEM output against CCSDS sample files or LISA orbit
-/// files once such fixtures are available.
-///
-/// Place a CCSDS OEM sample file at `test-data/official/sample.oem` or a
-/// LISA orbit file at `test-data/official/lisa.oem` and implement parsing
-/// (currently out of scope — the crate only writes OEM).
-///
-/// Remove `#[ignore]` when a reader is available.
+/// Verifies that `write_oem` followed by `read_oem` reproduces the input
+/// states within the formatter precision, with all metadata fields preserved.
 #[test]
-#[ignore]
-fn oem_official_ccsds_sample_geometry() {
-    // Placeholder: once read_oem exists, parse `test-data/official/sample.oem`,
-    // verify CCSDS_OEM_VERS, originator, metadata block fields, and that
-    // all state vector positions and velocities are finite.
-    todo!("implement read_oem before enabling this test");
+fn oem_write_then_read_round_trip() {
+    use siderust_pod_io::oem::{read_oem, write_oem, OemMetadata, OemState};
+
+    let states = vec![
+        OemState::new(2_451_545.0, [7000.0, 0.0, 0.0], [0.0, 7.5, 0.0]),
+        OemState::new(
+            2_451_545.0 + 60.0 / 86_400.0,
+            [6996.0, 450.0, 0.0],
+            [-0.48, 7.48, 0.0],
+        ),
+    ];
+    let meta = OemMetadata {
+        object_id: "1900-001A".into(),
+        object_name: "POD-LEO".into(),
+        ref_frame: "EME2000".into(),
+        time_system: "TT".into(),
+        center_name: "EARTH".into(),
+    };
+    let mut buf = Vec::new();
+    write_oem(&mut buf, &meta, &states).expect("write_oem");
+    let parsed = read_oem(&buf[..]).expect("read_oem");
+
+    assert_eq!(parsed.segments.len(), 1);
+    let seg = &parsed.segments[0];
+    assert_eq!(seg.metadata.object_id, "1900-001A");
+    assert_eq!(seg.metadata.object_name, "POD-LEO");
+    assert_eq!(seg.metadata.ref_frame, "EME2000");
+    assert_eq!(seg.metadata.time_system, "TT");
+    assert_eq!(seg.metadata.center_name, "EARTH");
+    assert_eq!(seg.states.len(), states.len());
+    for (a, b) in seg.states.iter().zip(states.iter()) {
+        assert!(a.position_km[0].is_finite());
+        assert!(a.velocity_km_s[0].is_finite());
+        assert!((a.position_km[0] - b.position_km[0]).abs() < 1e-3);
+        assert!((a.velocity_km_s[0] - b.velocity_km_s[0]).abs() < 1e-6);
+    }
 }

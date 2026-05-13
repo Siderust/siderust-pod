@@ -32,9 +32,27 @@ use crate::PodIoError;
 use qtty::angular::{Arcseconds, MilliArcseconds};
 use qtty::time::Seconds;
 use qtty::Day;
-use siderust::astro::eop::EopValues;
 use std::io::{BufRead, BufReader, Read};
 use tempoch::{ModifiedJulianDate, UTC};
+
+/// Earth-orientation parameters from an IERS C04 record.
+///
+/// All fields use typed `qtty` quantities. Convert to radians with `.to::<Radian>()`.
+#[derive(Debug, Clone, Copy)]
+pub struct EopValues {
+    /// UT1 − UTC.
+    pub dut1: Seconds,
+    /// Length of day offset.
+    pub lod: Seconds,
+    /// Pole x-coordinate.
+    pub xp: Arcseconds,
+    /// Pole y-coordinate.
+    pub yp: Arcseconds,
+    /// Celestial pole offset dX (nutation correction).
+    pub dx: MilliArcseconds,
+    /// Celestial pole offset dY (nutation correction).
+    pub dy: MilliArcseconds,
+}
 
 /// A single Earth-orientation record from IERS C04.
 #[derive(Debug, Clone, Copy)]

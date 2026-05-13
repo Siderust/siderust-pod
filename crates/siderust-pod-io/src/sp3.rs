@@ -30,9 +30,26 @@
 //!   satellite geometry and ephemeris products. GPS Solutions, 21, 101-111.
 use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
 use qtty::time::Microseconds;
+use affn::cartesian;
+use affn::centers::{AffineCenter, ReferenceCenter};
+use affn::frames::GCRS;
 use qtty::unit::Kilometer;
-use siderust::astro::dynamics::Position;
-use siderust::coordinates::frames::GCRS;
+
+/// Geocentric center marker for SP3 positions.
+#[derive(Debug, Copy, Clone)]
+pub struct EarthCenter;
+
+impl ReferenceCenter for EarthCenter {
+    type Params = ();
+    fn center_name() -> &'static str {
+        "Geocentric"
+    }
+}
+
+impl AffineCenter for EarthCenter {}
+
+/// Local type alias for SP3 positions: geocentric, GCRS-framed, km.
+type Position<F = GCRS, U = Kilometer> = cartesian::Position<EarthCenter, F, U>;
 use std::io::{BufRead, BufReader, Read, Write};
 use tempoch::{Time, UTC};
 use thiserror::Error;
@@ -269,6 +286,186 @@ pub fn write_sp3<W: Write>(w: &mut W, rec: &Sp3Record) -> Result<(), Sp3Error> {
     }
     writeln!(w, "EOF")?;
     Ok(())
+}
+
+/// Iterator-based streaming SP3 reader.
+///
+/// Yields one [`Sp3Epoch`] at a time from a buffered reader without
+/// materialising the entire file in memory. Use this when ingesting
+/// hour-of-day SP3 files that can exceed 100 MB.
+///
+/// The reader-borrowing iterator is a thin layer over [`read_sp3`] and
+/// makes the same parsing decisions; in particular, the SP3 header is
+/// pre-consumed and exposed via [`Sp3Stream::header`].
+///
+/// # Examples
+///
+/// ```
+/// use siderust_pod_io::sp3::Sp3Stream;
+///
+/// const SAMPLE: &str = "\
+/// #dP2024  1  1  0  0  0.00000000       1 ORBIT IGS20 HLM  IGS\n\
+/// ##  2295 518400.00000000   900.00000000 60310 0.0000000000000\n\
+/// +    1   G01                                                      \n\
+/// ++         5                                                       \n\
+/// %c L  cc GPS ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc\n\
+/// %c cc cc ccc ccc cccc cccc cccc cccc ccccc ccccc ccccc ccccc\n\
+/// %f  1.2500000  1.025000000  0.00000000000  0.000000000000000\n\
+/// %f  0.0000000  0.000000000  0.00000000000  0.000000000000000\n\
+/// %i    0    0    0    0      0      0      0      0         0\n\
+/// %i    0    0    0    0      0      0      0      0         0\n\
+/// /* COMMENT\n\
+/// *  2024  1  1  0  0  0.00000000\n\
+/// PG01  15000.000000  20000.000000  -5000.000000      0.000123\n\
+/// EOF\n";
+/// let mut s = Sp3Stream::new(SAMPLE.as_bytes()).unwrap();
+/// assert!(!s.header().is_empty());
+/// let mut epochs = 0;
+/// while let Some(ep) = s.next_epoch().unwrap() {
+///     assert!(!ep.positions.is_empty());
+///     epochs += 1;
+/// }
+/// assert_eq!(epochs, 1);
+/// ```
+pub struct Sp3Stream<R: Read> {
+    inner: BufReader<R>,
+    header: Vec<String>,
+    pending_epoch_line: Option<(usize, String)>,
+    line_no: usize,
+    finished: bool,
+}
+
+impl<R: Read> Sp3Stream<R> {
+    /// Create a new streaming reader by consuming the SP3 header up to the
+    /// first epoch line.
+    pub fn new(r: R) -> Result<Self, Sp3Error> {
+        let mut inner = BufReader::new(r);
+        let mut header = Vec::new();
+        let mut line_no = 0usize;
+        let mut s = String::new();
+        let pending = loop {
+            s.clear();
+            let n = inner.read_line(&mut s)?;
+            if n == 0 {
+                break None;
+            }
+            line_no += 1;
+            let trimmed = s.trim_end_matches(['\r', '\n']).to_string();
+            if trimmed == "EOF" {
+                break None;
+            }
+            if trimmed.starts_with('*') {
+                break Some((line_no, trimmed));
+            }
+            header.push(trimmed);
+        };
+        Ok(Self {
+            inner,
+            header,
+            pending_epoch_line: pending,
+            line_no,
+            finished: false,
+        })
+    }
+
+    /// Header lines collected before the first epoch.
+    pub fn header(&self) -> &[String] {
+        &self.header
+    }
+
+    /// Yield the next [`Sp3Epoch`], or `None` when the stream is exhausted.
+    pub fn next_epoch(&mut self) -> Result<Option<Sp3Epoch>, Sp3Error> {
+        if self.finished {
+            return Ok(None);
+        }
+        let (epoch_line_no, epoch_line) = match self.pending_epoch_line.take() {
+            Some(v) => v,
+            None => {
+                self.finished = true;
+                return Ok(None);
+            }
+        };
+        let mut epoch = parse_epoch_line(&epoch_line, epoch_line_no)?;
+        let mut s = String::new();
+        loop {
+            s.clear();
+            let n = self.inner.read_line(&mut s)?;
+            if n == 0 {
+                self.finished = true;
+                break;
+            }
+            self.line_no += 1;
+            let trimmed = s.trim_end_matches(['\r', '\n']).to_string();
+            if trimmed == "EOF" {
+                self.finished = true;
+                break;
+            }
+            if trimmed.starts_with('*') {
+                self.pending_epoch_line = Some((self.line_no, trimmed));
+                break;
+            }
+            if trimmed.starts_with('P') {
+                epoch
+                    .positions
+                    .push(parse_p_line(&trimmed, self.line_no)?);
+            }
+            // V/EP/EV records ignored as in batch reader.
+        }
+        Ok(Some(epoch))
+    }
+}
+
+fn parse_epoch_line(line: &str, line_no: usize) -> Result<Sp3Epoch, Sp3Error> {
+    let fields: Vec<&str> = line
+        .strip_prefix('*')
+        .unwrap_or(line)
+        .split_whitespace()
+        .collect();
+    if fields.len() < 6 {
+        return Err(Sp3Error::Record {
+            line: line_no,
+            message: format!("epoch needs 6 fields, got {}", fields.len()),
+        });
+    }
+    Ok(Sp3Epoch {
+        time: civil_to_time_utc(
+            parse_field(fields[0], line_no, "year")?,
+            parse_field(fields[1], line_no, "month")?,
+            parse_field(fields[2], line_no, "day")?,
+            parse_field(fields[3], line_no, "hour")?,
+            parse_field(fields[4], line_no, "minute")?,
+            parse_field(fields[5], line_no, "second")?,
+            line_no,
+        )?,
+        positions: Vec::new(),
+    })
+}
+
+fn parse_p_line(line: &str, line_no: usize) -> Result<Sp3Position, Sp3Error> {
+    let id = line
+        .get(1..4)
+        .ok_or_else(|| Sp3Error::Record {
+            line: line_no,
+            message: "P record too short for sat id".into(),
+        })?
+        .trim()
+        .to_string();
+    let rest: Vec<&str> = line[4..].split_whitespace().collect();
+    if rest.len() < 4 {
+        return Err(Sp3Error::Record {
+            line: line_no,
+            message: format!("P record needs 4 numeric fields, got {}", rest.len()),
+        });
+    }
+    Ok(Sp3Position {
+        sat_id: id,
+        position: Position::<GCRS, Kilometer>::new(
+            parse_field::<f64>(rest[0], line_no, "x")?,
+            parse_field::<f64>(rest[1], line_no, "y")?,
+            parse_field::<f64>(rest[2], line_no, "z")?,
+        ),
+        clock: Microseconds::new(parse_field(rest[3], line_no, "clock")?),
+    })
 }
 
 #[cfg(test)]

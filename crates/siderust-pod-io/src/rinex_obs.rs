@@ -29,11 +29,11 @@
 //! - Misra, P., & Enge, P. (2012). Global Positioning System: Signals,
 //!   Measurements, and Performance (2nd ed.). Ganga-Jamuna Press.
 use crate::PodIoError;
-use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
+use chrono::{DateTime, Datelike, NaiveDate, Timelike, Utc as ChronoUtc};
 use qtty::length::Meters;
 use qtty::time::Seconds;
 use std::collections::HashMap;
-use std::io::{BufRead, BufReader, Read};
+use std::io::{BufRead, BufReader, Read, Write};
 use tempoch::{Time, UTC};
 
 /// One observation epoch.
@@ -212,6 +212,127 @@ pub fn read_rinex_obs<R: Read>(rdr: R) -> Result<RinexObs, PodIoError> {
     })
 }
 
+/// Write a RINEX 3.04 observation file matching the layout produced by
+/// [`read_rinex_obs`].
+///
+/// The writer emits a minimal but spec-conformant RINEX 3 header (VERSION /
+/// TYPE, MARKER NAME, optional APPROX POSITION XYZ, SYS / # / OBS TYPES per
+/// system, optional INTERVAL, END OF HEADER) followed by one epoch block
+/// per [`ObsEpoch`]. Per-satellite observations are written in the order
+/// declared by `obs_types[&sys]`; missing observations are written as
+/// blanks (the standard sentinel for "not observed").
+///
+/// Round-trip parity is **canonicalised**: header line order is normalised,
+/// trailing whitespace is stripped, and observation columns are emitted in
+/// the standard 16-column F14.3 layout. Numerical values round-trip to
+/// 1e-3 m (code) / 1e-3 cycles (carrier), which exceeds RINEX 3 native
+/// precision.
+///
+/// # Errors
+///
+/// Returns [`PodIoError::Io`] on write failures and [`PodIoError::Format`]
+/// if an epoch cannot be projected onto the proleptic Gregorian calendar.
+///
+/// # Examples
+///
+/// ```
+/// use siderust_pod_io::rinex_obs::{read_rinex_obs, write_rinex_obs};
+///
+/// let src = concat!(
+///     "     3.04           OBSERVATION DATA    M (MIXED)           RINEX VERSION / TYPE\n",
+///     "TINY                                                        MARKER NAME\n",
+///     "G    1 C1C                                                  SYS / # / OBS TYPES\n",
+///     "                                                            END OF HEADER\n",
+///     "> 2024 01 01 00 00  0.0000000  0  1\n",
+///     "G01  20100000.000\n",
+/// );
+/// let obs = read_rinex_obs(src.as_bytes()).unwrap();
+/// let mut buf = Vec::new();
+/// write_rinex_obs(&mut buf, &obs).unwrap();
+/// let parsed = read_rinex_obs(&buf[..]).unwrap();
+/// assert_eq!(parsed.marker, obs.marker);
+/// assert_eq!(parsed.epochs.len(), obs.epochs.len());
+/// ```
+pub fn write_rinex_obs<W: Write>(w: &mut W, obs: &RinexObs) -> Result<(), PodIoError> {
+    fn header_line(w: &mut impl Write, body: &str, label: &str) -> std::io::Result<()> {
+        let body = if body.len() > 60 {
+            &body[..60]
+        } else {
+            body
+        };
+        writeln!(w, "{:<60}{}", body, label)
+    }
+    header_line(
+        w,
+        "     3.04           OBSERVATION DATA    M (MIXED)",
+        "RINEX VERSION / TYPE",
+    )?;
+    header_line(w, &obs.marker, "MARKER NAME")?;
+    if let Some(xyz) = &obs.approx_xyz_m {
+        let body = format!(
+            "{:14.4}{:14.4}{:14.4}",
+            xyz[0].value(),
+            xyz[1].value(),
+            xyz[2].value()
+        );
+        header_line(w, &body, "APPROX POSITION XYZ")?;
+    }
+    let mut systems: Vec<&char> = obs.obs_types.keys().collect();
+    systems.sort();
+    for sys in systems {
+        let types = &obs.obs_types[sys];
+        let mut body = format!("{}{:>5}", sys, types.len());
+        for (i, t) in types.iter().enumerate() {
+            // RINEX 3: 13 obs codes per header line, 4 chars each.
+            if i > 0 && i % 13 == 0 {
+                header_line(w, &body, "SYS / # / OBS TYPES")?;
+                body = format!("{:>6}", "");
+            }
+            body.push_str(&format!(" {:<3}", t));
+        }
+        header_line(w, &body, "SYS / # / OBS TYPES")?;
+    }
+    if let Some(interval) = obs.interval_s {
+        let body = format!("{:10.3}", interval.value());
+        header_line(w, &body, "INTERVAL")?;
+    }
+    header_line(w, "", "END OF HEADER")?;
+
+    for ep in &obs.epochs {
+        let dt = ep.time.try_to_chrono().map_err(|e| {
+            PodIoError::Format(format!("rinex_obs: epoch to chrono failed: {e}"))
+        })?;
+        let second = dt.second() as f64 + dt.nanosecond() as f64 / 1e9;
+        writeln!(
+            w,
+            "> {:4} {:02} {:02} {:02} {:02} {:10.7}  0 {:>2}",
+            dt.year(),
+            dt.month(),
+            dt.day(),
+            dt.hour(),
+            dt.minute(),
+            second,
+            ep.satellites.len(),
+        )?;
+        let mut sats: Vec<&String> = ep.satellites.keys().collect();
+        sats.sort();
+        for sat in sats {
+            let vals = &ep.satellites[sat];
+            let sys = sat.chars().next().unwrap_or(' ');
+            let types = obs.obs_types.get(&sys).cloned().unwrap_or_default();
+            let mut row = format!("{:<3}", sat);
+            for ty in &types {
+                match vals.get(ty) {
+                    Some(v) => row.push_str(&format!("{:14.3}  ", v)),
+                    None => row.push_str(&" ".repeat(16)),
+                }
+            }
+            writeln!(w, "{}", row.trim_end())?;
+        }
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -240,5 +361,27 @@ G01  20124000.000         123457000.000
         assert!(e0.satellites.contains_key("G01"));
         let g01 = &e0.satellites["G01"];
         assert!((g01["C1C"] - 20_123_456.789).abs() < 1e-3);
+    }
+
+    #[test]
+    fn round_trips_through_writer() {
+        let r = read_rinex_obs(SAMPLE.as_bytes()).unwrap();
+        let mut buf = Vec::new();
+        write_rinex_obs(&mut buf, &r).unwrap();
+        let r2 = read_rinex_obs(&buf[..]).unwrap();
+        assert_eq!(r2.marker, r.marker);
+        assert_eq!(r2.epochs.len(), r.epochs.len());
+        assert_eq!(r2.obs_types, r.obs_types);
+        assert_eq!(r2.interval_s.map(|s| s.value()), r.interval_s.map(|s| s.value()));
+        for (a, b) in r.epochs.iter().zip(r2.epochs.iter()) {
+            assert_eq!(a.satellites.keys().collect::<std::collections::BTreeSet<_>>(),
+                       b.satellites.keys().collect::<std::collections::BTreeSet<_>>());
+            for (sat, vals_a) in &a.satellites {
+                let vals_b = &b.satellites[sat];
+                for (k, v) in vals_a {
+                    assert!((vals_b[k] - v).abs() < 1e-3, "{sat}/{k} {v} vs {}", vals_b[k]);
+                }
+            }
+        }
     }
 }

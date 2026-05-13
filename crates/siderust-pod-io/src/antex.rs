@@ -34,7 +34,7 @@ use affn::cartesian::Displacement;
 use affn::frames::ReferenceFrame;
 use qtty::length::Millimeter;
 use std::collections::HashMap;
-use std::io::{BufRead, BufReader, Read};
+use std::io::{BufRead, BufReader, Read, Write};
 
 /// ANTEX local north-east-up component frame.
 ///
@@ -113,6 +113,85 @@ pub fn read_antex<R: Read>(rdr: R) -> Result<AntexCatalog, PodIoError> {
     Ok(catalog)
 }
 
+fn header_line<W: Write>(w: &mut W, body: &str, label: &str) -> std::io::Result<()> {
+    let body = if body.len() > 60 {
+        &body[..60]
+    } else {
+        body
+    };
+    writeln!(w, "{:<60}{}", body, label)
+}
+
+/// Write an ANTEX 1.4 catalog matching the layout consumed by [`read_antex`].
+///
+/// Output is canonicalised: antennas are emitted in lexicographic order by
+/// type/serial string, and frequencies within each antenna are sorted by
+/// frequency identifier. Phase-centre **variation grids** are not written
+/// (only the offset block is).
+///
+/// Round-trip: `read_antex(write_antex(cat))` reproduces `cat` exactly
+/// when only PCO offsets are present.
+///
+/// # Errors
+///
+/// Returns [`PodIoError::Io`] on write failures.
+///
+/// # Examples
+///
+/// ```
+/// use siderust_pod_io::antex::{read_antex, write_antex};
+///
+/// let src = "\
+///                                                             START OF ANTENNA\n\
+/// TINY-ANT  001                                               TYPE / SERIAL NO\n\
+///    G01                                                      START OF FREQUENCY\n\
+///       1.00      0.00     90.00                              NORTH / EAST / UP\n\
+///                                                             END OF FREQUENCY\n\
+///                                                             END OF ANTENNA\n";
+/// let cat = read_antex(src.as_bytes()).unwrap();
+/// let mut buf = Vec::new();
+/// write_antex(&mut buf, &cat).unwrap();
+/// let cat2 = read_antex(&buf[..]).unwrap();
+/// assert_eq!(cat.len(), cat2.len());
+/// ```
+pub fn write_antex<W: Write>(w: &mut W, catalog: &AntexCatalog) -> Result<(), PodIoError> {
+    header_line(
+        w,
+        "     1.4            G                  ",
+        "ANTEX VERSION / SYST",
+    )?;
+    header_line(
+        w,
+        "ANTEX                                                       ",
+        "PCV TYPE / REFANT",
+    )?;
+    header_line(w, "", "END OF HEADER")?;
+
+    let mut antennas: Vec<&String> = catalog.keys().collect();
+    antennas.sort();
+    for ant in antennas {
+        header_line(w, "", "START OF ANTENNA")?;
+        header_line(w, ant, "TYPE / SERIAL NO")?;
+        let pcos = &catalog[ant];
+        let mut freqs: Vec<&String> = pcos.keys().collect();
+        freqs.sort();
+        for freq in freqs {
+            let pco = &pcos[freq];
+            header_line(w, &format!("   {:<3}", freq), "START OF FREQUENCY")?;
+            let body = format!(
+                "{:10.2}{:10.2}{:10.2}",
+                pco.x().value(),
+                pco.y().value(),
+                pco.z().value()
+            );
+            header_line(w, &body, "NORTH / EAST / UP")?;
+            header_line(w, &format!("   {:<3}", freq), "END OF FREQUENCY")?;
+        }
+        header_line(w, "", "END OF ANTENNA")?;
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -137,5 +216,24 @@ TEST-ANTENNA   ABC                                          TYPE / SERIAL NO
         assert!((g01.z().value() - 90.0).abs() < 1e-9);
         let g02 = ant["G02"];
         assert!((g02.y().value() + 0.3).abs() < 1e-9);
+    }
+
+    #[test]
+    fn round_trips_through_writer() {
+        let cat = read_antex(SAMPLE.as_bytes()).unwrap();
+        let mut buf = Vec::new();
+        write_antex(&mut buf, &cat).unwrap();
+        let cat2 = read_antex(&buf[..]).unwrap();
+        assert_eq!(cat.len(), cat2.len());
+        for (name, pcos) in &cat {
+            let pcos2 = cat2.get(name).expect("antenna missing after round-trip");
+            assert_eq!(pcos.len(), pcos2.len());
+            for (freq, pco) in pcos {
+                let pco2 = pcos2[freq];
+                assert!((pco.x().value() - pco2.x().value()).abs() < 1e-3);
+                assert!((pco.y().value() - pco2.y().value()).abs() < 1e-3);
+                assert!((pco.z().value() - pco2.z().value()).abs() < 1e-3);
+            }
+        }
     }
 }
