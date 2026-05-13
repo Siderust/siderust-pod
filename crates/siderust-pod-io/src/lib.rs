@@ -42,9 +42,16 @@ pub mod crd;
 pub mod eop;
 pub mod lisa;
 pub mod oem;
+pub mod omm;
+pub mod opm;
+pub mod orbex;
+pub mod rinex_doris;
 pub mod rinex_nav;
 pub mod rinex_obs;
+pub mod sinex;
 pub mod sp3;
+pub mod tdm;
+pub mod vgosdb;
 
 /// Location inside an input artefact, used by structured diagnostics.
 ///
@@ -166,6 +173,9 @@ pub enum PodIoError {
     /// Malformed or unsupported file content (free-form).
     #[error("format: {0}")]
     Format(String),
+    /// Format or feature not yet supported.
+    #[error("unsupported: {0}")]
+    Unsupported(String),
     /// Structured format error with file location and spec section.
     #[error("{spec} at {location}: {message}")]
     Located {

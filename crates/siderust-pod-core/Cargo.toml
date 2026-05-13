@@ -26,3 +26,7 @@ serde = ["dep:serde", "dep:serde_json"]
 
 [dev-dependencies]
 approx.workspace = true
+trybuild.workspace = true
+
+[lints]
+workspace = true

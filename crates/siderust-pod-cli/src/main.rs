@@ -1,5 +1,8 @@
 //! # POD command-line interface
 //!
+//! Operator-facing CLI; `println!` is the intended user output channel.
+#![allow(clippy::print_stdout)]
+//!
 //! ## Scientific scope
 //!
 //! This binary is an operational entry point for batch POD workflows. It

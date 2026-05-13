@@ -33,9 +33,19 @@
 //!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
 use crate::manifest::{canonical_json, DatasetRef, RunManifest};
 use crate::synth::SyntheticArc;
-use siderust::astro::dynamics::{OrbitState, Position, Velocity};
+use siderust::astro::dynamics::context::DynamicsContext;
 use siderust::astro::dynamics::forces::{CompositeForce, ForceModel, TwoBody, J2};
 use siderust::astro::dynamics::integrators::rk4_propagate_series;
+use siderust::astro::dynamics::{OrbitState, Position, Velocity};
+// `finite_diff_stm_series` is upstream-deprecated in favour of the
+// variational `propagate_stm`, but the latter only returns Φ at the final
+// epoch. Batch least-squares assembly here needs Φ at every measurement
+// epoch, which is exactly the use-case the upstream deprecation note
+// explicitly preserves the series API for ("no direct variational
+// equivalent ... retained for validation workflows that need the STM at
+// every intermediate step"). Switching to per-step `propagate_stm` calls
+// would re-do the same 12 perturbation propagations per epoch.
+#[allow(deprecated)]
 use siderust::astro::dynamics::finite_diff_stm_series;
 use siderust::qtty::Second;
 use siderust_pod_estimation::{
@@ -149,11 +159,26 @@ pub fn run_synth(
 
     let estimated_initial = OrbitState::new(
         initial_guess.epoch,
-        Position::new(report.parameters[0], report.parameters[1], report.parameters[2]),
-        Velocity::new(report.parameters[3], report.parameters[4], report.parameters[5]),
+        Position::new(
+            report.parameters[0],
+            report.parameters[1],
+            report.parameters[2],
+        ),
+        Velocity::new(
+            report.parameters[3],
+            report.parameters[4],
+            report.parameters[5],
+        ),
     );
     let clk = report.parameters[6];
-    let estimated_states = rk4_propagate_series(&force, estimated_initial, Second::new(dt_s), n_steps);
+    let estimated_states = rk4_propagate_series(
+        &force,
+        estimated_initial,
+        Second::new(dt_s),
+        n_steps,
+        &DynamicsContext::empty(),
+    )
+    .map_err(|e| std::io::Error::other(format!("propagation failed: {e:?}")))?;
     let estimated_final = *estimated_states.last().unwrap();
 
     // Postfit residuals.
@@ -204,39 +229,28 @@ pub fn run_synth(
     // Manifest.
     let mut manifest = RunManifest::new(env!("CARGO_PKG_VERSION"));
     manifest.config_sha256 = String::new();
-    manifest
-        .outputs
-        .push(DatasetRef::from_path(
-            "orbit-sp3",
-            "SP3",
-            &output_dir.join("products/orbit.sp3").to_string_lossy(),
-        )?);
-    manifest
-        .outputs
-        .push(DatasetRef::from_path(
-            "orbit-oem",
-            "OEM",
-            &output_dir.join("products/orbit.oem").to_string_lossy(),
-        )?);
-    manifest
-        .outputs
-        .push(DatasetRef::from_path(
-            "residuals",
-            "CSV",
-            &output_dir.join("residuals/residuals.csv").to_string_lossy(),
-        )?);
-    manifest
-        .outputs
-        .push(DatasetRef::from_path(
-            "qc",
-            "JSON",
-            &output_dir.join("qc/qc.json").to_string_lossy(),
-        )?);
+    manifest.outputs.push(DatasetRef::from_path(
+        "orbit-sp3",
+        "SP3",
+        &output_dir.join("products/orbit.sp3").to_string_lossy(),
+    )?);
+    manifest.outputs.push(DatasetRef::from_path(
+        "orbit-oem",
+        "OEM",
+        &output_dir.join("products/orbit.oem").to_string_lossy(),
+    )?);
+    manifest.outputs.push(DatasetRef::from_path(
+        "residuals",
+        "CSV",
+        &output_dir.join("residuals/residuals.csv").to_string_lossy(),
+    )?);
+    manifest.outputs.push(DatasetRef::from_path(
+        "qc",
+        "JSON",
+        &output_dir.join("qc/qc.json").to_string_lossy(),
+    )?);
     let manifest_path = output_dir.join("run.manifest.json");
-    fs::write(
-        &manifest_path,
-        canonical_json(&manifest),
-    )?;
+    fs::write(&manifest_path, canonical_json(&manifest))?;
 
     Ok(PipelineReport {
         estimator: report,
@@ -260,7 +274,8 @@ fn step_size(arc: &SyntheticArc) -> f64 {
     if arc.truth_states.len() < 2 {
         return 30.0;
     }
-    let dt_jd = arc.truth_states[1].epoch_jd().jd_value() - arc.truth_states[0].epoch_jd().jd_value();
+    let dt_jd =
+        arc.truth_states[1].epoch_jd().jd_value() - arc.truth_states[0].epoch_jd().jd_value();
     dt_jd * 86_400.0
 }
 
@@ -276,8 +291,27 @@ fn assemble_normal_equations<F: ForceModel>(
         Position::new(params[0], params[1], params[2]),
         Velocity::new(params[3], params[4], params[5]),
     );
-    let states = rk4_propagate_series(force, s0, Second::new(dt_s), n_steps);
-    let stms = finite_diff_stm_series(force, s0, Second::new(dt_s), n_steps);
+    let states = rk4_propagate_series(
+        force,
+        s0,
+        Second::new(dt_s),
+        n_steps,
+        &DynamicsContext::empty(),
+    )
+    .map_err(|e| {
+        siderust_pod_estimation::WlsSolverError::other(format!("propagation failed: {e:?}"))
+    })?;
+    let stms = {
+        #[allow(deprecated)]
+        finite_diff_stm_series(
+            force,
+            s0,
+            Second::new(dt_s),
+            n_steps,
+            &DynamicsContext::empty(),
+        )
+        .map_err(|e| siderust_pod_estimation::WlsSolverError::other(format!("STM failed: {e:?}")))?
+    };
     let n_sats = arc.gss_count();
     let n_params = 6 + 1 + n_sats;
     let mut ne = NormalEquations::new(n_params);

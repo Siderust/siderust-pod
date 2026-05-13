@@ -14,8 +14,12 @@ tempoch.workspace = true
 affn.workspace = true
 cheby.workspace = true
 siderust.workspace = true
+siderust-dynamics.workspace = true
 siderust-pod-core.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]
 approx.workspace = true
+
+[lints]
+workspace = true

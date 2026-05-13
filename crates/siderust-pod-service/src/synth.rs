@@ -29,13 +29,14 @@
 //! - Consultative Committee for Space Data Systems. (2010). Orbit Data
 //!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
 use crate::pipeline::{ArcEpoch, GpsSatellite};
-use siderust::coordinates::frames::GCRS;
-use siderust::time::JulianDate;
-use siderust::astro::dynamics::{OrbitState, Position, Velocity};
-use siderust::astro::dynamics::state::VelocityUnit;
+use siderust::astro::dynamics::context::DynamicsContext;
 use siderust::astro::dynamics::forces::TwoBody;
 use siderust::astro::dynamics::integrators::rk4_propagate_series;
+use siderust::astro::dynamics::state::VelocityUnit;
+use siderust::astro::dynamics::{OrbitState, Position, Velocity};
+use siderust::coordinates::frames::GCRS;
 use siderust::qtty::Second;
+use siderust::time::JulianDate;
 use siderust_pod_observations::gnss::{CarrierPhaseObs, GnssCodeModel, PseudorangeObs};
 use siderust_pod_observations::model::MeasurementModel;
 
@@ -97,7 +98,11 @@ pub struct SyntheticArc {
     pub truth_clock_bias_m: f64,
 }
 
-fn gps_state_at(jd: JulianDate, slot: usize, n: usize) -> (Position<GCRS>, Velocity<GCRS, VelocityUnit>) {
+fn gps_state_at(
+    jd: JulianDate,
+    slot: usize,
+    n: usize,
+) -> (Position<GCRS>, Velocity<GCRS, VelocityUnit>) {
     // Simple circular orbits at GPS altitude (~26 600 km), evenly spaced
     // in argument of latitude across two planes.
     let r = 26_600.0_f64;
@@ -113,7 +118,11 @@ fn gps_state_at(jd: JulianDate, slot: usize, n: usize) -> (Position<GCRS>, Veloc
     let vmag = (mu / r).sqrt();
     (
         Position::<GCRS>::new(r * cos_t, r * sin_t * cos_i, r * sin_t * sin_i),
-        Velocity::<GCRS, VelocityUnit>::new(-vmag * sin_t, vmag * cos_t * cos_i, vmag * cos_t * sin_i),
+        Velocity::<GCRS, VelocityUnit>::new(
+            -vmag * sin_t,
+            vmag * cos_t * cos_i,
+            vmag * cos_t * sin_i,
+        ),
     )
 }
 
@@ -141,7 +150,14 @@ impl Lcg {
 /// Generate the synthetic arc.
 pub fn generate(cfg: &SyntheticArcConfig) -> SyntheticArc {
     let force = TwoBody::earth();
-    let truth = rk4_propagate_series(&force, cfg.truth_initial, Second::new(cfg.dt_s), cfg.n_steps);
+    let truth = rk4_propagate_series(
+        &force,
+        cfg.truth_initial,
+        Second::new(cfg.dt_s),
+        cfg.n_steps,
+        &DynamicsContext::empty(),
+    )
+    .expect("synthetic two-body propagation must succeed");
     let mut rng = Lcg::new(cfg.seed);
     let gps_sats: Vec<GpsSatellite> = (0..cfg.n_gps_sats)
         .map(|i| GpsSatellite {
@@ -154,7 +170,7 @@ pub fn generate(cfg: &SyntheticArcConfig) -> SyntheticArc {
         let mut code = Vec::new();
         let mut carrier = Vec::new();
         for sat in &gps_sats {
-            let (gps_pos, gps_vel) = gps_state_at(s.epoch, sat.slot, cfg.n_gps_sats);
+            let (gps_pos, gps_vel) = gps_state_at(s.epoch.into(), sat.slot, cfg.n_gps_sats);
             // Use the analytic prediction at *truth* state and add noise +
             // truth clock bias to obtain the synthetic measurement.
             let geom = code_truth_m(s, gps_pos, gps_vel) + cfg.clock_bias_m;
@@ -193,7 +209,11 @@ pub fn generate(cfg: &SyntheticArcConfig) -> SyntheticArc {
     }
 }
 
-fn code_truth_m(state: &OrbitState, gps_pos: Position<GCRS>, gps_vel: Velocity<GCRS, VelocityUnit>) -> f64 {
+fn code_truth_m(
+    state: &OrbitState,
+    gps_pos: Position<GCRS>,
+    gps_vel: Velocity<GCRS, VelocityUnit>,
+) -> f64 {
     let model = GnssCodeModel {
         obs: PseudorangeObs {
             gps_pos_km: gps_pos,

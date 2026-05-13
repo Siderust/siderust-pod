@@ -1,0 +1,37 @@
+[package]
+name = "siderust-sgp4"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+description = "Reusable SGP4/SDP4 mean-element propagator producing strongly-typed TEME Cartesian states."
+
+[lib]
+name = "siderust_sgp4"
+path = "src/lib.rs"
+
+[[example]]
+name = "04_sgp4_from_tle"
+path = "../../examples/04_sgp4_from_tle.rs"
+
+[dependencies]
+qtty.workspace = true
+qtty-core.workspace = true
+tempoch.workspace = true
+affn.workspace = true
+siderust.workspace = true
+siderust-tle.workspace = true
+thiserror.workspace = true
+chrono.workspace = true
+sgp4 = { version = "2.4", default-features = false, features = ["std"] }
+
+[dev-dependencies]
+serde.workspace = true
+toml = "0.8"
+approx.workspace = true
+
+[lints]
+workspace = true

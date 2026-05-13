@@ -6,7 +6,12 @@ rust-version.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Measurement models and corrections for Siderust POD: GNSS, SLR (later), DORIS (later), VLBI (later)."
+description = "Measurement models and corrections for Siderust POD: GNSS, SLR, InterSatRange, DORIS (later), VLBI (later)."
+
+[features]
+## Enables the inter-satellite range model for the LISA mission, pulling in
+## `siderust-pod-io` for the LISA ephemeris provider.
+lisa = ["dep:siderust-pod-io", "dep:siderust-pod-core"]
 
 [dependencies]
 qtty.workspace = true
@@ -14,6 +19,11 @@ tempoch.workspace = true
 affn.workspace = true
 siderust.workspace = true
 thiserror.workspace = true
+siderust-pod-io   = { workspace = true, optional = true }
+siderust-pod-core = { workspace = true, optional = true }
 
 [dev-dependencies]
 approx.workspace = true
+
+[lints]
+workspace = true

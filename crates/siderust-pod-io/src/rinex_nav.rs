@@ -322,9 +322,10 @@ pub fn write_rinex_nav<W: Write>(w: &mut W, file: &RinexNavFile) -> Result<(), P
     header_line(w, "", "END OF HEADER")?;
 
     for r in &file.gps {
-        let dt = r.toc.try_to_chrono().map_err(|e| {
-            PodIoError::Format(format!("rinex_nav: TOC to chrono failed: {e}"))
-        })?;
+        let dt = r
+            .toc
+            .try_to_chrono()
+            .map_err(|e| PodIoError::Format(format!("rinex_nav: TOC to chrono failed: {e}")))?;
         let sec = dt.second() as f64 + dt.nanosecond() as f64 / 1e9;
         // Line 0: PRN + TOC + 3 clock terms.
         writeln!(
@@ -355,7 +356,12 @@ pub fn write_rinex_nav<W: Write>(w: &mut W, file: &RinexNavFile) -> Result<(), P
         cont(w, [r.cuc.value(), r.e, r.cus.value(), r.sqrt_a])?;
         cont(
             w,
-            [r.toe.value(), r.cic.value(), r.omega0.value(), r.cis.value()],
+            [
+                r.toe.value(),
+                r.cic.value(),
+                r.omega0.value(),
+                r.cis.value(),
+            ],
         )?;
         cont(
             w,

@@ -7,7 +7,69 @@ crate (independent versioning).
 
 ## [Unreleased]
 
+### Workspace
+
+* Moved sibling reusable crates `siderust-dynamics`, `siderust-sgp4`,
+  `siderust-spice`, `siderust-tle`, and `siderust-lambert` into
+  `siderust-pod/crates/`. They are now full members of this workspace
+  and consume `qtty`/`tempoch`/`affn`/`siderust` via the shared
+  `[workspace.dependencies]` and `[patch.crates-io]` redirections.
+  No public-API change; their previous standalone crate roots under
+  `rust/` were removed.
+* Added a `[workspace.lints]` table (`unsafe_code = forbid`,
+  `missing_docs = deny`, `clippy::all = deny`,
+  `clippy::{todo,unimplemented,dbg_macro} = deny`,
+  `rustdoc::broken_intra_doc_links = deny`) and wired every workspace
+  member to inherit it via `[lints] workspace = true`. The full
+  workspace now builds clean under `cargo clippy --all-targets -- -D
+  warnings` and `cargo doc -- -D rustdoc::broken-intra-doc-links`.
+* CI scripts under `scripts/`:
+  * `check_no_todos.sh` (gates `todo!`/`unimplemented!`/TODO/FIXME/XXX
+    comments — currently passes with zero hits in the source tree).
+  * `snapshot_public_api.sh` (commits `crates/<crate>/api.snapshot`
+    baselines for all 14 library crates via `cargo public-api`; runs
+    in `--update` mode locally and as a diff in CI).
+* `.github/workflows/ci.yml`: extended the `build-test` job with
+  default / no-default-features / all-features test matrices and the
+  new `todo-sweep` step, and added an advisory `public-api` job that
+  diffs against the committed snapshots.
+* Per-crate library-hygiene baseline: every flagged `missing_docs`
+  warning across `siderust-{tle,dynamics,lambert,sgp4,spice}` and
+  `siderust-pod-{core,dynamics}` was resolved (120 warnings → 0)
+  with informative rustdoc covering items, fields, variants, and
+  units/encoding.
+* `siderust-pod-estimation::WlsSolverError`: new `Other(String)` variant
+  + `WlsSolverError::other()` constructor so callers can wrap upstream
+  propagation/STM failures during normal-equation assembly.
+* `siderust-pod-service::pipeline`: scoped `#[allow(deprecated)]`
+  around the legacy `finite_diff_stm_series` call site (upstream notes
+  explicitly preserve the series API for batch-LS use, since
+  `propagate_stm` only returns Φ at the terminal epoch).
+
+### Fixed
+
+* `siderust-pod-observations::gnss::sagnac_km`: convert the typed
+  `OMEGA_EARTH_RAD_S` (`InverseSeconds`) to its scalar value before the
+  km/(km·s⁻¹) division, restoring `cargo check` after the upstream
+  `siderust` typed-constant migration.
+* `siderust-pod-service`: pipeline & synthetic-arc generation updated
+  to the new five-argument `rk4_propagate_series`/`finite_diff_stm_series`
+  signatures (which now take a `&DynamicsContext` and return
+  `Result<_, DynamicsError>`); errors are wrapped through
+  `WlsSolverError::Other`. EKF replay test migrated to the
+  `EncodedTime`-based `OrbitState::new` and to
+  `StateCovariance::diagonal_from_sigmas` with typed
+  `Kilometers`/`KmPerSecond` arguments.
+
 ### Added
+
+* `siderust_pod_io::oem::{read_oem, OemFile, OemSegment}` — CCSDS OEM
+  KVN reader with full round-trip support (`write_oem` ↔ `read_oem`),
+  multi-segment parsing, tolerant skipping of `COVARIANCE_*` and
+  `MAN_*` sub-blocks, structured `PodIoError::Format` diagnostics with
+  line numbers, and a documented inverse `iso8601_to_jd`. Closes the
+  long-standing `todo!()` in `tests/functional/oem.rs` (replaced by a
+  proper round-trip functional test).
 
 * `siderust-pod-core::manifest`: shipped JSON-Schema (draft-07) for the
   `RunManifest` and QC report formats as `schema/run_manifest.v1.json` and

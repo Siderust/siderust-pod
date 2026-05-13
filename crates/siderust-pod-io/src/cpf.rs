@@ -309,13 +309,16 @@ pub fn parse_cpf_with_mode(text: &str, mode: ParseMode) -> Result<CpfFile, PodIo
 /// ```
 pub fn write_cpf<W: Write>(f: &CpfFile, w: &mut W) -> Result<(), PodIoError> {
     // H1: CPF <version> <source> <year> <month> <day> <hour> 1
-    writeln!(w, "H1 CPF {} {} 2024 01 01 00 1", f.version, f.source)
-        .map_err(PodIoError::Io)?;
+    writeln!(w, "H1 CPF {} {} 2024 01 01 00 1", f.version, f.source).map_err(PodIoError::Io)?;
     // H2: <cospar> <sic> <norad> <start> <end> <step> <leap> <frame>
     writeln!(
         w,
         "H2 {} {} {} 2024 01 01 00 00 00 2024 01 01 01 00 00 {} 0 {}",
-        if f.cospar_id.is_empty() { &f.target_name } else { &f.cospar_id },
+        if f.cospar_id.is_empty() {
+            &f.target_name
+        } else {
+            &f.cospar_id
+        },
         f.sic,
         if f.norad.is_empty() { "0" } else { &f.norad },
         if f.time_step_s > 0.0 {
@@ -413,33 +416,37 @@ fn parse_cpf_impl(
                 let maybe_y = rest.get(5).and_then(|s| s.parse::<f64>().ok());
                 let maybe_z = rest.get(6).and_then(|s| s.parse::<f64>().ok());
 
-                let (mjd_i, sod, x_m, y_m, z_m) = match (maybe_mjd, maybe_sod, maybe_x, maybe_y, maybe_z) {
-                    (Some(m), Some(s), Some(x), Some(y), Some(z)) => (m, s, x, y, z),
-                    (None, ..) => {
-                        let loc = FileLocation::new(path.clone(), Some(line_no), None);
-                        let err = PodIoError::located("CPF v2 §4.1", loc, "record 10: missing MJD");
-                        if mode == ParseMode::Strict {
-                            return Err(err);
+                let (mjd_i, sod, x_m, y_m, z_m) =
+                    match (maybe_mjd, maybe_sod, maybe_x, maybe_y, maybe_z) {
+                        (Some(m), Some(s), Some(x), Some(y), Some(z)) => (m, s, x, y, z),
+                        (None, ..) => {
+                            let loc = FileLocation::new(path.clone(), Some(line_no), None);
+                            let err =
+                                PodIoError::located("CPF v2 §4.1", loc, "record 10: missing MJD");
+                            if mode == ParseMode::Strict {
+                                return Err(err);
+                            }
+                            continue;
                         }
-                        continue;
-                    }
-                    (_, None, ..) => {
-                        let loc = FileLocation::new(path.clone(), Some(line_no), None);
-                        let err = PodIoError::located("CPF v2 §4.1", loc, "record 10: missing SOD");
-                        if mode == ParseMode::Strict {
-                            return Err(err);
+                        (_, None, ..) => {
+                            let loc = FileLocation::new(path.clone(), Some(line_no), None);
+                            let err =
+                                PodIoError::located("CPF v2 §4.1", loc, "record 10: missing SOD");
+                            if mode == ParseMode::Strict {
+                                return Err(err);
+                            }
+                            continue;
                         }
-                        continue;
-                    }
-                    _ => {
-                        let loc = FileLocation::new(path.clone(), Some(line_no), None);
-                        let err = PodIoError::located("CPF v2 §4.1", loc, "record 10: missing X/Y/Z");
-                        if mode == ParseMode::Strict {
-                            return Err(err);
+                        _ => {
+                            let loc = FileLocation::new(path.clone(), Some(line_no), None);
+                            let err =
+                                PodIoError::located("CPF v2 §4.1", loc, "record 10: missing X/Y/Z");
+                            if mode == ParseMode::Strict {
+                                return Err(err);
+                            }
+                            continue;
                         }
-                        continue;
-                    }
-                };
+                    };
 
                 let mjd = ModifiedJulianDate::<UTC>::try_new(Day::new(mjd_i as f64))
                     .map_err(|_| PodIoError::Format(format!("CPF 10: invalid MJD {mjd_i}")))?;
@@ -473,7 +480,7 @@ fn build_epoch_from_mjd_sod(mjd_int: i64, sod: f64) -> Result<Time<UTC>, PodIoEr
     // MJD 0 = 1858-11-17. MJD → Julian Day: JD = MJD + 2400000.5
     // Use Julian Day Number arithmetic to get year/month/day.
     let jd_whole = mjd_int + 2_400_001; // integer JD at noon of MJD day
-    // Algorithm from USNO (Fliegel & Van Flandern, 1968):
+                                        // Algorithm from USNO (Fliegel & Van Flandern, 1968):
     let l = jd_whole + 68_569;
     let n = (4 * l) / 146_097;
     let l2 = l - (146_097 * n + 3) / 4;
@@ -572,8 +579,15 @@ H2 lageos1 1155 7603901 2024 01 01 00 00 00 2024 01 01 01 00 00 60 0 ITRF2014\n\
         write_cpf(&f1, &mut buf).expect("write");
         let s = String::from_utf8(buf).expect("utf8");
         let f2 = parse_cpf(&s).expect("re-parse");
-        assert_eq!(f1.positions.len(), f2.positions.len(), "position count preserved");
-        assert_eq!(f1.reference_frame, f2.reference_frame, "reference frame preserved");
+        assert_eq!(
+            f1.positions.len(),
+            f2.positions.len(),
+            "position count preserved"
+        );
+        assert_eq!(
+            f1.reference_frame, f2.reference_frame,
+            "reference frame preserved"
+        );
         for (p1, p2) in f1.positions.iter().zip(f2.positions.iter()) {
             assert!(
                 (p1.position_m[0].value() - p2.position_m[0].value()).abs() < 1e-3,

@@ -1,0 +1,37 @@
+[package]
+name = "siderust-spice"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+description = "DAF/SPK kernel reader + SpiceEphemerisProvider adapter on top of siderust::data::{daf, spk}."
+
+[lib]
+name = "siderust_spice"
+path = "src/lib.rs"
+
+[features]
+default = []
+# Enables the integration test that loads a JPL DE kernel from disk.
+# The test reads the path from the `SIDERUST_SPICE_DE_PATH` env var; if
+# unset (or pointing at a missing file) the test is skipped via `eprintln`,
+# so this feature is safe to enable in CI even without a kernel on disk.
+de440 = []
+
+[dependencies]
+qtty.workspace = true
+tempoch.workspace = true
+affn.workspace = true
+cheby.workspace = true
+siderust.workspace = true
+siderust-pod-core.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

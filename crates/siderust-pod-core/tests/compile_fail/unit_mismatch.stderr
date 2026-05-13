@@ -1,0 +1,16 @@
+error[E0277]: cannot subtract `affn::Position<siderust::coordinates::centers::Geocentric, GCRS, Meter>` from `affn::Position<siderust::coordinates::centers::Geocentric, GCRS, Kilometer>`
+ --> tests/compile_fail/unit_mismatch.rs:9:15
+  |
+9 |     let _ = a - b;
+  |               ^ no implementation for `affn::Position<siderust::coordinates::centers::Geocentric, GCRS, Kilometer> - affn::Position<siderust::coordinates::centers::Geocentric, GCRS, Meter>`
+  |
+  = help: the trait `Sub<affn::Position<siderust::coordinates::centers::Geocentric, GCRS, Meter>>` is not implemented for `affn::Position<siderust::coordinates::centers::Geocentric, GCRS, Kilometer>`
+  = help: the following other types implement trait `Sub<Rhs>`:
+            `&affn::Position<C, F, U>` implements `Sub<&affn::Vector<F, U>>`
+            `&affn::Position<C, F, U>` implements `Sub<affn::Position<C, F, U>>`
+            `&affn::Position<C, F, U>` implements `Sub<affn::Vector<F, U>>`
+            `&affn::Position<C, F, U>` implements `Sub`
+            `affn::Position<C, F, U>` implements `Sub<&affn::Position<C, F, U>>`
+            `affn::Position<C, F, U>` implements `Sub<&affn::Vector<F, U>>`
+            `affn::Position<C, F, U>` implements `Sub<affn::Vector<F, U>>`
+            `affn::Position<C, F, U>` implements `Sub`

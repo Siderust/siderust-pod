@@ -1,0 +1,164 @@
+# Vendored subset of Vallado's SGP4-VER reference test set.
+#
+# Source: Vallado & Crawford, "Revisiting Spacetrack Report #3", 2006,
+# distributed via celestrak.org as SGP4-VER.TLE / tcppver.out (public domain).
+#
+# This TOML repackaging was lifted verbatim from the test fixtures of the
+# pure-Rust `sgp4` crate (https://crates.io/crates/sgp4, MIT-licensed,
+# Copyright (c) 2020 International Centre for Neuromorphic Systems).
+#
+# Six well-behaved satellites with three to four reference epochs each:
+#   * 00005 — generic LEO TEME demo
+#   * 04632 — geostationary, exercises Lyddane choice
+#   * 08195 — Molniya, exercises high-e deep-space branch
+#   * 14128 — geostationary, exercises Lyddane choice
+#   * 22674 — Molniya
+#   * 23177 — geosynchronous
+
+
+[[list]]
+    # TEME example satellite.
+    line1 = "1 00005U 58002B   00179.78495062  .00000023  00000-0  28098-4 0  4753"
+    line2 = "2 00005  34.2682 348.7242 1859667 331.7664  19.3264 10.82419157413667"
+    [[list.states]]
+        time = 0.0
+        position = [7022.46529266, -1400.08296755, 0.03995155]
+        velocity = [1.893841015, 6.405893759, 4.534807250]
+    [[list.states]]
+        time = 360.0
+        position = [-7154.03120202, -3783.17682504, -3536.19412294]
+        velocity = [4.741887409, -4.151817765, -2.093935425]
+        date = 2000-06-28T00:50:19.733571Z
+    [[list.states]]
+        time = 720.0
+        position = [-7134.59340119, 6531.68641334, 3260.27186483]
+        velocity = [-4.113793027, -2.911922039, -2.557327851]
+        date = 2000-06-28T06:50:19.733571Z
+    [[list.states]]
+        time = 1080.0
+        position = [5568.53901181, 4492.06992591, 3863.87641983]
+        velocity = [-4.209106476, 5.159719888, 2.744852980]
+        date = 2000-06-28T12:50:19.733571Z
+
+[[list]]
+    # Geostationary orbit close to 0.2 radian inclination.
+    # Shows Lyddane choice problem at about –5000 minutes from epoch.
+    line1 = "1 04632U 70093B   04031.91070959 -.00000084  00000-0  10000-3 0  9955"
+    line2 = "2 04632  11.4628 273.1101 1450506 207.6000 143.9350  1.20231981 44145"
+    [[list.states]]
+        time = 0.0
+        position = [2334.11450085, -41920.44035349, -0.03867437]
+        velocity = [2.826321032, -0.065091664, 0.570936053]
+    [[list.states]]
+        time = -5184.0
+        position = [-29020.02587128, 13819.84419063, -5713.33679183]
+        velocity = [-1.768068390, -3.235371192, -0.395206135]
+        date = 2004-01-28T07:27:25.308584Z
+    [[list.states]]
+        time = -5064.0
+        position = [-32982.56870101, -11125.54996609, -6803.28472771]
+        velocity = [0.617446996, -3.379240041, 0.085954707]
+        date = 2004-01-28T09:27:25.308597Z
+    [[list.states]]
+        time = -4944.0
+        position = [-22097.68730513, -31583.13829284, -4836.34329328]
+        velocity = [2.230597499, -2.166594667, 0.426443070]
+        date = 2004-01-28T11:27:25.308611Z
+
+[[list]]
+    # Molniya launch.
+    # Exercises the 0.65 to 0.7 eccentricity branches of the deep-space code.
+    line1 = "1 08195U 75081A   06176.33215444  .00000099  00000-0  11873-3 0   813"
+    line2 = "2 08195  64.1586 279.0717 6877146 264.7651  20.2257  2.00491383225656"
+    [[list.states]]
+        time = 0.0
+        position = [2349.89483350, -14785.93811562, 0.02119378]
+        velocity = [2.721488096, -3.256811655, 4.498416672]
+    [[list.states]]
+        time = 120.0
+        position = [15223.91713658, -17852.95881713, 25280.39558224]
+        velocity = [1.079041732, 0.875187372, 2.485682813]
+        date = 2006-06-25T09:58:18.143649Z
+    [[list.states]]
+        time = 240.0
+        position = [19752.78050009, -8600.07130962, 37522.72921090]
+        velocity = [0.238105279, 1.546110924, 0.986410447]
+        date = 2006-06-25T11:58:18.143622Z
+    [[list.states]]
+        time = 360.0
+        position = [19089.29762968, 3107.89495018, 39958.14661370]
+        velocity = [-0.410308034, 1.640332277, -0.306873818]
+        date = 2006-06-25T13:58:18.143636Z
+
+[[list]]
+    # Geostationary orbit close to 0.2 radian inclination.
+    # Shows Lyddane choice problem at about 2080 minutes from epoch.
+    line1 = "1 14128U 83058A   06176.02844893 -.00000158  00000-0  10000-3 0  9627"
+    line2 = "2 14128  11.4384  35.2134 0011562  26.4582 333.5652  0.98870114 46093"
+    [[list.states]]
+        time = 0.0
+        position = [34747.57932696, 24502.37114079, -1.32832986]
+        velocity = [-1.731642662, 2.452772615, 0.608510081]
+    [[list.states]]
+        time = 120.0
+        position = [18263.33439094, 38159.96004751, 4186.18304085]
+        velocity = [-2.744396611, 1.255583260, 0.528558932]
+        date = 2006-06-25T02:40:57.987566Z
+    [[list.states]]
+        time = 240.0
+        position = [-3023.38840703, 41783.13186459, 7273.03412906]
+        velocity = [-3.035574793, -0.271656544, 0.309645251]
+        date = 2006-06-25T04:40:57.987539Z
+    [[list.states]]
+        time = 360.0
+        position = [-23516.34391907, 34424.42065671, 8448.49867693]
+        velocity = [-2.529120477, -1.726186020, 0.009582303]
+        date = 2006-06-25T06:40:57.987553Z
+
+[[list]]
+    # Rocket body, similar to 21897 (e > 0.715) but positive B*.
+    line1 = "1 22674U 93035D   06176.55909107  .00002121  00000-0  29868-3 0  6569"
+    line2 = "2 22674  63.5035 354.4452 7541712 253.3264  18.7754  1.96679808 93877"
+    [[list.states]]
+        time = 0.0
+        position = [14712.22023280, -1443.81061850, 0.83497888]
+        velocity = [4.418965470, 1.629592098, 4.115531802]
+    [[list.states]]
+        time = 120.0
+        position = [25418.88807860, 9342.60307989, 23611.46690798]
+        velocity = [0.051284086, 1.213127306, 2.429004159]
+        date = 2006-06-25T15:25:05.468479Z
+    [[list.states]]
+        time = 240.0
+        position = [21619.59550749, 16125.24978864, 36396.79365831]
+        velocity = [-0.963604380, 0.685454965, 1.177181937]
+        date = 2006-06-25T17:25:05.468452Z
+    [[list.states]]
+        time = 360.0
+        position = [12721.50543331, 19258.96193362, 40898.47648359]
+        velocity = [-1.457448565, 0.179955469, 0.071502601]
+        date = 2006-06-25T19:25:05.468465Z
+
+[[list]]
+    # Lyddane bug at less than 70 min, with atan2(), but no quadrant fix.
+    line1 = "1 23177U 94040C   06175.45752052  .00000386  00000-0  76590-3 0    95"
+    line2 = "2 23177   7.0496 179.8238 7258491 296.0482   8.3061  2.25906668 97438"
+    [[list.states]]
+        time = 0.0
+        position = [-8801.60046706, -0.03357557, -0.44522743]
+        velocity = [-3.835279101, -7.662552175, 0.944561323]
+    [[list.states]]
+        time = 120.0
+        position = [-1684.34352858, -31555.95196340, 3888.99944319]
+        velocity = [2.023055719, -2.151306405, 0.265065778]
+        date = 2006-06-24T12:58:49.772928Z
+    [[list.states]]
+        time = 240.0
+        position = [12325.51410155, -38982.15046244, 4802.88832275]
+        velocity = [1.763224157, -0.102514446, 0.012397139]
+        date = 2006-06-24T14:58:49.772902Z
+    [[list.states]]
+        time = 360.0
+        position = [22773.66831936, -34348.02176606, 4228.77407391]
+        velocity = [1.067616787, 1.352427865, -0.166956367]
+        date = 2006-06-24T16:58:49.772915Z

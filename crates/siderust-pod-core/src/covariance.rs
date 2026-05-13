@@ -18,6 +18,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct ParameterCovariance {
+    /// Parameter ordering defining the row/column correspondence.
     pub params: ParameterOrdering,
     /// Row-major `n x n` data, where `n = params.len()`.
     pub data: Vec<f64>,
@@ -26,20 +27,38 @@ pub struct ParameterCovariance {
 /// Errors when validating or transforming a parameter covariance.
 #[derive(Debug, thiserror::Error)]
 pub enum CovarianceError {
+    /// Row/column count does not match the expected square dimension.
     #[error("dimension mismatch: expected {expected}x{expected}, got {actual} entries")]
-    Dimension { expected: usize, actual: usize },
+    Dimension {
+        /// Expected dimension (will be squared for matrix size).
+        expected: usize,
+        /// Actual number of elements provided.
+        actual: usize,
+    },
+    /// Matrix is not symmetric within tolerance.
     #[error("not symmetric: |C[{i},{j}] - C[{j},{i}]| = {delta} > tol {tol}")]
     NotSymmetric {
+        /// Row index.
         i: usize,
+        /// Column index.
         j: usize,
+        /// Absolute difference between symmetric pairs.
         delta: f64,
+        /// Tolerance threshold that was exceeded.
         tol: f64,
     },
+    /// Diagonal element is negative, violating positive semi-definiteness.
     #[error("not positive semi-definite: diagonal entry {i} = {value} < 0")]
-    NotPsdDiagonal { i: usize, value: f64 },
+    NotPsdDiagonal {
+        /// Diagonal index.
+        i: usize,
+        /// Non-negative value found.
+        value: f64,
+    },
 }
 
 impl ParameterCovariance {
+    /// Dimension of the parameter covariance matrix (number of parameters).
     pub fn n(&self) -> usize {
         self.params.len()
     }

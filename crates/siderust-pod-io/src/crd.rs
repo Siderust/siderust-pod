@@ -319,7 +319,13 @@ fn parse_crd_impl(
                 let sys_no = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
                 let occ_no = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
                 let time_zone = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
-                out.station = CrdStation { name: name.clone(), cdp_pad, sys_no, occ_no, time_zone };
+                out.station = CrdStation {
+                    name: name.clone(),
+                    cdp_pad,
+                    sys_no,
+                    occ_no,
+                    time_zone,
+                };
                 out.station_name = name;
                 out.station_cdp_pad = cdp_pad;
             }
@@ -330,7 +336,13 @@ fn parse_crd_impl(
                 let norad = tokens.next().unwrap_or("").to_string();
                 let sc_flag: i32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
                 let epoch_id: i32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
-                out.target = CrdTarget { name: name.clone(), sic, norad: norad.clone(), sc_flag, epoch_id };
+                out.target = CrdTarget {
+                    name: name.clone(),
+                    sic,
+                    norad: norad.clone(),
+                    sc_flag,
+                    epoch_id,
+                };
                 out.satellite_name = name;
                 out.satellite_sic = sic;
                 out.satellite_norad = norad;
@@ -341,8 +353,8 @@ fn parse_crd_impl(
                 let year: i32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
                 let month: u32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
                 let day: u32 = tokens.next().and_then(|s| s.parse().ok()).unwrap_or(0);
-                if let Some(naive) = NaiveDate::from_ymd_opt(year, month, day)
-                    .and_then(|d| d.and_hms_opt(0, 0, 0))
+                if let Some(naive) =
+                    NaiveDate::from_ymd_opt(year, month, day).and_then(|d| d.and_hms_opt(0, 0, 0))
                 {
                     let dt = DateTime::from_naive_utc_and_offset(naive, ChronoUtc);
                     if let Ok(t) = Time::<UTC>::try_from_chrono(dt) {
@@ -429,7 +441,9 @@ fn parse_crd_impl(
                     // sys_cfg_id epoch_event filter_flag data_quality
                     // format_flag num_raws bin_rms(ps) bin_skew bin_kurtosis
                     // bin_peak return_rate [detector_channel]
-                    let sys_id = rest.first().map(|s| s.to_string())
+                    let sys_id = rest
+                        .first()
+                        .map(|s| s.to_string())
                         .unwrap_or_else(|| current_sys.clone());
                     let epoch_event: u8 = rest.get(1).and_then(|s| s.parse().ok()).unwrap_or(0);
                     let filter_flag: u8 = rest.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
@@ -437,11 +451,11 @@ fn parse_crd_impl(
                     let format_flag: u8 = rest.get(4).and_then(|s| s.parse().ok()).unwrap_or(0);
                     let num_raws: Option<u32> = rest.get(5).and_then(|s| s.parse().ok());
                     // bin_rms is in picoseconds in the file; convert to metres.
-                    let bin_rms_m: Option<Meters> = rest.get(6)
+                    let bin_rms_m: Option<Meters> = rest
+                        .get(6)
                         .and_then(|s| s.parse::<f64>().ok())
                         .map(|ps| Meters::new(ps * 1e-12 * SPEED_OF_LIGHT_M_S / 2.0));
-                    let return_rate: Option<f64> =
-                        rest.get(9).and_then(|s| s.parse().ok());
+                    let return_rate: Option<f64> = rest.get(9).and_then(|s| s.parse().ok());
 
                     out.normal_points.push(NormalPoint {
                         seconds_of_day: Seconds::new(sod),

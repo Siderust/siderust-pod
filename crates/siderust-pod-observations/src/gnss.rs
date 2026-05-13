@@ -30,12 +30,12 @@
 //! - Tapley, B. D., Schutz, B. E., & Born, G. H. (2004). Statistical Orbit
 //!   Determination. Elsevier Academic Press.
 use crate::model::{MeasurementModel, Partials, Prediction};
-use qtty::velocity::C;
 use qtty::unit::{Kilometer, Second};
+use qtty::velocity::C;
 use qtty::Per;
 use siderust::astro::dynamics::forces::OMEGA_EARTH_RAD_S;
-use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 use siderust::astro::dynamics::state::VelocityUnit;
+use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 use siderust::coordinates::frames::GCRS;
 
 /// Pseudorange observation between a LEO receiver and a GPS satellite.
@@ -88,7 +88,7 @@ pub struct GnssCarrierModel {
 
 fn sagnac_km(gps_pos_km: Position<GCRS>, rx_pos_km: Position<GCRS>) -> f64 {
     let c_km_s = C.to::<Per<Kilometer, Second>>().value();
-    OMEGA_EARTH_RAD_S
+    OMEGA_EARTH_RAD_S.value()
         * (gps_pos_km.x().value() * rx_pos_km.y().value()
             - gps_pos_km.y().value() * rx_pos_km.x().value())
         / c_km_s
@@ -175,8 +175,8 @@ impl MeasurementModel for GnssCarrierModel {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use siderust::time::JulianDate;
     use siderust::astro::dynamics::{Position, Velocity};
+    use siderust::time::JulianDate;
 
     #[test]
     fn pseudorange_partials_match_finite_difference() {
@@ -203,11 +203,7 @@ mod tests {
             let rx = state.position.x().value() + if i == 0 { h } else { 0.0 };
             let ry = state.position.y().value() + if i == 1 { h } else { 0.0 };
             let rz = state.position.z().value() + if i == 2 { h } else { 0.0 };
-            let s = OrbitState::new(
-                state.epoch,
-                Position::new(rx, ry, rz),
-                state.velocity,
-            );
+            let s = OrbitState::new(state.epoch, Position::new(rx, ry, rz), state.velocity);
             let p1 = model.predict(&s, &extra);
             let fd = (p1.value - p0.value) / h;
             let analytic = p0.partials.entries.iter().find(|(j, _)| *j == i).unwrap().1;

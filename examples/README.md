@@ -1,65 +1,32 @@
-# Siderust Examples
+# siderust-pod examples
 
-Runnable examples organized by theme. Run any example with:
+POD-shaped runnable examples. The cloned `siderust` examples that lived
+here previously have been removed (Phase 11 — purge); the new POD
+example set is implemented in stages alongside Phases 2–11 of the
+maturity plan.
+
+Run any example with:
 
 ```bash
 cargo run --example <name>
 ```
 
-Feature-gated examples list the required feature in the command.
+| Example | Phase | Status |
+|---|---|---|
+| `01_propagate_two_body` | P11 | pending |
+| `02_propagate_full_dynamics` | P11 | pending |
+| `03_lambert_earth_to_mars` | P2 (lambert) | shipped |
+| `04_sgp4_from_tle` | P2 (sgp4) | shipped |
+| `05_spice_ephemeris` | P2 (spice) | pending |
+| `06_synthetic_gnss_arc` | P11 | pending |
+| `07_real_gnss_pod` | P11 (uses E2E-02 fixture) | pending |
+| `08_slr_validation` | P11 | pending |
+| `09_ekf_replay` | P11 | pending |
+| `10_orbit_overlap` | P11 | pending |
+| `11_qc_html_report` | P11 | pending |
+| `12_lisa_poc` | P11 (LISA POC) | pending |
+| `13_rest_quickstart.sh` | P11 (REST) | pending |
 
-## Core Coordinates
-
-- `01_basic_coordinates`: coordinate centers, frames, and typed units.
-- `02_coordinate_transformations`: frame and center transforms.
-- `03_all_frames_conversions`: supported frame rotations and round-trip checks.
-- `04_all_center_conversions`: supported center shifts and round-trip checks.
-- `13_coordinate_operations`: angular separation, distances, and displacement algebra.
-- `14_nutation_models`: default and custom nutation-model transform paths.
-
-```bash
-cargo run --example 01_basic_coordinates
-cargo run --example 02_coordinate_transformations
-cargo run --example 03_all_frames_conversions
-cargo run --example 04_all_center_conversions
-cargo run --example 13_coordinate_operations
-cargo run --example 14_nutation_models
-```
-
-## Observing Workflows
-
-- `05_target_tracking`: timestamped targets and proper-motion propagation.
-- `06_night_events`: night and twilight event calculations.
-- `07_moon_properties`: Moon position and illumination helpers.
-- `09_star_observability`: star altitude windows at an observatory.
-
-```bash
-cargo run --example 05_target_tracking
-cargo run --example 06_night_events
-cargo run --example 07_moon_properties
-cargo run --example 09_star_observability
-```
-
-## Solar System And Time
-
-- `08_solar_system`: solar-system body positions and comparisons.
-- `10_time_periods`: `tempoch` time scales and periods re-exported by `siderust`.
-
-```bash
-cargo run --example 08_solar_system
-cargo run --example 10_time_periods
-```
-
-## Optional Features
-
-- `11_serde_serialization`: JSON round-trips for time and coordinate values.
-- `12_runtime_ephemeris`: runtime JPL ephemeris loading and DE feature checks.
-
-```bash
-cargo run --example 11_serde_serialization --features serde
-cargo run --example 12_runtime_ephemeris --features de440
-cargo run --example 12_runtime_ephemeris --features de441
-
-# Fast/offline loop: compile JPL features while stubbing large DE datasets.
-SIDERUST_JPL_STUB=all cargo run --example 12_runtime_ephemeris --features de440,de441
-```
+Configuration files for the examples live under `examples/configs/`;
+fixtures under `examples/fixtures/` (frozen inputs — see
+`docs/validation/fixtures.md` for provenance).

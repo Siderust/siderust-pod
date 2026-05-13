@@ -114,11 +114,7 @@ pub fn read_antex<R: Read>(rdr: R) -> Result<AntexCatalog, PodIoError> {
 }
 
 fn header_line<W: Write>(w: &mut W, body: &str, label: &str) -> std::io::Result<()> {
-    let body = if body.len() > 60 {
-        &body[..60]
-    } else {
-        body
-    };
+    let body = if body.len() > 60 { &body[..60] } else { body };
     writeln!(w, "{:<60}{}", body, label)
 }
 

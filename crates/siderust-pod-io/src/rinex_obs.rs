@@ -255,11 +255,7 @@ pub fn read_rinex_obs<R: Read>(rdr: R) -> Result<RinexObs, PodIoError> {
 /// ```
 pub fn write_rinex_obs<W: Write>(w: &mut W, obs: &RinexObs) -> Result<(), PodIoError> {
     fn header_line(w: &mut impl Write, body: &str, label: &str) -> std::io::Result<()> {
-        let body = if body.len() > 60 {
-            &body[..60]
-        } else {
-            body
-        };
+        let body = if body.len() > 60 { &body[..60] } else { body };
         writeln!(w, "{:<60}{}", body, label)
     }
     header_line(
@@ -299,9 +295,10 @@ pub fn write_rinex_obs<W: Write>(w: &mut W, obs: &RinexObs) -> Result<(), PodIoE
     header_line(w, "", "END OF HEADER")?;
 
     for ep in &obs.epochs {
-        let dt = ep.time.try_to_chrono().map_err(|e| {
-            PodIoError::Format(format!("rinex_obs: epoch to chrono failed: {e}"))
-        })?;
+        let dt = ep
+            .time
+            .try_to_chrono()
+            .map_err(|e| PodIoError::Format(format!("rinex_obs: epoch to chrono failed: {e}")))?;
         let second = dt.second() as f64 + dt.nanosecond() as f64 / 1e9;
         writeln!(
             w,
@@ -372,14 +369,27 @@ G01  20124000.000         123457000.000
         assert_eq!(r2.marker, r.marker);
         assert_eq!(r2.epochs.len(), r.epochs.len());
         assert_eq!(r2.obs_types, r.obs_types);
-        assert_eq!(r2.interval_s.map(|s| s.value()), r.interval_s.map(|s| s.value()));
+        assert_eq!(
+            r2.interval_s.map(|s| s.value()),
+            r.interval_s.map(|s| s.value())
+        );
         for (a, b) in r.epochs.iter().zip(r2.epochs.iter()) {
-            assert_eq!(a.satellites.keys().collect::<std::collections::BTreeSet<_>>(),
-                       b.satellites.keys().collect::<std::collections::BTreeSet<_>>());
+            assert_eq!(
+                a.satellites
+                    .keys()
+                    .collect::<std::collections::BTreeSet<_>>(),
+                b.satellites
+                    .keys()
+                    .collect::<std::collections::BTreeSet<_>>()
+            );
             for (sat, vals_a) in &a.satellites {
                 let vals_b = &b.satellites[sat];
                 for (k, v) in vals_a {
-                    assert!((vals_b[k] - v).abs() < 1e-3, "{sat}/{k} {v} vs {}", vals_b[k]);
+                    assert!(
+                        (vals_b[k] - v).abs() < 1e-3,
+                        "{sat}/{k} {v} vs {}",
+                        vals_b[k]
+                    );
                 }
             }
         }

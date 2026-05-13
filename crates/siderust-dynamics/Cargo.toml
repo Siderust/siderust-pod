@@ -1,0 +1,28 @@
+[package]
+name = "siderust-dynamics"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+description = "Reusable astrodynamics primitives (variational equations, STM, force-model composition, finite-burn / thrust-arc physical models) built on siderust + qtty + tempoch + affn."
+
+[lib]
+name = "siderust_dynamics"
+path = "src/lib.rs"
+
+[dependencies]
+qtty-core.workspace = true
+qtty.workspace = true
+tempoch.workspace = true
+affn.workspace = true
+cheby.workspace = true
+siderust.workspace = true
+chrono.workspace = true
+thiserror.workspace = true
+
+
+[lints]
+workspace = true

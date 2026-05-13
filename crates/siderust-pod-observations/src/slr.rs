@@ -32,12 +32,13 @@
 //! - Pearlman, M. R., Noll, C. E., et al. (2019). The ILRS: Current status
 //!   and future prospects. Journal of Geodesy, 93, 2161-2180.
 use crate::model::{MeasurementModel, Partials, Prediction};
-use qtty::velocity::C;
+use affn::cartesian::Displacement;
 use qtty::unit::{Kilometer, Second};
+use qtty::velocity::C;
 use qtty::Per;
 use siderust::astro::dynamics::{OrbitState, Position};
 use siderust::coordinates::frames::GCRS;
-use affn::cartesian::Displacement;/// One SLR range observation (two-way time-of-flight converted to metres).
+/// One SLR range observation (two-way time-of-flight converted to metres).
 #[derive(Debug, Clone)]
 pub struct SlrRangeObs {
     /// Two-way range, metres.
@@ -72,7 +73,6 @@ impl SlrRangeModel {
     }
 }
 
-
 impl MeasurementModel for SlrRangeModel {
     fn predict(&self, state: &OrbitState, extra: &[f64]) -> Prediction {
         let c_km_s = C.to::<Per<Kilometer, Second>>().value();
@@ -85,19 +85,23 @@ impl MeasurementModel for SlrRangeModel {
 
         let mut down_dt = 0.0_f64;
         for _ in 0..3 {
-            let r_bounce = r_sat - Displacement::<GCRS, Kilometer>::new(vx * down_dt, vy * down_dt, vz * down_dt);
+            let r_bounce = r_sat
+                - Displacement::<GCRS, Kilometer>::new(vx * down_dt, vy * down_dt, vz * down_dt);
             let d_km = (r_bounce - r_sta).magnitude().value();
             down_dt = d_km / c_km_s;
         }
-        let r_bounce = r_sat - Displacement::<GCRS, Kilometer>::new(vx * down_dt, vy * down_dt, vz * down_dt);
+        let r_bounce =
+            r_sat - Displacement::<GCRS, Kilometer>::new(vx * down_dt, vy * down_dt, vz * down_dt);
 
         let mut up_dt = 0.0_f64;
         for _ in 0..3 {
-            let r_arrive = r_bounce + Displacement::<GCRS, Kilometer>::new(vx * up_dt, vy * up_dt, vz * up_dt);
+            let r_arrive =
+                r_bounce + Displacement::<GCRS, Kilometer>::new(vx * up_dt, vy * up_dt, vz * up_dt);
             let d_km = (r_arrive - r_sta).magnitude().value();
             up_dt = d_km / c_km_s;
         }
-        let r_arrive = r_bounce + Displacement::<GCRS, Kilometer>::new(vx * up_dt, vy * up_dt, vz * up_dt);
+        let r_arrive =
+            r_bounce + Displacement::<GCRS, Kilometer>::new(vx * up_dt, vy * up_dt, vz * up_dt);
 
         let down_vec = r_bounce - r_sta;
         let up_vec = r_arrive - r_sta;
@@ -107,12 +111,20 @@ impl MeasurementModel for SlrRangeModel {
 
         let mut entries = Vec::with_capacity(4);
         let los_down = if down_km > 0.0 {
-            [down_vec.x().value() / down_km, down_vec.y().value() / down_km, down_vec.z().value() / down_km]
+            [
+                down_vec.x().value() / down_km,
+                down_vec.y().value() / down_km,
+                down_vec.z().value() / down_km,
+            ]
         } else {
             [0.0; 3]
         };
         let los_up = if up_km > 0.0 {
-            [up_vec.x().value() / up_km, up_vec.y().value() / up_km, up_vec.z().value() / up_km]
+            [
+                up_vec.x().value() / up_km,
+                up_vec.y().value() / up_km,
+                up_vec.z().value() / up_km,
+            ]
         } else {
             [0.0; 3]
         };
@@ -143,8 +155,8 @@ impl MeasurementModel for SlrRangeModel {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use siderust::time::JulianDate;
     use siderust::astro::dynamics::{Position, Velocity};
+    use siderust::time::JulianDate;
 
     #[test]
     fn predicts_two_way_range_at_rest() {

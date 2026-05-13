@@ -28,6 +28,7 @@
 //!   (4th ed.). Microcosm Press.
 use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 use siderust::coordinates::frames::GCRS;
+use siderust::qtty::{Kilometers, KmPerSecond, Quantity};
 use siderust::time::JulianDate;
 use siderust_pod_estimation::OrbitEkf;
 
@@ -36,9 +37,9 @@ fn ekf_random_walk_converges() {
     let epoch = JulianDate::new(2_451_545.0);
     let pos = Position::<GCRS>::new(7000.0, 0.0, 0.0);
     let vel = Velocity::<GCRS>::new(0.0, 7.5, 0.0);
-    let state0 = OrbitState::new(epoch, pos, vel);
+    let state0 = OrbitState::new(epoch.into(), pos, vel);
 
-    let mut f = OrbitEkf::from_stddevs(state0.clone(), [10.0, 10.0, 10.0], [0.1, 0.1, 0.1]);
+    let mut f = OrbitEkf::from_stddevs(state0, [10.0, 10.0, 10.0], [0.1, 0.1, 0.1]);
     let truth_x = 7000.0 + std::f64::consts::PI; // ~7003.14 km
     let r = 0.01_f64;
     let mut last_var = f.covariance().to_row_major()[0][0];
@@ -46,18 +47,28 @@ fn ekf_random_walk_converges() {
     for _ in 0..50 {
         // No-op predict: identity STM, small Q on position.
         let mut phi = [[0.0f64; 6]; 6];
-        for i in 0..6 {
-            phi[i][i] = 1.0;
+        for (i, row) in phi.iter_mut().enumerate() {
+            row[i] = 1.0;
         }
-        let q = siderust::astro::dynamics::covariance::StateCovariance::<GCRS>::from_stddevs(
-            [0.001, 0.001, 0.001],
-            [1e-6, 1e-6, 1e-6],
-        );
-        f.predict(f.state().clone(), phi, Some(q));
+        let q =
+            siderust::astro::dynamics::covariance::StateCovariance::<GCRS>::diagonal_from_sigmas(
+                [
+                    Kilometers::new(0.001),
+                    Kilometers::new(0.001),
+                    Kilometers::new(0.001),
+                ],
+                [
+                    Quantity::<KmPerSecond>::new(1e-6),
+                    Quantity::<KmPerSecond>::new(1e-6),
+                    Quantity::<KmPerSecond>::new(1e-6),
+                ],
+            );
+        f.predict(*f.state(), phi, Some(q));
 
         // Observe x-component: h = [1,0,0,0,0,0].
         let innov = truth_x - f.state().position.x().value();
-        f.update_scalar([1.0, 0.0, 0.0, 0.0, 0.0, 0.0], innov, r).unwrap();
+        f.update_scalar([1.0, 0.0, 0.0, 0.0, 0.0, 0.0], innov, r)
+            .unwrap();
 
         let var = f.covariance().to_row_major()[0][0];
         assert!(var <= last_var + 0.0011, "variance must not blow up");
@@ -69,5 +80,8 @@ fn ekf_random_walk_converges() {
         "x = {}",
         f.state().position.x().value()
     );
-    assert!(f.covariance().to_row_major()[0][0] < 0.05, "posterior variance too large");
+    assert!(
+        f.covariance().to_row_major()[0][0] < 0.05,
+        "posterior variance too large"
+    );
 }

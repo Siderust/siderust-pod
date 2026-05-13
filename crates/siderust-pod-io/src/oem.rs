@@ -49,7 +49,11 @@ pub struct OemState {
 impl OemState {
     /// Construct an `OemState` from a Julian Date and component arrays.
     pub fn new(epoch_jd: f64, position_km: [f64; 3], velocity_km_s: [f64; 3]) -> Self {
-        Self { epoch_jd, position_km, velocity_km_s }
+        Self {
+            epoch_jd,
+            position_km,
+            velocity_km_s,
+        }
     }
 }
 
@@ -464,28 +468,56 @@ pub fn write_oem_xml<W: std::io::Write>(
     writeln!(w, "  <body>")?;
     writeln!(w, "    <segment>")?;
     writeln!(w, "      <metadata>")?;
-    writeln!(w, "        <OBJECT_NAME>{}</OBJECT_NAME>", xml_escape(&meta.object_name))?;
-    writeln!(w, "        <OBJECT_ID>{}</OBJECT_ID>", xml_escape(&meta.object_id))?;
-    writeln!(w, "        <CENTER_NAME>{}</CENTER_NAME>", xml_escape(&meta.center_name))?;
-    writeln!(w, "        <REF_FRAME>{}</REF_FRAME>", xml_escape(&meta.ref_frame))?;
-    writeln!(w, "        <TIME_SYSTEM>{}</TIME_SYSTEM>", xml_escape(&meta.time_system))?;
+    writeln!(
+        w,
+        "        <OBJECT_NAME>{}</OBJECT_NAME>",
+        xml_escape(&meta.object_name)
+    )?;
+    writeln!(
+        w,
+        "        <OBJECT_ID>{}</OBJECT_ID>",
+        xml_escape(&meta.object_id)
+    )?;
+    writeln!(
+        w,
+        "        <CENTER_NAME>{}</CENTER_NAME>",
+        xml_escape(&meta.center_name)
+    )?;
+    writeln!(
+        w,
+        "        <REF_FRAME>{}</REF_FRAME>",
+        xml_escape(&meta.ref_frame)
+    )?;
+    writeln!(
+        w,
+        "        <TIME_SYSTEM>{}</TIME_SYSTEM>",
+        xml_escape(&meta.time_system)
+    )?;
     writeln!(w, "        <START_TIME>{}</START_TIME>", start)?;
     writeln!(w, "        <STOP_TIME>{}</STOP_TIME>", stop)?;
     writeln!(w, "      </metadata>")?;
     writeln!(w, "      <data>")?;
     for s in states {
         writeln!(w, "        <stateVector>")?;
-        writeln!(
-            w,
-            "          <EPOCH>{}</EPOCH>",
-            jd_to_iso8601(s.epoch_jd)
-        )?;
+        writeln!(w, "          <EPOCH>{}</EPOCH>", jd_to_iso8601(s.epoch_jd))?;
         writeln!(w, "          <X units=\"km\">{:.6}</X>", s.position_km[0])?;
         writeln!(w, "          <Y units=\"km\">{:.6}</Y>", s.position_km[1])?;
         writeln!(w, "          <Z units=\"km\">{:.6}</Z>", s.position_km[2])?;
-        writeln!(w, "          <X_DOT units=\"km/s\">{:.9}</X_DOT>", s.velocity_km_s[0])?;
-        writeln!(w, "          <Y_DOT units=\"km/s\">{:.9}</Y_DOT>", s.velocity_km_s[1])?;
-        writeln!(w, "          <Z_DOT units=\"km/s\">{:.9}</Z_DOT>", s.velocity_km_s[2])?;
+        writeln!(
+            w,
+            "          <X_DOT units=\"km/s\">{:.9}</X_DOT>",
+            s.velocity_km_s[0]
+        )?;
+        writeln!(
+            w,
+            "          <Y_DOT units=\"km/s\">{:.9}</Y_DOT>",
+            s.velocity_km_s[1]
+        )?;
+        writeln!(
+            w,
+            "          <Z_DOT units=\"km/s\">{:.9}</Z_DOT>",
+            s.velocity_km_s[2]
+        )?;
         writeln!(w, "        </stateVector>")?;
     }
     writeln!(w, "      </data>")?;
@@ -617,7 +649,11 @@ pub fn read_oem_xml<R: std::io::Read>(mut r: R) -> Result<OemFile, PodIoError> {
                                 let st = OemState::new(
                                     epoch_jd,
                                     [need(b.x, "X")?, need(b.y, "Y")?, need(b.z, "Z")?],
-                                    [need(b.vx, "X_DOT")?, need(b.vy, "Y_DOT")?, need(b.vz, "Z_DOT")?],
+                                    [
+                                        need(b.vx, "X_DOT")?,
+                                        need(b.vy, "Y_DOT")?,
+                                        need(b.vz, "Z_DOT")?,
+                                    ],
                                 );
                                 s.states.push(st);
                             }
@@ -713,7 +749,11 @@ mod tests {
     fn writes_header_and_data_lines() {
         let states = vec![
             OemState::new(2_451_545.0, [7000.0, 0.0, 0.0], [0.0, 7.5, 0.0]),
-            OemState::new(2_451_545.0 + 30.0 / 86_400.0, [6999.0, 225.0, 0.0], [-0.24, 7.49, 0.0]),
+            OemState::new(
+                2_451_545.0 + 30.0 / 86_400.0,
+                [6999.0, 225.0, 0.0],
+                [-0.24, 7.49, 0.0],
+            ),
         ];
         let mut buf = Vec::new();
         write_oem(
@@ -755,7 +795,11 @@ mod tests {
     fn write_then_read_round_trip() {
         let states = vec![
             OemState::new(2_451_545.0, [7000.0, 0.0, 0.0], [0.0, 7.5, 0.0]),
-            OemState::new(2_451_545.0 + 30.0 / 86_400.0, [6999.0, 225.0, 0.0], [-0.24, 7.49, 0.0]),
+            OemState::new(
+                2_451_545.0 + 30.0 / 86_400.0,
+                [6999.0, 225.0, 0.0],
+                [-0.24, 7.49, 0.0],
+            ),
         ];
         let meta = OemMetadata {
             object_id: "1900-001A".into(),
@@ -800,7 +844,11 @@ mod tests {
     fn xml_round_trip() {
         let states = vec![
             OemState::new(2_451_545.0, [7000.0, 0.0, 0.0], [0.0, 7.5, 0.0]),
-            OemState::new(2_451_545.0 + 30.0 / 86_400.0, [6999.0, 225.0, 0.0], [-0.24, 7.49, 0.0]),
+            OemState::new(
+                2_451_545.0 + 30.0 / 86_400.0,
+                [6999.0, 225.0, 0.0],
+                [-0.24, 7.49, 0.0],
+            ),
         ];
         let meta = OemMetadata {
             object_id: "1900-001A".into(),

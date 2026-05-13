@@ -28,11 +28,11 @@
 //!   Specification.
 //! - Montenbruck, O., Steigenberger, P., & Khachikyan, R. (2017). GNSS
 //!   satellite geometry and ephemeris products. GPS Solutions, 21, 101-111.
-use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
-use qtty::time::Microseconds;
 use affn::cartesian;
 use affn::centers::{AffineCenter, ReferenceCenter};
 use affn::frames::GCRS;
+use chrono::{DateTime, NaiveDate, Utc as ChronoUtc};
+use qtty::time::Microseconds;
 use qtty::unit::Kilometer;
 
 /// Geocentric center marker for SP3 positions.
@@ -405,9 +405,7 @@ impl<R: Read> Sp3Stream<R> {
                 break;
             }
             if trimmed.starts_with('P') {
-                epoch
-                    .positions
-                    .push(parse_p_line(&trimmed, self.line_no)?);
+                epoch.positions.push(parse_p_line(&trimmed, self.line_no)?);
             }
             // V/EP/EV records ignored as in batch reader.
         }

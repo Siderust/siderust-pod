@@ -47,5 +47,5 @@ pub use synth::{generate, SyntheticArc, SyntheticArcConfig};
 
 // Re-export the core orbit state types so downstream crates (pod-rest)
 // that only depend on this crate can access them without adding siderust directly.
-pub use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 pub use siderust::astro::dynamics::state::VelocityUnit;
+pub use siderust::astro::dynamics::{OrbitState, Position, Velocity};

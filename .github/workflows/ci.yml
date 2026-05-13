@@ -20,14 +20,34 @@ jobs:
         run: cargo fmt --all -- --check
       - name: clippy
         run: cargo clippy --workspace --all-targets -- -D warnings
-      - name: test
-        run: cargo test --workspace
+      - name: test (default features)
+        run: cargo test --workspace --no-fail-fast
+      - name: test (no default features)
+        run: cargo test --workspace --no-default-features --no-fail-fast
+      - name: test (all features)
+        run: cargo test --workspace --all-features --no-fail-fast
       - name: dep-graph
         run: bash scripts/check_dep_graph.sh
+      - name: todo-sweep
+        run: bash scripts/check_no_todos.sh
       - name: doc
         run: cargo doc --workspace --no-deps
         env:
           RUSTDOCFLAGS: -D rustdoc::broken-intra-doc-links
+
+  public-api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rust/siderust-pod
+    continue-on-error: true   # advisory until 1.0; baselines tracked under crates/*/api.snapshot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - name: install cargo-public-api
+        run: cargo install --locked cargo-public-api || true
+      - name: snapshot diff
+        run: bash scripts/snapshot_public_api.sh
 
   supply-chain:
     runs-on: ubuntu-latest

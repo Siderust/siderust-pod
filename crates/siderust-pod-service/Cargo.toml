@@ -26,3 +26,6 @@ hex.workspace = true
 thiserror.workspace = true
 log.workspace = true
 chrono.workspace = true
+
+[lints]
+workspace = true

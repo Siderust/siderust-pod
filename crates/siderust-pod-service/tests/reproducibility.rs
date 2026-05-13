@@ -26,7 +26,9 @@
 //!   Determination. Elsevier Academic Press.
 //! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
 //!   (4th ed.). Microcosm Press.
-use siderust_pod_service::{generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity};
+use siderust_pod_service::{
+    generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity,
+};
 use std::path::PathBuf;
 
 fn run_once(label: &str) -> (PathBuf, Vec<u8>, Vec<u8>, Vec<u8>) {

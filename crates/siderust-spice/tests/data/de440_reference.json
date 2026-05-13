@@ -1,0 +1,12 @@
+{
+  "_provenance": {
+    "kernel": "de440.bsp",
+    "source": "JPL/NAIF — to be regenerated via CSPICE spkez_c",
+    "frame": "J2000 (≡ ICRS for SPK ephemerides)",
+    "units": "position km, velocity km/s",
+    "epoch_convention": "TDB seconds past J2000 (et)",
+    "note": "This file ships empty: the validation test runs only when both `SIDERUST_SPICE_DE_PATH` is set AND the `cases` array is populated with vetted CSPICE-generated reference states. A future session with a JPL kernel on disk should regenerate these via `spkez_c` and commit the result. Tolerance enforced by tests/de440_validation.rs is 1e-6 km (1 mm) for position and 1e-6 km/s for velocity.",
+    "regenerate_with": "tools/spice/dump_reference.py (TBD: write a small CSPICE/spiceypy script that dumps targets {199, 299, 399, 499, 599, 699, 799, 899, 301} relative to center 0 (SSB) and 301 relative to 399 across 10 epochs spanning the kernel coverage)"
+  },
+  "cases": []
+}

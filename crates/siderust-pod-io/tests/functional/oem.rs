@@ -189,7 +189,11 @@ fn oem_multi_segment_two_meta_blocks() {
         time_system: "TT".into(),
         center_name: "EARTH".into(),
     };
-    let states2 = vec![OemState::new(2_451_546.0, [-7_000.0, 100.0, 0.0], [0.1, -7.5, 0.0])];
+    let states2 = vec![OemState::new(
+        2_451_546.0,
+        [-7_000.0, 100.0, 0.0],
+        [0.1, -7.5, 0.0],
+    )];
 
     let mut buf = Vec::new();
     write_oem(&mut buf, &meta1, &two_states()).expect("write segment 1");

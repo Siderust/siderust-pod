@@ -54,8 +54,7 @@ impl RunManifest {
 /// and is included verbatim at build time so the crate ships a single source
 /// of truth without filesystem access at runtime.
 #[cfg(feature = "serde")]
-pub const RUN_MANIFEST_SCHEMA_V1: &str =
-    include_str!("../schema/run_manifest.v1.json");
+pub const RUN_MANIFEST_SCHEMA_V1: &str = include_str!("../schema/run_manifest.v1.json");
 
 /// Embedded JSON-Schema (draft-07) for a v1 QC report (`qc.v1`).
 #[cfg(feature = "serde")]
@@ -124,18 +123,23 @@ mod tests {
         let serialised = sample().to_json_pretty().unwrap();
         let v: serde_json::Value = serde_json::from_str(&serialised).unwrap();
         for k in &req {
-            assert!(v.get(*k).is_some(), "manifest missing schema-required field {k}");
+            assert!(
+                v.get(*k).is_some(),
+                "manifest missing schema-required field {k}"
+            );
         }
     }
 
     #[test]
     fn qc_schema_is_well_formed_v1() {
         let schema: serde_json::Value = serde_json::from_str(QC_SCHEMA_V1).unwrap();
-        assert_eq!(schema["properties"]["schema"]["const"].as_str(), Some("qc.v1"));
+        assert_eq!(
+            schema["properties"]["schema"]["const"].as_str(),
+            Some("qc.v1")
+        );
         let req = schema["required"].as_array().unwrap();
         let req: Vec<&str> = req.iter().map(|v| v.as_str().unwrap()).collect();
         assert!(req.contains(&"schema"));
         assert!(req.contains(&"rtn"));
     }
 }
-

@@ -1,0 +1,29 @@
+error[E0277]: cannot add `affn::cartesian::position::Position<siderust::coordinates::centers::Geocentric, affn::frames::astro::GCRS, qtty_core::units::length::Kilometer>` to `affn::cartesian::position::Position<siderust::coordinates::centers::Geocentric, affn::frames::astro::GCRS, qtty_core::units::length::Kilometer>`
+   --> tests/compile_fail/position_plus_position.rs:9:15
+    |
+  9 |     let _ = a + b;
+    |               ^ no implementation for `affn::cartesian::position::Position<siderust::coordinates::centers::Geocentric, affn::frames::astro::GCRS, qtty_core::units::length::Kilometer> + affn::cartesian::position::Position<siderust::coordinates::centers::Geocentric, affn::frames::astro::GCRS, qtty_core::units::length::Kilometer>`
+    |
+    = help: the trait `Add` is not implemented for `affn::cartesian::position::Position<siderust::coordinates::centers::Geocentric, affn::frames::astro::GCRS, qtty_core::units::length::Kilometer>`
+help: the following other types implement trait `Add<Rhs>`
+   --> /home/valles/workspace/siderust/rust/affn/src/cartesian/position.rs:510:1
+    |
+510 | / impl<C, F, U> Add<Displacement<F, U>> for Position<C, F, U>
+511 | | where
+512 | |     C: ReferenceCenter,
+513 | |     F: ReferenceFrame,
+514 | |     U: LengthUnit,
+    | |__________________^ `affn::cartesian::position::Position<C, F, U>` implements `Add<affn::cartesian::vector::Vector<F, U>>`
+...
+546 | / forward_ref_binop! {
+547 | |     impl[C, F, U] Add, add for Position<C, F, U>, Displacement<F, U>
+548 | |     where (
+549 | |         C: ReferenceCenter,
+...   |
+554 | | }
+    | | ^
+    | |_|
+    | |_`&affn::cartesian::position::Position<C, F, U>` implements `Add<&affn::cartesian::vector::Vector<F, U>>`
+    | |_`&affn::cartesian::position::Position<C, F, U>` implements `Add<affn::cartesian::vector::Vector<F, U>>`
+    |   `affn::cartesian::position::Position<C, F, U>` implements `Add<&affn::cartesian::vector::Vector<F, U>>`
+    = note: this error originates in the macro `forward_ref_binop_lhs` which comes from the expansion of the macro `forward_ref_binop` (in Nightly builds, run with -Z macro-backtrace for more info)

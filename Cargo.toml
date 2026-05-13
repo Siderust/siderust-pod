@@ -1,119 +1,166 @@
+# siderust-pod — single-crate Precise Orbit Determination toolkit.
+#
+# The previous multi-crate workspace has been collapsed: every former
+# sub-crate is now a module inside this single library.  The
+# [workspace] block is kept only to let `target-sgp4-test/probe`
+# inherit its edition/version metadata.
+
+[package]
+name         = "siderust-pod"
+version      = "0.0.0"
+edition      = "2021"
+rust-version = "1.82"
+authors      = ["Siderust authors"]
+license      = "AGPL-3.0-or-later"
+repository   = "https://github.com/Siderust/siderust-pod"
+homepage     = "https://github.com/Siderust/siderust-pod"
+keywords     = ["satellite", "pod", "orbit-determination", "geodesy", "gnss"]
+categories   = ["science", "aerospace"]
+publish      = false
+description  = "Precise Orbit Determination toolkit (POD) built on siderust, qtty, tempoch, and affn."
+
+[lib]
+name = "siderust_pod"
+path = "src/lib.rs"
+
+[[bin]]
+name = "siderust-pod"
+path = "src/bin/siderust-pod.rs"
+
+[[bin]]
+name = "siderust-pod-rest"
+path = "src/bin/siderust-pod-rest.rs"
+
+[[example]]
+name = "03_lambert_earth_to_mars"
+path = "examples/03_lambert_earth_to_mars.rs"
+
+[[example]]
+name = "04_sgp4_from_tle"
+path = "examples/04_sgp4_from_tle.rs"
+
+[features]
+default = ["serde"]
+## Serde Serialize/Deserialize impls on core POD types.
+serde   = ["dep:serde", "dep:serde_json"]
+## DORIS RINEX observation parser in the io module.
+doris   = []
+## LISA inter-satellite range observation model.
+lisa    = []
+## Integration tests that load a JPL DE kernel from disk (de440/de441).
+de440   = []
+## Parquet residuals writer in the products module.
+parquet = ["dep:parquet"]
+
+[dependencies]
+# ── Baseline crates ───────────────────────────────────────────────────────────
+qtty-core = { version = "0.8", path = "../qtty/qtty-core" }
+qtty      = { version = "0.8", path = "../qtty/qtty", features = ["astro"] }
+tempoch   = { version = "0.4", path = "../tempoch/tempoch" }
+affn      = { version = "0.7", path = "../affn", features = ["astro"] }
+cheby     = { version = "0.2", path = "../cheby" }
+siderust  = { version = "0.7", path = "../siderust" }
+
+# ── SGP4 propagation backend ──────────────────────────────────────────────────
+sgp4 = { version = "2.4", default-features = false, features = ["std"] }
+
+# ── Linear algebra ────────────────────────────────────────────────────────────
+faer = { version = "0.22", default-features = false, features = ["std", "linalg"] }
+
+# ── Serialisation ─────────────────────────────────────────────────────────────
+serde      = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+# serde_yaml is always required (used unconditionally in the service module).
+serde_yaml = "0.9"
+
+# ── Error handling ────────────────────────────────────────────────────────────
+thiserror = "1.0"
+anyhow    = "1.0"
+
+# ── Hashing ───────────────────────────────────────────────────────────────────
+sha2 = "0.10"
+hex  = "0.4"
+
+# ── Time ──────────────────────────────────────────────────────────────────────
+chrono = "0.4"
+
+# ── XML parsing ───────────────────────────────────────────────────────────────
+quick-xml = "0.36"
+
+# ── HTTP / REST ───────────────────────────────────────────────────────────────
+axum  = "0.7"
+tokio = { version = "1.39", features = ["macros", "rt-multi-thread"] }
+tower = "0.5"
+uuid  = { version = "1.10", features = ["v4"] }
+
+# ── CLI ───────────────────────────────────────────────────────────────────────
+clap = { version = "4.5", features = ["derive"] }
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+log        = "0.4"
+env_logger = "0.11"
+
+# ── Optional: Parquet residuals ───────────────────────────────────────────────
+parquet = { version = "52", default-features = false, optional = true }
+
+[dev-dependencies]
+approx   = "0.5"
+trybuild = "1.0"
+serde    = { version = "1.0", features = ["derive"] }
+toml     = "0.8"
+
+# ── Workspace (minimal — only for the sgp4-probe fixture) ─────────────────────
 [workspace]
 resolver = "2"
-members = [
-    "crates/siderust-dynamics",
-    "crates/siderust-lambert",
-    "crates/siderust-sgp4",
-    "crates/siderust-spice",
-    "crates/siderust-tle",
-    "crates/siderust-pod-core",
-    "crates/siderust-pod-dynamics",
-    "crates/siderust-pod-io",
-    "crates/siderust-pod-observations",
-    "crates/siderust-pod-estimation",
-    "crates/siderust-pod-qc",
-    "crates/siderust-pod-products",
-    "crates/siderust-pod-service",
-    "crates/siderust-pod-cli",
-    "crates/siderust-pod-rest", "target-sgp4-test/probe",
-]
+members  = ["target-sgp4-test/probe"]
 
 [workspace.package]
-version = "0.0.0"
-edition = "2021"
+version      = "0.0.0"
+edition      = "2021"
 rust-version = "1.82"
-authors = ["Siderust authors"]
-license = "AGPL-3.0-or-later"
-repository = "https://github.com/Siderust/siderust-pod"
-homepage = "https://github.com/Siderust/siderust-pod"
-keywords = ["satellite", "pod", "orbit-determination", "geodesy", "gnss"]
-categories = ["science", "aerospace"]
-
-[workspace.dependencies]
-# Foundational crates (read-only to this workspace).
-# Pinned by path during local dev; published versions are fine for crates.io builds.
-qtty-core = { version = "0.8", path = "../qtty/qtty-core" }
-qtty     = { version = "0.8", path = "../qtty/qtty" }
-tempoch  = { version = "0.4", path = "../tempoch/tempoch" }
-affn     = { version = "0.7", path = "../affn", features = ["astro"] }
-cheby    = { version = "0.2", path = "../cheby" }
-siderust = { version = "0.7", path = "../siderust" }
-
-# Satellite mechanics / propagation crates (now members of this workspace).
-siderust-dynamics = { path = "crates/siderust-dynamics", version = "0.0.0" }
-siderust-lambert  = { path = "crates/siderust-lambert",  version = "0.0.0" }
-siderust-sgp4     = { path = "crates/siderust-sgp4",     version = "0.0.0" }
-siderust-spice    = { path = "crates/siderust-spice",    version = "0.0.0" }
-siderust-tle      = { path = "crates/siderust-tle",      version = "0.0.0" }
-
-# POD-internal crates referenced from siblings.
-siderust-pod-core         = { path = "crates/siderust-pod-core",         version = "0.0.0" }
-siderust-pod-dynamics     = { path = "crates/siderust-pod-dynamics",     version = "0.0.0" }
-siderust-pod-io           = { path = "crates/siderust-pod-io",           version = "0.0.0" }
-siderust-pod-observations = { path = "crates/siderust-pod-observations", version = "0.0.0" }
-siderust-pod-estimation   = { path = "crates/siderust-pod-estimation",   version = "0.0.0" }
-siderust-pod-qc           = { path = "crates/siderust-pod-qc",           version = "0.0.0" }
-siderust-pod-products     = { path = "crates/siderust-pod-products",     version = "0.0.0" }
-siderust-pod-service      = { path = "crates/siderust-pod-service",      version = "0.0.0" }
-
-# Third-party.
-faer        = { version = "0.22", default-features = false, features = ["std", "linalg"] }
-serde       = { version = "1.0", features = ["derive"] }
-serde_json  = "1.0"
-serde_yaml  = "0.9"
-thiserror   = "1.0"
-clap        = { version = "4.5", features = ["derive"] }
-sha2        = "0.10"
-hex         = "0.4"
-chrono      = "0.4"
-anyhow      = "1.0"
-log         = "0.4"
-env_logger  = "0.11"
-trybuild    = "1.0"
-approx      = "0.5"
-axum        = "0.7"
-tokio       = { version = "1.39", features = ["macros", "rt-multi-thread"] }
-tower       = "0.5"
-uuid        = { version = "1.10", features = ["v4"] }
-
-# Redirect transitive crates.io pulls of these foundational crates to the local
-# path checkouts.  Without this, `siderust` (which declares `affn = "0.7"` from
-# crates.io in its own Cargo.toml) would get a *different* affn instance than the
-# local path dep, causing type-level incompatibilities at crate boundaries.
-[patch.crates-io]
-qtty-core = { path = "../qtty/qtty-core" }
-tempoch-core = { path = "../tempoch/tempoch-core" }
-qtty     = { path = "../qtty/qtty" }
-tempoch  = { path = "../tempoch/tempoch" }
-affn     = { path = "../affn" }
-siderust = { path = "../siderust" }
-
-# Redirect the git source of `affn` used by `siderust` to the same local path
-# so both the workspace crates and siderust share a single `affn` instance.
-[patch."https://github.com/Siderust/affn.git"]
-affn = { path = "../affn" }
+authors      = ["Siderust authors"]
+license      = "AGPL-3.0-or-later"
+repository   = "https://github.com/Siderust/siderust-pod"
+homepage     = "https://github.com/Siderust/siderust-pod"
+keywords     = ["satellite", "pod", "orbit-determination", "geodesy", "gnss"]
+categories   = ["science", "aerospace"]
 
 [workspace.lints.rust]
-unsafe_code = "forbid"
-missing_docs = "deny"
+unsafe_code     = "forbid"
+missing_docs    = "deny"
 unreachable_pub = "warn"
 
 [workspace.lints.clippy]
-all = { level = "deny", priority = -1 }
-todo = "deny"
+all           = { level = "deny", priority = -1 }
+todo          = "deny"
 unimplemented = "deny"
-dbg_macro = "deny"
-print_stdout = "warn"
+dbg_macro     = "deny"
+print_stdout  = "warn"
 
 [workspace.lints.rustdoc]
 broken_intra_doc_links = "deny"
 
+# ── Redirect transitive crates.io pulls to the local path checkouts ───────────
+[patch.crates-io]
+qtty-core    = { path = "../qtty/qtty-core" }
+tempoch-core = { path = "../tempoch/tempoch-core" }
+qtty         = { path = "../qtty/qtty" }
+tempoch      = { path = "../tempoch/tempoch" }
+affn         = { path = "../affn" }
+siderust     = { path = "../siderust" }
+
+[patch."https://github.com/Siderust/affn.git"]
+affn = { path = "../affn" }
+
 [profile.release]
-opt-level = 3
-lto       = "thin"
+opt-level     = 3
+lto           = "thin"
 codegen-units = 1
-panic = "abort"
+panic         = "abort"
 
 [profile.bench]
 opt-level = 3
-lto = "thin"
+lto       = "thin"
+
+[lints]
+workspace = true

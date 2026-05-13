@@ -26,11 +26,11 @@
 //!   Determination. Elsevier Academic Press.
 //! - Vallado, D. A. (2013). Fundamentals of Astrodynamics and Applications
 //!   (4th ed.). Microcosm Press.
-use siderust_pod_service::{generate, SyntheticArcConfig, Position};
+use siderust::coordinates::frames::GCRS;
 use siderust_pod_observations::model::MeasurementModel;
 use siderust_pod_observations::SlrRangeModel;
 use siderust_pod_qc::SlrValidationReport;
-use siderust::coordinates::frames::GCRS;
+use siderust_pod_service::{generate, Position, SyntheticArcConfig};
 
 #[test]
 fn slr_validation_self_consistent() {
