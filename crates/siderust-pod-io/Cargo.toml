@@ -16,6 +16,7 @@ affn.workspace = true
 thiserror.workspace = true
 sha2.workspace = true
 hex.workspace = true
+siderust-pod-core.workspace = true
 quick-xml = "0.36"
 
 [dev-dependencies]

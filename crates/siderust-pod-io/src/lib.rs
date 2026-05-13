@@ -40,6 +40,7 @@ pub mod antex;
 pub mod cpf;
 pub mod crd;
 pub mod eop;
+pub mod lisa;
 pub mod oem;
 pub mod rinex_nav;
 pub mod rinex_obs;

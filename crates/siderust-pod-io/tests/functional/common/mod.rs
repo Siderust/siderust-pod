@@ -20,6 +20,30 @@ pub(super) fn official(name: &str) -> PathBuf {
         .join(name)
 }
 
+/// Returns the absolute path to a file inside `test-data/crd/`.
+pub(super) fn crd_fixture(name: &str) -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("test-data")
+        .join("crd")
+        .join(name)
+}
+
+/// Returns the absolute path to a file inside `test-data/cpf/`.
+pub(super) fn cpf_fixture(name: &str) -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("test-data")
+        .join("cpf")
+        .join(name)
+}
+
+/// Returns the absolute path to a file inside `test-data/lisa/`.
+pub(super) fn lisa_fixture(name: &str) -> PathBuf {
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("test-data")
+        .join("lisa")
+        .join(name)
+}
+
 /// Assert `actual ≈ expected` within `tol`, with a diagnostic message naming
 /// the field being checked.
 #[track_caller]
