@@ -1,0 +1,333 @@
+pub mod siderust_pod_observations
+pub mod siderust_pod_observations::frame_transform
+pub enum siderust_pod_observations::frame_transform::FrameTransformError
+pub siderust_pod_observations::frame_transform::FrameTransformError::Failed(alloc::string::String)
+impl core::error::Error for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::fmt::Debug for siderust_pod_observations::frame_transform::FrameTransformError
+pub fn siderust_pod_observations::frame_transform::FrameTransformError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_observations::frame_transform::FrameTransformError
+pub fn siderust_pod_observations::frame_transform::FrameTransformError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::marker::Send for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::marker::Sync for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::marker::Unpin for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::marker::UnsafeUnpin for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::frame_transform::FrameTransformError
+pub trait siderust_pod_observations::frame_transform::FrameTransformProvider: core::marker::Send + core::marker::Sync
+pub fn siderust_pod_observations::frame_transform::FrameTransformProvider::gcrf_to_itrf(&self, jd_tt: siderust::time::JulianDate, jd_ut1: siderust::time::JulianDate) -> core::result::Result<affn::ops::rotation::Rotation3, siderust_pod_observations::frame_transform::FrameTransformError>
+pub fn siderust_pod_observations::frame_transform::FrameTransformProvider::itrf_to_gcrf(&self, jd_tt: siderust::time::JulianDate, jd_ut1: siderust::time::JulianDate) -> core::result::Result<affn::ops::rotation::Rotation3, siderust_pod_observations::frame_transform::FrameTransformError>
+pub mod siderust_pod_observations::gnss
+pub struct siderust_pod_observations::gnss::CarrierPhaseObs
+pub siderust_pod_observations::gnss::CarrierPhaseObs::gps_pos_km: siderust::astro::dynamics::state::Position<affn::frames::astro::GCRS>
+pub siderust_pod_observations::gnss::CarrierPhaseObs::gps_vel_km_s: siderust::astro::dynamics::state::Velocity<affn::frames::astro::GCRS, siderust::astro::dynamics::state::VelocityUnit>
+pub siderust_pod_observations::gnss::CarrierPhaseObs::measured_m: f64
+pub siderust_pod_observations::gnss::CarrierPhaseObs::sigma_m: f64
+impl core::clone::Clone for siderust_pod_observations::gnss::CarrierPhaseObs
+pub fn siderust_pod_observations::gnss::CarrierPhaseObs::clone(&self) -> siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::fmt::Debug for siderust_pod_observations::gnss::CarrierPhaseObs
+pub fn siderust_pod_observations::gnss::CarrierPhaseObs::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::Freeze for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::Send for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::Sync for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::Unpin for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::UnsafeUnpin for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::gnss::CarrierPhaseObs
+pub struct siderust_pod_observations::gnss::GnssCarrierModel
+pub siderust_pod_observations::gnss::GnssCarrierModel::ambiguity_index: usize
+pub siderust_pod_observations::gnss::GnssCarrierModel::clock_bias_index: usize
+pub siderust_pod_observations::gnss::GnssCarrierModel::obs: siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::clone::Clone for siderust_pod_observations::gnss::GnssCarrierModel
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::clone(&self) -> siderust_pod_observations::gnss::GnssCarrierModel
+impl core::fmt::Debug for siderust_pod_observations::gnss::GnssCarrierModel
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::gnss::GnssCarrierModel
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::sigma(&self) -> f64
+impl core::marker::Freeze for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::marker::Send for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::marker::Sync for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::marker::Unpin for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::marker::UnsafeUnpin for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::gnss::GnssCarrierModel
+pub struct siderust_pod_observations::gnss::GnssCodeModel
+pub siderust_pod_observations::gnss::GnssCodeModel::clock_bias_index: usize
+pub siderust_pod_observations::gnss::GnssCodeModel::obs: siderust_pod_observations::gnss::PseudorangeObs
+impl core::clone::Clone for siderust_pod_observations::gnss::GnssCodeModel
+pub fn siderust_pod_observations::gnss::GnssCodeModel::clone(&self) -> siderust_pod_observations::gnss::GnssCodeModel
+impl core::fmt::Debug for siderust_pod_observations::gnss::GnssCodeModel
+pub fn siderust_pod_observations::gnss::GnssCodeModel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::gnss::GnssCodeModel
+pub fn siderust_pod_observations::gnss::GnssCodeModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::gnss::GnssCodeModel::sigma(&self) -> f64
+impl core::marker::Freeze for siderust_pod_observations::gnss::GnssCodeModel
+impl core::marker::Send for siderust_pod_observations::gnss::GnssCodeModel
+impl core::marker::Sync for siderust_pod_observations::gnss::GnssCodeModel
+impl core::marker::Unpin for siderust_pod_observations::gnss::GnssCodeModel
+impl core::marker::UnsafeUnpin for siderust_pod_observations::gnss::GnssCodeModel
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::gnss::GnssCodeModel
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::gnss::GnssCodeModel
+pub struct siderust_pod_observations::gnss::PseudorangeObs
+pub siderust_pod_observations::gnss::PseudorangeObs::gps_pos_km: siderust::astro::dynamics::state::Position<affn::frames::astro::GCRS>
+pub siderust_pod_observations::gnss::PseudorangeObs::gps_vel_km_s: siderust::astro::dynamics::state::Velocity<affn::frames::astro::GCRS, siderust::astro::dynamics::state::VelocityUnit>
+pub siderust_pod_observations::gnss::PseudorangeObs::measured_m: f64
+pub siderust_pod_observations::gnss::PseudorangeObs::sigma_m: f64
+impl core::clone::Clone for siderust_pod_observations::gnss::PseudorangeObs
+pub fn siderust_pod_observations::gnss::PseudorangeObs::clone(&self) -> siderust_pod_observations::gnss::PseudorangeObs
+impl core::fmt::Debug for siderust_pod_observations::gnss::PseudorangeObs
+pub fn siderust_pod_observations::gnss::PseudorangeObs::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::Freeze for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::Send for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::Sync for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::Unpin for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::UnsafeUnpin for siderust_pod_observations::gnss::PseudorangeObs
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::gnss::PseudorangeObs
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::gnss::PseudorangeObs
+pub mod siderust_pod_observations::model
+pub struct siderust_pod_observations::model::Partials
+pub siderust_pod_observations::model::Partials::entries: alloc::vec::Vec<(usize, f64)>
+impl siderust_pod_observations::model::Partials
+pub fn siderust_pod_observations::model::Partials::from_pairs(pairs: impl core::iter::traits::collect::IntoIterator<Item = (usize, f64)>) -> Self
+impl core::clone::Clone for siderust_pod_observations::model::Partials
+pub fn siderust_pod_observations::model::Partials::clone(&self) -> siderust_pod_observations::model::Partials
+impl core::default::Default for siderust_pod_observations::model::Partials
+pub fn siderust_pod_observations::model::Partials::default() -> siderust_pod_observations::model::Partials
+impl core::fmt::Debug for siderust_pod_observations::model::Partials
+pub fn siderust_pod_observations::model::Partials::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_observations::model::Partials
+impl core::marker::Send for siderust_pod_observations::model::Partials
+impl core::marker::Sync for siderust_pod_observations::model::Partials
+impl core::marker::Unpin for siderust_pod_observations::model::Partials
+impl core::marker::UnsafeUnpin for siderust_pod_observations::model::Partials
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::model::Partials
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::model::Partials
+pub struct siderust_pod_observations::model::Prediction
+pub siderust_pod_observations::model::Prediction::partials: siderust_pod_observations::model::Partials
+pub siderust_pod_observations::model::Prediction::value: f64
+impl core::clone::Clone for siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::model::Prediction::clone(&self) -> siderust_pod_observations::model::Prediction
+impl core::fmt::Debug for siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::model::Prediction::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_observations::model::Prediction
+impl core::marker::Send for siderust_pod_observations::model::Prediction
+impl core::marker::Sync for siderust_pod_observations::model::Prediction
+impl core::marker::Unpin for siderust_pod_observations::model::Prediction
+impl core::marker::UnsafeUnpin for siderust_pod_observations::model::Prediction
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::model::Prediction
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::model::Prediction
+pub trait siderust_pod_observations::model::MeasurementModel
+pub fn siderust_pod_observations::model::MeasurementModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::model::MeasurementModel::sigma(&self) -> f64
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::gnss::GnssCarrierModel
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::sigma(&self) -> f64
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::gnss::GnssCodeModel
+pub fn siderust_pod_observations::gnss::GnssCodeModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::gnss::GnssCodeModel::sigma(&self) -> f64
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::slr::SlrRangeModel::sigma(&self) -> f64
+pub mod siderust_pod_observations::slr
+pub struct siderust_pod_observations::slr::SlrRangeModel
+pub siderust_pod_observations::slr::SlrRangeModel::sigma_m: f64
+pub siderust_pod_observations::slr::SlrRangeModel::station_bias_index: core::option::Option<usize>
+pub siderust_pod_observations::slr::SlrRangeModel::station_inertial_km: siderust::astro::dynamics::state::Position<affn::frames::astro::GCRS>
+pub siderust_pod_observations::slr::SlrRangeModel::trop_bias_m: f64
+impl siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::new(station_inertial_km: siderust::astro::dynamics::state::Position<affn::frames::astro::GCRS>, trop_bias_m: f64, sigma_m: f64) -> Self
+impl core::clone::Clone for siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::clone(&self) -> siderust_pod_observations::slr::SlrRangeModel
+impl core::fmt::Debug for siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::slr::SlrRangeModel::sigma(&self) -> f64
+impl core::marker::Freeze for siderust_pod_observations::slr::SlrRangeModel
+impl core::marker::Send for siderust_pod_observations::slr::SlrRangeModel
+impl core::marker::Sync for siderust_pod_observations::slr::SlrRangeModel
+impl core::marker::Unpin for siderust_pod_observations::slr::SlrRangeModel
+impl core::marker::UnsafeUnpin for siderust_pod_observations::slr::SlrRangeModel
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::slr::SlrRangeModel
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::slr::SlrRangeModel
+pub struct siderust_pod_observations::slr::SlrRangeObs
+pub siderust_pod_observations::slr::SlrRangeObs::range_m: f64
+pub siderust_pod_observations::slr::SlrRangeObs::sigma_m: f64
+impl core::clone::Clone for siderust_pod_observations::slr::SlrRangeObs
+pub fn siderust_pod_observations::slr::SlrRangeObs::clone(&self) -> siderust_pod_observations::slr::SlrRangeObs
+impl core::fmt::Debug for siderust_pod_observations::slr::SlrRangeObs
+pub fn siderust_pod_observations::slr::SlrRangeObs::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_observations::slr::SlrRangeObs
+impl core::marker::Send for siderust_pod_observations::slr::SlrRangeObs
+impl core::marker::Sync for siderust_pod_observations::slr::SlrRangeObs
+impl core::marker::Unpin for siderust_pod_observations::slr::SlrRangeObs
+impl core::marker::UnsafeUnpin for siderust_pod_observations::slr::SlrRangeObs
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::slr::SlrRangeObs
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::slr::SlrRangeObs
+pub enum siderust_pod_observations::FrameTransformError
+pub siderust_pod_observations::FrameTransformError::Failed(alloc::string::String)
+impl core::error::Error for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::fmt::Debug for siderust_pod_observations::frame_transform::FrameTransformError
+pub fn siderust_pod_observations::frame_transform::FrameTransformError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_observations::frame_transform::FrameTransformError
+pub fn siderust_pod_observations::frame_transform::FrameTransformError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::marker::Send for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::marker::Sync for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::marker::Unpin for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::marker::UnsafeUnpin for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::frame_transform::FrameTransformError
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::frame_transform::FrameTransformError
+pub struct siderust_pod_observations::CarrierPhaseObs
+pub siderust_pod_observations::CarrierPhaseObs::gps_pos_km: siderust::astro::dynamics::state::Position<affn::frames::astro::GCRS>
+pub siderust_pod_observations::CarrierPhaseObs::gps_vel_km_s: siderust::astro::dynamics::state::Velocity<affn::frames::astro::GCRS, siderust::astro::dynamics::state::VelocityUnit>
+pub siderust_pod_observations::CarrierPhaseObs::measured_m: f64
+pub siderust_pod_observations::CarrierPhaseObs::sigma_m: f64
+impl core::clone::Clone for siderust_pod_observations::gnss::CarrierPhaseObs
+pub fn siderust_pod_observations::gnss::CarrierPhaseObs::clone(&self) -> siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::fmt::Debug for siderust_pod_observations::gnss::CarrierPhaseObs
+pub fn siderust_pod_observations::gnss::CarrierPhaseObs::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::Freeze for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::Send for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::Sync for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::Unpin for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::marker::UnsafeUnpin for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::gnss::CarrierPhaseObs
+pub struct siderust_pod_observations::GnssCarrierModel
+pub siderust_pod_observations::GnssCarrierModel::ambiguity_index: usize
+pub siderust_pod_observations::GnssCarrierModel::clock_bias_index: usize
+pub siderust_pod_observations::GnssCarrierModel::obs: siderust_pod_observations::gnss::CarrierPhaseObs
+impl core::clone::Clone for siderust_pod_observations::gnss::GnssCarrierModel
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::clone(&self) -> siderust_pod_observations::gnss::GnssCarrierModel
+impl core::fmt::Debug for siderust_pod_observations::gnss::GnssCarrierModel
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::gnss::GnssCarrierModel
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::sigma(&self) -> f64
+impl core::marker::Freeze for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::marker::Send for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::marker::Sync for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::marker::Unpin for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::marker::UnsafeUnpin for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::gnss::GnssCarrierModel
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::gnss::GnssCarrierModel
+pub struct siderust_pod_observations::GnssCodeModel
+pub siderust_pod_observations::GnssCodeModel::clock_bias_index: usize
+pub siderust_pod_observations::GnssCodeModel::obs: siderust_pod_observations::gnss::PseudorangeObs
+impl core::clone::Clone for siderust_pod_observations::gnss::GnssCodeModel
+pub fn siderust_pod_observations::gnss::GnssCodeModel::clone(&self) -> siderust_pod_observations::gnss::GnssCodeModel
+impl core::fmt::Debug for siderust_pod_observations::gnss::GnssCodeModel
+pub fn siderust_pod_observations::gnss::GnssCodeModel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::gnss::GnssCodeModel
+pub fn siderust_pod_observations::gnss::GnssCodeModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::gnss::GnssCodeModel::sigma(&self) -> f64
+impl core::marker::Freeze for siderust_pod_observations::gnss::GnssCodeModel
+impl core::marker::Send for siderust_pod_observations::gnss::GnssCodeModel
+impl core::marker::Sync for siderust_pod_observations::gnss::GnssCodeModel
+impl core::marker::Unpin for siderust_pod_observations::gnss::GnssCodeModel
+impl core::marker::UnsafeUnpin for siderust_pod_observations::gnss::GnssCodeModel
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::gnss::GnssCodeModel
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::gnss::GnssCodeModel
+pub struct siderust_pod_observations::Partials
+pub siderust_pod_observations::Partials::entries: alloc::vec::Vec<(usize, f64)>
+impl siderust_pod_observations::model::Partials
+pub fn siderust_pod_observations::model::Partials::from_pairs(pairs: impl core::iter::traits::collect::IntoIterator<Item = (usize, f64)>) -> Self
+impl core::clone::Clone for siderust_pod_observations::model::Partials
+pub fn siderust_pod_observations::model::Partials::clone(&self) -> siderust_pod_observations::model::Partials
+impl core::default::Default for siderust_pod_observations::model::Partials
+pub fn siderust_pod_observations::model::Partials::default() -> siderust_pod_observations::model::Partials
+impl core::fmt::Debug for siderust_pod_observations::model::Partials
+pub fn siderust_pod_observations::model::Partials::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_observations::model::Partials
+impl core::marker::Send for siderust_pod_observations::model::Partials
+impl core::marker::Sync for siderust_pod_observations::model::Partials
+impl core::marker::Unpin for siderust_pod_observations::model::Partials
+impl core::marker::UnsafeUnpin for siderust_pod_observations::model::Partials
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::model::Partials
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::model::Partials
+pub struct siderust_pod_observations::Prediction
+pub siderust_pod_observations::Prediction::partials: siderust_pod_observations::model::Partials
+pub siderust_pod_observations::Prediction::value: f64
+impl core::clone::Clone for siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::model::Prediction::clone(&self) -> siderust_pod_observations::model::Prediction
+impl core::fmt::Debug for siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::model::Prediction::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_observations::model::Prediction
+impl core::marker::Send for siderust_pod_observations::model::Prediction
+impl core::marker::Sync for siderust_pod_observations::model::Prediction
+impl core::marker::Unpin for siderust_pod_observations::model::Prediction
+impl core::marker::UnsafeUnpin for siderust_pod_observations::model::Prediction
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::model::Prediction
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::model::Prediction
+pub struct siderust_pod_observations::PseudorangeObs
+pub siderust_pod_observations::PseudorangeObs::gps_pos_km: siderust::astro::dynamics::state::Position<affn::frames::astro::GCRS>
+pub siderust_pod_observations::PseudorangeObs::gps_vel_km_s: siderust::astro::dynamics::state::Velocity<affn::frames::astro::GCRS, siderust::astro::dynamics::state::VelocityUnit>
+pub siderust_pod_observations::PseudorangeObs::measured_m: f64
+pub siderust_pod_observations::PseudorangeObs::sigma_m: f64
+impl core::clone::Clone for siderust_pod_observations::gnss::PseudorangeObs
+pub fn siderust_pod_observations::gnss::PseudorangeObs::clone(&self) -> siderust_pod_observations::gnss::PseudorangeObs
+impl core::fmt::Debug for siderust_pod_observations::gnss::PseudorangeObs
+pub fn siderust_pod_observations::gnss::PseudorangeObs::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::Freeze for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::Send for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::Sync for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::Unpin for siderust_pod_observations::gnss::PseudorangeObs
+impl core::marker::UnsafeUnpin for siderust_pod_observations::gnss::PseudorangeObs
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::gnss::PseudorangeObs
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::gnss::PseudorangeObs
+pub struct siderust_pod_observations::SlrRangeModel
+pub siderust_pod_observations::SlrRangeModel::sigma_m: f64
+pub siderust_pod_observations::SlrRangeModel::station_bias_index: core::option::Option<usize>
+pub siderust_pod_observations::SlrRangeModel::station_inertial_km: siderust::astro::dynamics::state::Position<affn::frames::astro::GCRS>
+pub siderust_pod_observations::SlrRangeModel::trop_bias_m: f64
+impl siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::new(station_inertial_km: siderust::astro::dynamics::state::Position<affn::frames::astro::GCRS>, trop_bias_m: f64, sigma_m: f64) -> Self
+impl core::clone::Clone for siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::clone(&self) -> siderust_pod_observations::slr::SlrRangeModel
+impl core::fmt::Debug for siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::slr::SlrRangeModel::sigma(&self) -> f64
+impl core::marker::Freeze for siderust_pod_observations::slr::SlrRangeModel
+impl core::marker::Send for siderust_pod_observations::slr::SlrRangeModel
+impl core::marker::Sync for siderust_pod_observations::slr::SlrRangeModel
+impl core::marker::Unpin for siderust_pod_observations::slr::SlrRangeModel
+impl core::marker::UnsafeUnpin for siderust_pod_observations::slr::SlrRangeModel
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::slr::SlrRangeModel
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::slr::SlrRangeModel
+pub struct siderust_pod_observations::SlrRangeObs
+pub siderust_pod_observations::SlrRangeObs::range_m: f64
+pub siderust_pod_observations::SlrRangeObs::sigma_m: f64
+impl core::clone::Clone for siderust_pod_observations::slr::SlrRangeObs
+pub fn siderust_pod_observations::slr::SlrRangeObs::clone(&self) -> siderust_pod_observations::slr::SlrRangeObs
+impl core::fmt::Debug for siderust_pod_observations::slr::SlrRangeObs
+pub fn siderust_pod_observations::slr::SlrRangeObs::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_observations::slr::SlrRangeObs
+impl core::marker::Send for siderust_pod_observations::slr::SlrRangeObs
+impl core::marker::Sync for siderust_pod_observations::slr::SlrRangeObs
+impl core::marker::Unpin for siderust_pod_observations::slr::SlrRangeObs
+impl core::marker::UnsafeUnpin for siderust_pod_observations::slr::SlrRangeObs
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_observations::slr::SlrRangeObs
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_observations::slr::SlrRangeObs
+pub trait siderust_pod_observations::FrameTransformProvider: core::marker::Send + core::marker::Sync
+pub fn siderust_pod_observations::FrameTransformProvider::gcrf_to_itrf(&self, jd_tt: siderust::time::JulianDate, jd_ut1: siderust::time::JulianDate) -> core::result::Result<affn::ops::rotation::Rotation3, siderust_pod_observations::frame_transform::FrameTransformError>
+pub fn siderust_pod_observations::FrameTransformProvider::itrf_to_gcrf(&self, jd_tt: siderust::time::JulianDate, jd_ut1: siderust::time::JulianDate) -> core::result::Result<affn::ops::rotation::Rotation3, siderust_pod_observations::frame_transform::FrameTransformError>
+pub trait siderust_pod_observations::MeasurementModel
+pub fn siderust_pod_observations::MeasurementModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::MeasurementModel::sigma(&self) -> f64
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::gnss::GnssCarrierModel
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::gnss::GnssCarrierModel::sigma(&self) -> f64
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::gnss::GnssCodeModel
+pub fn siderust_pod_observations::gnss::GnssCodeModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra_params: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::gnss::GnssCodeModel::sigma(&self) -> f64
+impl siderust_pod_observations::model::MeasurementModel for siderust_pod_observations::slr::SlrRangeModel
+pub fn siderust_pod_observations::slr::SlrRangeModel::predict(&self, state: &siderust::astro::dynamics::state::OrbitState, extra: &[f64]) -> siderust_pod_observations::model::Prediction
+pub fn siderust_pod_observations::slr::SlrRangeModel::sigma(&self) -> f64

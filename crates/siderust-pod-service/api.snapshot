@@ -1,0 +1,449 @@
+pub mod siderust_pod_service
+pub use siderust_pod_service::OrbitState
+pub use siderust_pod_service::Position
+pub use siderust_pod_service::Velocity
+pub use siderust_pod_service::VelocityUnit
+pub mod siderust_pod_service::config
+pub struct siderust_pod_service::config::ForcesConfig
+pub siderust_pod_service::config::ForcesConfig::j2: bool
+pub siderust_pod_service::config::ForcesConfig::third_body: bool
+pub siderust_pod_service::config::ForcesConfig::two_body: bool
+impl core::clone::Clone for siderust_pod_service::config::ForcesConfig
+pub fn siderust_pod_service::config::ForcesConfig::clone(&self) -> siderust_pod_service::config::ForcesConfig
+impl core::fmt::Debug for siderust_pod_service::config::ForcesConfig
+pub fn siderust_pod_service::config::ForcesConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_service::config::ForcesConfig
+pub fn siderust_pod_service::config::ForcesConfig::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_service::config::ForcesConfig
+pub fn siderust_pod_service::config::ForcesConfig::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_service::config::ForcesConfig
+impl core::marker::Send for siderust_pod_service::config::ForcesConfig
+impl core::marker::Sync for siderust_pod_service::config::ForcesConfig
+impl core::marker::Unpin for siderust_pod_service::config::ForcesConfig
+impl core::marker::UnsafeUnpin for siderust_pod_service::config::ForcesConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::config::ForcesConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::config::ForcesConfig
+pub struct siderust_pod_service::config::InputsConfig
+pub siderust_pod_service::config::InputsConfig::antex: core::option::Option<alloc::string::String>
+pub siderust_pod_service::config::InputsConfig::rinex_nav: core::option::Option<alloc::string::String>
+pub siderust_pod_service::config::InputsConfig::rinex_obs: core::option::Option<alloc::string::String>
+pub siderust_pod_service::config::InputsConfig::sp3: core::option::Option<alloc::string::String>
+impl core::clone::Clone for siderust_pod_service::config::InputsConfig
+pub fn siderust_pod_service::config::InputsConfig::clone(&self) -> siderust_pod_service::config::InputsConfig
+impl core::fmt::Debug for siderust_pod_service::config::InputsConfig
+pub fn siderust_pod_service::config::InputsConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_service::config::InputsConfig
+pub fn siderust_pod_service::config::InputsConfig::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_service::config::InputsConfig
+pub fn siderust_pod_service::config::InputsConfig::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_service::config::InputsConfig
+impl core::marker::Send for siderust_pod_service::config::InputsConfig
+impl core::marker::Sync for siderust_pod_service::config::InputsConfig
+impl core::marker::Unpin for siderust_pod_service::config::InputsConfig
+impl core::marker::UnsafeUnpin for siderust_pod_service::config::InputsConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::config::InputsConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::config::InputsConfig
+pub struct siderust_pod_service::config::RunConfig
+pub siderust_pod_service::config::RunConfig::forces: siderust_pod_service::config::ForcesConfig
+pub siderust_pod_service::config::RunConfig::inputs: siderust_pod_service::config::InputsConfig
+pub siderust_pod_service::config::RunConfig::output_dir: alloc::string::String
+pub siderust_pod_service::config::RunConfig::run_id: alloc::string::String
+pub siderust_pod_service::config::RunConfig::schema_version: alloc::string::String
+impl siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::from_yaml_file(path: &str) -> core::result::Result<Self, std::io::error::Error>
+pub fn siderust_pod_service::config::RunConfig::validate(&self) -> core::result::Result<(), alloc::string::String>
+impl core::clone::Clone for siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::clone(&self) -> siderust_pod_service::config::RunConfig
+impl core::fmt::Debug for siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_service::config::RunConfig
+impl core::marker::Send for siderust_pod_service::config::RunConfig
+impl core::marker::Sync for siderust_pod_service::config::RunConfig
+impl core::marker::Unpin for siderust_pod_service::config::RunConfig
+impl core::marker::UnsafeUnpin for siderust_pod_service::config::RunConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::config::RunConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::config::RunConfig
+pub mod siderust_pod_service::manifest
+pub struct siderust_pod_service::manifest::DatasetRef
+pub siderust_pod_service::manifest::DatasetRef::format: alloc::string::String
+pub siderust_pod_service::manifest::DatasetRef::path: alloc::string::String
+pub siderust_pod_service::manifest::DatasetRef::role: alloc::string::String
+pub siderust_pod_service::manifest::DatasetRef::sha256: alloc::string::String
+impl siderust_pod_service::manifest::DatasetRef
+pub fn siderust_pod_service::manifest::DatasetRef::from_path(role: &str, format: &str, path: &str) -> std::io::error::Result<Self>
+impl core::clone::Clone for siderust_pod_service::manifest::DatasetRef
+pub fn siderust_pod_service::manifest::DatasetRef::clone(&self) -> siderust_pod_service::manifest::DatasetRef
+impl core::cmp::Eq for siderust_pod_service::manifest::DatasetRef
+impl core::cmp::PartialEq for siderust_pod_service::manifest::DatasetRef
+pub fn siderust_pod_service::manifest::DatasetRef::eq(&self, other: &siderust_pod_service::manifest::DatasetRef) -> bool
+impl core::fmt::Debug for siderust_pod_service::manifest::DatasetRef
+pub fn siderust_pod_service::manifest::DatasetRef::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_service::manifest::DatasetRef
+impl core::marker::Freeze for siderust_pod_service::manifest::DatasetRef
+impl core::marker::Send for siderust_pod_service::manifest::DatasetRef
+impl core::marker::Sync for siderust_pod_service::manifest::DatasetRef
+impl core::marker::Unpin for siderust_pod_service::manifest::DatasetRef
+impl core::marker::UnsafeUnpin for siderust_pod_service::manifest::DatasetRef
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::manifest::DatasetRef
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::manifest::DatasetRef
+pub struct siderust_pod_service::manifest::RunManifest
+pub siderust_pod_service::manifest::RunManifest::config_sha256: alloc::string::String
+pub siderust_pod_service::manifest::RunManifest::inputs: alloc::vec::Vec<siderust_pod_service::manifest::DatasetRef>
+pub siderust_pod_service::manifest::RunManifest::notes: core::option::Option<alloc::string::String>
+pub siderust_pod_service::manifest::RunManifest::outputs: alloc::vec::Vec<siderust_pod_service::manifest::DatasetRef>
+pub siderust_pod_service::manifest::RunManifest::schema_version: alloc::string::String
+pub siderust_pod_service::manifest::RunManifest::software_version: alloc::string::String
+impl siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::canonical_sha256(&self) -> alloc::string::String
+pub fn siderust_pod_service::manifest::RunManifest::new(software_version: impl core::convert::Into<alloc::string::String>) -> Self
+impl core::clone::Clone for siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::clone(&self) -> siderust_pod_service::manifest::RunManifest
+impl core::cmp::Eq for siderust_pod_service::manifest::RunManifest
+impl core::cmp::PartialEq for siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::eq(&self, other: &siderust_pod_service::manifest::RunManifest) -> bool
+impl core::default::Default for siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::default() -> siderust_pod_service::manifest::RunManifest
+impl core::fmt::Debug for siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_service::manifest::RunManifest
+impl core::marker::Freeze for siderust_pod_service::manifest::RunManifest
+impl core::marker::Send for siderust_pod_service::manifest::RunManifest
+impl core::marker::Sync for siderust_pod_service::manifest::RunManifest
+impl core::marker::Unpin for siderust_pod_service::manifest::RunManifest
+impl core::marker::UnsafeUnpin for siderust_pod_service::manifest::RunManifest
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::manifest::RunManifest
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::canonical_json(m: &siderust_pod_service::manifest::RunManifest) -> alloc::string::String
+pub mod siderust_pod_service::pipeline
+pub enum siderust_pod_service::pipeline::PipelineError
+pub siderust_pod_service::pipeline::PipelineError::Estimation(siderust_pod_estimation::nonlinear::NonlinearError)
+pub siderust_pod_service::pipeline::PipelineError::Io(std::io::error::Error)
+pub siderust_pod_service::pipeline::PipelineError::PodIo(siderust_pod_io::PodIoError)
+pub siderust_pod_service::pipeline::PipelineError::Sp3(siderust_pod_io::sp3::Sp3Error)
+impl core::convert::From<siderust_pod_estimation::nonlinear::NonlinearError> for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::from(source: siderust_pod_estimation::nonlinear::NonlinearError) -> Self
+impl core::convert::From<siderust_pod_io::PodIoError> for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::from(source: siderust_pod_io::PodIoError) -> Self
+impl core::convert::From<siderust_pod_io::sp3::Sp3Error> for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::from(source: siderust_pod_io::sp3::Sp3Error) -> Self
+impl core::convert::From<std::io::error::Error> for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::from(source: std::io::error::Error) -> Self
+impl core::error::Error for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::pipeline::PipelineError
+impl core::marker::Send for siderust_pod_service::pipeline::PipelineError
+impl core::marker::Sync for siderust_pod_service::pipeline::PipelineError
+impl core::marker::Unpin for siderust_pod_service::pipeline::PipelineError
+impl core::marker::UnsafeUnpin for siderust_pod_service::pipeline::PipelineError
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::pipeline::PipelineError
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_service::pipeline::PipelineError
+pub struct siderust_pod_service::pipeline::ArcEpoch
+pub siderust_pod_service::pipeline::ArcEpoch::carrier: alloc::vec::Vec<(siderust_pod_service::pipeline::GpsSatellite, siderust_pod_observations::gnss::CarrierPhaseObs)>
+pub siderust_pod_service::pipeline::ArcEpoch::code: alloc::vec::Vec<(siderust_pod_service::pipeline::GpsSatellite, siderust_pod_observations::gnss::PseudorangeObs)>
+pub siderust_pod_service::pipeline::ArcEpoch::state_index: usize
+impl core::clone::Clone for siderust_pod_service::pipeline::ArcEpoch
+pub fn siderust_pod_service::pipeline::ArcEpoch::clone(&self) -> siderust_pod_service::pipeline::ArcEpoch
+impl core::fmt::Debug for siderust_pod_service::pipeline::ArcEpoch
+pub fn siderust_pod_service::pipeline::ArcEpoch::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::pipeline::ArcEpoch
+impl core::marker::Send for siderust_pod_service::pipeline::ArcEpoch
+impl core::marker::Sync for siderust_pod_service::pipeline::ArcEpoch
+impl core::marker::Unpin for siderust_pod_service::pipeline::ArcEpoch
+impl core::marker::UnsafeUnpin for siderust_pod_service::pipeline::ArcEpoch
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::pipeline::ArcEpoch
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::pipeline::ArcEpoch
+pub struct siderust_pod_service::pipeline::GpsSatellite
+pub siderust_pod_service::pipeline::GpsSatellite::id: alloc::string::String
+pub siderust_pod_service::pipeline::GpsSatellite::slot: usize
+impl core::clone::Clone for siderust_pod_service::pipeline::GpsSatellite
+pub fn siderust_pod_service::pipeline::GpsSatellite::clone(&self) -> siderust_pod_service::pipeline::GpsSatellite
+impl core::fmt::Debug for siderust_pod_service::pipeline::GpsSatellite
+pub fn siderust_pod_service::pipeline::GpsSatellite::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::pipeline::GpsSatellite
+impl core::marker::Send for siderust_pod_service::pipeline::GpsSatellite
+impl core::marker::Sync for siderust_pod_service::pipeline::GpsSatellite
+impl core::marker::Unpin for siderust_pod_service::pipeline::GpsSatellite
+impl core::marker::UnsafeUnpin for siderust_pod_service::pipeline::GpsSatellite
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::pipeline::GpsSatellite
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::pipeline::GpsSatellite
+pub struct siderust_pod_service::pipeline::PipelineReport
+pub siderust_pod_service::pipeline::PipelineReport::estimated_clock_bias_m: f64
+pub siderust_pod_service::pipeline::PipelineReport::estimated_final: siderust::astro::dynamics::state::OrbitState
+pub siderust_pod_service::pipeline::PipelineReport::estimated_initial: siderust::astro::dynamics::state::OrbitState
+pub siderust_pod_service::pipeline::PipelineReport::estimator: siderust_pod_estimation::nonlinear::NonlinearReport
+pub siderust_pod_service::pipeline::PipelineReport::manifest_path: std::path::PathBuf
+pub siderust_pod_service::pipeline::PipelineReport::output_dir: std::path::PathBuf
+impl core::fmt::Debug for siderust_pod_service::pipeline::PipelineReport
+pub fn siderust_pod_service::pipeline::PipelineReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::pipeline::PipelineReport
+impl core::marker::Send for siderust_pod_service::pipeline::PipelineReport
+impl core::marker::Sync for siderust_pod_service::pipeline::PipelineReport
+impl core::marker::Unpin for siderust_pod_service::pipeline::PipelineReport
+impl core::marker::UnsafeUnpin for siderust_pod_service::pipeline::PipelineReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::pipeline::PipelineReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::pipeline::PipelineReport
+pub fn siderust_pod_service::pipeline::run_synth(arc: &siderust_pod_service::synth::SyntheticArc, initial_guess: siderust::astro::dynamics::state::OrbitState, initial_clock_guess_m: f64, output_dir: &std::path::Path, run_id: &str, enable_j2: bool) -> core::result::Result<siderust_pod_service::pipeline::PipelineReport, siderust_pod_service::pipeline::PipelineError>
+pub mod siderust_pod_service::runner
+pub struct siderust_pod_service::runner::RunReport
+pub siderust_pod_service::runner::RunReport::final_state: siderust::astro::dynamics::state::OrbitState
+pub siderust_pod_service::runner::RunReport::manifest_path: std::path::PathBuf
+pub siderust_pod_service::runner::RunReport::n_steps: usize
+impl core::fmt::Debug for siderust_pod_service::runner::RunReport
+pub fn siderust_pod_service::runner::RunReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::runner::RunReport
+impl core::marker::Send for siderust_pod_service::runner::RunReport
+impl core::marker::Sync for siderust_pod_service::runner::RunReport
+impl core::marker::Unpin for siderust_pod_service::runner::RunReport
+impl core::marker::UnsafeUnpin for siderust_pod_service::runner::RunReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::runner::RunReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::runner::RunReport
+pub fn siderust_pod_service::runner::run(cfg: &siderust_pod_service::config::RunConfig, _config_path: &str) -> std::io::error::Result<siderust_pod_service::runner::RunReport>
+pub mod siderust_pod_service::synth
+pub struct siderust_pod_service::synth::SyntheticArc
+pub siderust_pod_service::synth::SyntheticArc::epochs: alloc::vec::Vec<siderust_pod_service::pipeline::ArcEpoch>
+pub siderust_pod_service::synth::SyntheticArc::gps_sats: alloc::vec::Vec<siderust_pod_service::pipeline::GpsSatellite>
+pub siderust_pod_service::synth::SyntheticArc::truth_clock_bias_m: f64
+pub siderust_pod_service::synth::SyntheticArc::truth_states: alloc::vec::Vec<siderust::astro::dynamics::state::OrbitState>
+impl core::clone::Clone for siderust_pod_service::synth::SyntheticArc
+pub fn siderust_pod_service::synth::SyntheticArc::clone(&self) -> siderust_pod_service::synth::SyntheticArc
+impl core::fmt::Debug for siderust_pod_service::synth::SyntheticArc
+pub fn siderust_pod_service::synth::SyntheticArc::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::synth::SyntheticArc
+impl core::marker::Send for siderust_pod_service::synth::SyntheticArc
+impl core::marker::Sync for siderust_pod_service::synth::SyntheticArc
+impl core::marker::Unpin for siderust_pod_service::synth::SyntheticArc
+impl core::marker::UnsafeUnpin for siderust_pod_service::synth::SyntheticArc
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::synth::SyntheticArc
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::synth::SyntheticArc
+pub struct siderust_pod_service::synth::SyntheticArcConfig
+pub siderust_pod_service::synth::SyntheticArcConfig::ambiguity_m: f64
+pub siderust_pod_service::synth::SyntheticArcConfig::carrier_sigma_m: f64
+pub siderust_pod_service::synth::SyntheticArcConfig::clock_bias_m: f64
+pub siderust_pod_service::synth::SyntheticArcConfig::code_sigma_m: f64
+pub siderust_pod_service::synth::SyntheticArcConfig::dt_s: f64
+pub siderust_pod_service::synth::SyntheticArcConfig::n_gps_sats: usize
+pub siderust_pod_service::synth::SyntheticArcConfig::n_steps: usize
+pub siderust_pod_service::synth::SyntheticArcConfig::seed: u64
+pub siderust_pod_service::synth::SyntheticArcConfig::truth_initial: siderust::astro::dynamics::state::OrbitState
+impl core::clone::Clone for siderust_pod_service::synth::SyntheticArcConfig
+pub fn siderust_pod_service::synth::SyntheticArcConfig::clone(&self) -> siderust_pod_service::synth::SyntheticArcConfig
+impl core::default::Default for siderust_pod_service::synth::SyntheticArcConfig
+pub fn siderust_pod_service::synth::SyntheticArcConfig::default() -> Self
+impl core::fmt::Debug for siderust_pod_service::synth::SyntheticArcConfig
+pub fn siderust_pod_service::synth::SyntheticArcConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::synth::SyntheticArcConfig
+impl core::marker::Send for siderust_pod_service::synth::SyntheticArcConfig
+impl core::marker::Sync for siderust_pod_service::synth::SyntheticArcConfig
+impl core::marker::Unpin for siderust_pod_service::synth::SyntheticArcConfig
+impl core::marker::UnsafeUnpin for siderust_pod_service::synth::SyntheticArcConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::synth::SyntheticArcConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::synth::SyntheticArcConfig
+pub fn siderust_pod_service::synth::generate(cfg: &siderust_pod_service::synth::SyntheticArcConfig) -> siderust_pod_service::synth::SyntheticArc
+pub enum siderust_pod_service::PipelineError
+pub siderust_pod_service::PipelineError::Estimation(siderust_pod_estimation::nonlinear::NonlinearError)
+pub siderust_pod_service::PipelineError::Io(std::io::error::Error)
+pub siderust_pod_service::PipelineError::PodIo(siderust_pod_io::PodIoError)
+pub siderust_pod_service::PipelineError::Sp3(siderust_pod_io::sp3::Sp3Error)
+impl core::convert::From<siderust_pod_estimation::nonlinear::NonlinearError> for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::from(source: siderust_pod_estimation::nonlinear::NonlinearError) -> Self
+impl core::convert::From<siderust_pod_io::PodIoError> for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::from(source: siderust_pod_io::PodIoError) -> Self
+impl core::convert::From<siderust_pod_io::sp3::Sp3Error> for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::from(source: siderust_pod_io::sp3::Sp3Error) -> Self
+impl core::convert::From<std::io::error::Error> for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::from(source: std::io::error::Error) -> Self
+impl core::error::Error for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_service::pipeline::PipelineError
+pub fn siderust_pod_service::pipeline::PipelineError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::pipeline::PipelineError
+impl core::marker::Send for siderust_pod_service::pipeline::PipelineError
+impl core::marker::Sync for siderust_pod_service::pipeline::PipelineError
+impl core::marker::Unpin for siderust_pod_service::pipeline::PipelineError
+impl core::marker::UnsafeUnpin for siderust_pod_service::pipeline::PipelineError
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::pipeline::PipelineError
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_service::pipeline::PipelineError
+pub struct siderust_pod_service::ArcEpoch
+pub siderust_pod_service::ArcEpoch::carrier: alloc::vec::Vec<(siderust_pod_service::pipeline::GpsSatellite, siderust_pod_observations::gnss::CarrierPhaseObs)>
+pub siderust_pod_service::ArcEpoch::code: alloc::vec::Vec<(siderust_pod_service::pipeline::GpsSatellite, siderust_pod_observations::gnss::PseudorangeObs)>
+pub siderust_pod_service::ArcEpoch::state_index: usize
+impl core::clone::Clone for siderust_pod_service::pipeline::ArcEpoch
+pub fn siderust_pod_service::pipeline::ArcEpoch::clone(&self) -> siderust_pod_service::pipeline::ArcEpoch
+impl core::fmt::Debug for siderust_pod_service::pipeline::ArcEpoch
+pub fn siderust_pod_service::pipeline::ArcEpoch::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::pipeline::ArcEpoch
+impl core::marker::Send for siderust_pod_service::pipeline::ArcEpoch
+impl core::marker::Sync for siderust_pod_service::pipeline::ArcEpoch
+impl core::marker::Unpin for siderust_pod_service::pipeline::ArcEpoch
+impl core::marker::UnsafeUnpin for siderust_pod_service::pipeline::ArcEpoch
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::pipeline::ArcEpoch
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::pipeline::ArcEpoch
+pub struct siderust_pod_service::DatasetRef
+pub siderust_pod_service::DatasetRef::format: alloc::string::String
+pub siderust_pod_service::DatasetRef::path: alloc::string::String
+pub siderust_pod_service::DatasetRef::role: alloc::string::String
+pub siderust_pod_service::DatasetRef::sha256: alloc::string::String
+impl siderust_pod_service::manifest::DatasetRef
+pub fn siderust_pod_service::manifest::DatasetRef::from_path(role: &str, format: &str, path: &str) -> std::io::error::Result<Self>
+impl core::clone::Clone for siderust_pod_service::manifest::DatasetRef
+pub fn siderust_pod_service::manifest::DatasetRef::clone(&self) -> siderust_pod_service::manifest::DatasetRef
+impl core::cmp::Eq for siderust_pod_service::manifest::DatasetRef
+impl core::cmp::PartialEq for siderust_pod_service::manifest::DatasetRef
+pub fn siderust_pod_service::manifest::DatasetRef::eq(&self, other: &siderust_pod_service::manifest::DatasetRef) -> bool
+impl core::fmt::Debug for siderust_pod_service::manifest::DatasetRef
+pub fn siderust_pod_service::manifest::DatasetRef::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_service::manifest::DatasetRef
+impl core::marker::Freeze for siderust_pod_service::manifest::DatasetRef
+impl core::marker::Send for siderust_pod_service::manifest::DatasetRef
+impl core::marker::Sync for siderust_pod_service::manifest::DatasetRef
+impl core::marker::Unpin for siderust_pod_service::manifest::DatasetRef
+impl core::marker::UnsafeUnpin for siderust_pod_service::manifest::DatasetRef
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::manifest::DatasetRef
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::manifest::DatasetRef
+pub struct siderust_pod_service::GpsSatellite
+pub siderust_pod_service::GpsSatellite::id: alloc::string::String
+pub siderust_pod_service::GpsSatellite::slot: usize
+impl core::clone::Clone for siderust_pod_service::pipeline::GpsSatellite
+pub fn siderust_pod_service::pipeline::GpsSatellite::clone(&self) -> siderust_pod_service::pipeline::GpsSatellite
+impl core::fmt::Debug for siderust_pod_service::pipeline::GpsSatellite
+pub fn siderust_pod_service::pipeline::GpsSatellite::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::pipeline::GpsSatellite
+impl core::marker::Send for siderust_pod_service::pipeline::GpsSatellite
+impl core::marker::Sync for siderust_pod_service::pipeline::GpsSatellite
+impl core::marker::Unpin for siderust_pod_service::pipeline::GpsSatellite
+impl core::marker::UnsafeUnpin for siderust_pod_service::pipeline::GpsSatellite
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::pipeline::GpsSatellite
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::pipeline::GpsSatellite
+pub struct siderust_pod_service::PipelineReport
+pub siderust_pod_service::PipelineReport::estimated_clock_bias_m: f64
+pub siderust_pod_service::PipelineReport::estimated_final: siderust::astro::dynamics::state::OrbitState
+pub siderust_pod_service::PipelineReport::estimated_initial: siderust::astro::dynamics::state::OrbitState
+pub siderust_pod_service::PipelineReport::estimator: siderust_pod_estimation::nonlinear::NonlinearReport
+pub siderust_pod_service::PipelineReport::manifest_path: std::path::PathBuf
+pub siderust_pod_service::PipelineReport::output_dir: std::path::PathBuf
+impl core::fmt::Debug for siderust_pod_service::pipeline::PipelineReport
+pub fn siderust_pod_service::pipeline::PipelineReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::pipeline::PipelineReport
+impl core::marker::Send for siderust_pod_service::pipeline::PipelineReport
+impl core::marker::Sync for siderust_pod_service::pipeline::PipelineReport
+impl core::marker::Unpin for siderust_pod_service::pipeline::PipelineReport
+impl core::marker::UnsafeUnpin for siderust_pod_service::pipeline::PipelineReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::pipeline::PipelineReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::pipeline::PipelineReport
+pub struct siderust_pod_service::RunConfig
+pub siderust_pod_service::RunConfig::forces: siderust_pod_service::config::ForcesConfig
+pub siderust_pod_service::RunConfig::inputs: siderust_pod_service::config::InputsConfig
+pub siderust_pod_service::RunConfig::output_dir: alloc::string::String
+pub siderust_pod_service::RunConfig::run_id: alloc::string::String
+pub siderust_pod_service::RunConfig::schema_version: alloc::string::String
+impl siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::from_yaml_file(path: &str) -> core::result::Result<Self, std::io::error::Error>
+pub fn siderust_pod_service::config::RunConfig::validate(&self) -> core::result::Result<(), alloc::string::String>
+impl core::clone::Clone for siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::clone(&self) -> siderust_pod_service::config::RunConfig
+impl core::fmt::Debug for siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_service::config::RunConfig
+pub fn siderust_pod_service::config::RunConfig::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_service::config::RunConfig
+impl core::marker::Send for siderust_pod_service::config::RunConfig
+impl core::marker::Sync for siderust_pod_service::config::RunConfig
+impl core::marker::Unpin for siderust_pod_service::config::RunConfig
+impl core::marker::UnsafeUnpin for siderust_pod_service::config::RunConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::config::RunConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::config::RunConfig
+pub struct siderust_pod_service::RunManifest
+pub siderust_pod_service::RunManifest::config_sha256: alloc::string::String
+pub siderust_pod_service::RunManifest::inputs: alloc::vec::Vec<siderust_pod_service::manifest::DatasetRef>
+pub siderust_pod_service::RunManifest::notes: core::option::Option<alloc::string::String>
+pub siderust_pod_service::RunManifest::outputs: alloc::vec::Vec<siderust_pod_service::manifest::DatasetRef>
+pub siderust_pod_service::RunManifest::schema_version: alloc::string::String
+pub siderust_pod_service::RunManifest::software_version: alloc::string::String
+impl siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::canonical_sha256(&self) -> alloc::string::String
+pub fn siderust_pod_service::manifest::RunManifest::new(software_version: impl core::convert::Into<alloc::string::String>) -> Self
+impl core::clone::Clone for siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::clone(&self) -> siderust_pod_service::manifest::RunManifest
+impl core::cmp::Eq for siderust_pod_service::manifest::RunManifest
+impl core::cmp::PartialEq for siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::eq(&self, other: &siderust_pod_service::manifest::RunManifest) -> bool
+impl core::default::Default for siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::default() -> siderust_pod_service::manifest::RunManifest
+impl core::fmt::Debug for siderust_pod_service::manifest::RunManifest
+pub fn siderust_pod_service::manifest::RunManifest::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_service::manifest::RunManifest
+impl core::marker::Freeze for siderust_pod_service::manifest::RunManifest
+impl core::marker::Send for siderust_pod_service::manifest::RunManifest
+impl core::marker::Sync for siderust_pod_service::manifest::RunManifest
+impl core::marker::Unpin for siderust_pod_service::manifest::RunManifest
+impl core::marker::UnsafeUnpin for siderust_pod_service::manifest::RunManifest
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::manifest::RunManifest
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::manifest::RunManifest
+pub struct siderust_pod_service::RunReport
+pub siderust_pod_service::RunReport::final_state: siderust::astro::dynamics::state::OrbitState
+pub siderust_pod_service::RunReport::manifest_path: std::path::PathBuf
+pub siderust_pod_service::RunReport::n_steps: usize
+impl core::fmt::Debug for siderust_pod_service::runner::RunReport
+pub fn siderust_pod_service::runner::RunReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::runner::RunReport
+impl core::marker::Send for siderust_pod_service::runner::RunReport
+impl core::marker::Sync for siderust_pod_service::runner::RunReport
+impl core::marker::Unpin for siderust_pod_service::runner::RunReport
+impl core::marker::UnsafeUnpin for siderust_pod_service::runner::RunReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::runner::RunReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::runner::RunReport
+pub struct siderust_pod_service::SyntheticArc
+pub siderust_pod_service::SyntheticArc::epochs: alloc::vec::Vec<siderust_pod_service::pipeline::ArcEpoch>
+pub siderust_pod_service::SyntheticArc::gps_sats: alloc::vec::Vec<siderust_pod_service::pipeline::GpsSatellite>
+pub siderust_pod_service::SyntheticArc::truth_clock_bias_m: f64
+pub siderust_pod_service::SyntheticArc::truth_states: alloc::vec::Vec<siderust::astro::dynamics::state::OrbitState>
+impl core::clone::Clone for siderust_pod_service::synth::SyntheticArc
+pub fn siderust_pod_service::synth::SyntheticArc::clone(&self) -> siderust_pod_service::synth::SyntheticArc
+impl core::fmt::Debug for siderust_pod_service::synth::SyntheticArc
+pub fn siderust_pod_service::synth::SyntheticArc::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::synth::SyntheticArc
+impl core::marker::Send for siderust_pod_service::synth::SyntheticArc
+impl core::marker::Sync for siderust_pod_service::synth::SyntheticArc
+impl core::marker::Unpin for siderust_pod_service::synth::SyntheticArc
+impl core::marker::UnsafeUnpin for siderust_pod_service::synth::SyntheticArc
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::synth::SyntheticArc
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::synth::SyntheticArc
+pub struct siderust_pod_service::SyntheticArcConfig
+pub siderust_pod_service::SyntheticArcConfig::ambiguity_m: f64
+pub siderust_pod_service::SyntheticArcConfig::carrier_sigma_m: f64
+pub siderust_pod_service::SyntheticArcConfig::clock_bias_m: f64
+pub siderust_pod_service::SyntheticArcConfig::code_sigma_m: f64
+pub siderust_pod_service::SyntheticArcConfig::dt_s: f64
+pub siderust_pod_service::SyntheticArcConfig::n_gps_sats: usize
+pub siderust_pod_service::SyntheticArcConfig::n_steps: usize
+pub siderust_pod_service::SyntheticArcConfig::seed: u64
+pub siderust_pod_service::SyntheticArcConfig::truth_initial: siderust::astro::dynamics::state::OrbitState
+impl core::clone::Clone for siderust_pod_service::synth::SyntheticArcConfig
+pub fn siderust_pod_service::synth::SyntheticArcConfig::clone(&self) -> siderust_pod_service::synth::SyntheticArcConfig
+impl core::default::Default for siderust_pod_service::synth::SyntheticArcConfig
+pub fn siderust_pod_service::synth::SyntheticArcConfig::default() -> Self
+impl core::fmt::Debug for siderust_pod_service::synth::SyntheticArcConfig
+pub fn siderust_pod_service::synth::SyntheticArcConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_service::synth::SyntheticArcConfig
+impl core::marker::Send for siderust_pod_service::synth::SyntheticArcConfig
+impl core::marker::Sync for siderust_pod_service::synth::SyntheticArcConfig
+impl core::marker::Unpin for siderust_pod_service::synth::SyntheticArcConfig
+impl core::marker::UnsafeUnpin for siderust_pod_service::synth::SyntheticArcConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_service::synth::SyntheticArcConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_service::synth::SyntheticArcConfig
+pub fn siderust_pod_service::canonical_json(m: &siderust_pod_service::manifest::RunManifest) -> alloc::string::String
+pub fn siderust_pod_service::generate(cfg: &siderust_pod_service::synth::SyntheticArcConfig) -> siderust_pod_service::synth::SyntheticArc
+pub fn siderust_pod_service::run(cfg: &siderust_pod_service::config::RunConfig, _config_path: &str) -> std::io::error::Result<siderust_pod_service::runner::RunReport>
+pub fn siderust_pod_service::run_synth(arc: &siderust_pod_service::synth::SyntheticArc, initial_guess: siderust::astro::dynamics::state::OrbitState, initial_clock_guess_m: f64, output_dir: &std::path::Path, run_id: &str, enable_j2: bool) -> core::result::Result<siderust_pod_service::pipeline::PipelineReport, siderust_pod_service::pipeline::PipelineError>

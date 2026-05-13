@@ -1,0 +1,226 @@
+pub mod siderust_tle
+pub mod siderust_tle::omm
+pub mod siderust_tle::omm::json
+pub fn siderust_tle::omm::json::read(input: &str) -> core::result::Result<siderust_tle::omm::Omm, siderust_tle::TleError>
+pub fn siderust_tle::omm::json::read_many(input: &str) -> core::result::Result<alloc::vec::Vec<siderust_tle::omm::Omm>, siderust_tle::TleError>
+pub fn siderust_tle::omm::json::write(omm: &siderust_tle::omm::Omm) -> core::result::Result<alloc::string::String, siderust_tle::TleError>
+pub fn siderust_tle::omm::json::write_many(items: &[siderust_tle::omm::Omm]) -> core::result::Result<alloc::string::String, siderust_tle::TleError>
+pub mod siderust_tle::omm::kvn
+pub fn siderust_tle::omm::kvn::read(input: &str) -> core::result::Result<siderust_tle::omm::Omm, siderust_tle::TleError>
+pub fn siderust_tle::omm::kvn::write(omm: &siderust_tle::omm::Omm) -> core::result::Result<alloc::string::String, siderust_tle::TleError>
+pub mod siderust_tle::omm::xml
+pub fn siderust_tle::omm::xml::read(input: &str) -> core::result::Result<siderust_tle::omm::Omm, siderust_tle::TleError>
+pub fn siderust_tle::omm::xml::write(omm: &siderust_tle::omm::Omm) -> core::result::Result<alloc::string::String, siderust_tle::TleError>
+pub struct siderust_tle::omm::Omm
+pub siderust_tle::omm::Omm::arg_of_pericenter: qtty_core::units::angular::Degrees
+pub siderust_tle::omm::Omm::bstar: f64
+pub siderust_tle::omm::Omm::classification: siderust_tle::Classification
+pub siderust_tle::omm::Omm::eccentricity: f64
+pub siderust_tle::omm::Omm::element_set_no: u16
+pub siderust_tle::omm::Omm::ephemeris_type: u8
+pub siderust_tle::omm::Omm::epoch: tempoch_core::time::Time<tempoch_core::scale::UTC>
+pub siderust_tle::omm::Omm::inclination: qtty_core::units::angular::Degrees
+pub siderust_tle::omm::Omm::mean_anomaly: qtty_core::units::angular::Degrees
+pub siderust_tle::omm::Omm::mean_motion: qtty_core::units::angular_rate::AngularRate<qtty_core::units::angular::Turn, qtty_core::units::time::Day>
+pub siderust_tle::omm::Omm::mean_motion_ddot: f64
+pub siderust_tle::omm::Omm::mean_motion_dot: f64
+pub siderust_tle::omm::Omm::norad_id: siderust_tle::SatelliteNumber
+pub siderust_tle::omm::Omm::object_id: alloc::string::String
+pub siderust_tle::omm::Omm::object_name: alloc::string::String
+pub siderust_tle::omm::Omm::ra_of_asc_node: qtty_core::units::angular::Degrees
+pub siderust_tle::omm::Omm::rev_at_epoch: u32
+impl siderust_tle::omm::Omm
+pub fn siderust_tle::omm::Omm::from_tle(tle: &siderust_tle::Tle) -> Self
+pub fn siderust_tle::omm::Omm::to_tle(&self) -> siderust_tle::Tle
+impl core::clone::Clone for siderust_tle::omm::Omm
+pub fn siderust_tle::omm::Omm::clone(&self) -> siderust_tle::omm::Omm
+impl core::fmt::Debug for siderust_tle::omm::Omm
+pub fn siderust_tle::omm::Omm::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_tle::omm::Omm
+impl core::marker::Send for siderust_tle::omm::Omm
+impl core::marker::Sync for siderust_tle::omm::Omm
+impl core::marker::Unpin for siderust_tle::omm::Omm
+impl core::marker::UnsafeUnpin for siderust_tle::omm::Omm
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_tle::omm::Omm
+impl core::panic::unwind_safe::UnwindSafe for siderust_tle::omm::Omm
+pub enum siderust_tle::Classification
+pub siderust_tle::Classification::Classified
+pub siderust_tle::Classification::Secret
+pub siderust_tle::Classification::Unclassified
+impl siderust_tle::Classification
+pub fn siderust_tle::Classification::as_char(self) -> char
+pub fn siderust_tle::Classification::from_char(c: char) -> core::result::Result<Self, siderust_tle::TleError>
+impl core::clone::Clone for siderust_tle::Classification
+pub fn siderust_tle::Classification::clone(&self) -> siderust_tle::Classification
+impl core::cmp::Eq for siderust_tle::Classification
+impl core::cmp::PartialEq for siderust_tle::Classification
+pub fn siderust_tle::Classification::eq(&self, other: &siderust_tle::Classification) -> bool
+impl core::fmt::Debug for siderust_tle::Classification
+pub fn siderust_tle::Classification::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_tle::Classification
+impl core::marker::StructuralPartialEq for siderust_tle::Classification
+impl core::marker::Freeze for siderust_tle::Classification
+impl core::marker::Send for siderust_tle::Classification
+impl core::marker::Sync for siderust_tle::Classification
+impl core::marker::Unpin for siderust_tle::Classification
+impl core::marker::UnsafeUnpin for siderust_tle::Classification
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_tle::Classification
+impl core::panic::unwind_safe::UnwindSafe for siderust_tle::Classification
+pub enum siderust_tle::TleError
+pub siderust_tle::TleError::BadChecksum
+pub siderust_tle::TleError::BadChecksum::computed: u8
+pub siderust_tle::TleError::BadChecksum::line: u8
+pub siderust_tle::TleError::BadChecksum::stated: u8
+pub siderust_tle::TleError::BadLeadingChar
+pub siderust_tle::TleError::BadLeadingChar::expected: char
+pub siderust_tle::TleError::BadLeadingChar::found: char
+pub siderust_tle::TleError::BadLeadingChar::line: u8
+pub siderust_tle::TleError::BadLength
+pub siderust_tle::TleError::BadLength::got: usize
+pub siderust_tle::TleError::BadLength::line: u8
+pub siderust_tle::TleError::BuilderMissingField(&'static str)
+pub siderust_tle::TleError::EpochConversion(alloc::string::String)
+pub siderust_tle::TleError::InvalidAlpha5
+pub siderust_tle::TleError::InvalidAlpha5::raw: alloc::string::String
+pub siderust_tle::TleError::InvalidClassification
+pub siderust_tle::TleError::InvalidClassification::raw: char
+pub siderust_tle::TleError::InvalidEpoch
+pub siderust_tle::TleError::InvalidEpoch::day_of_year: f64
+pub siderust_tle::TleError::InvalidEpoch::reason: &'static str
+pub siderust_tle::TleError::InvalidEpoch::year: i32
+pub siderust_tle::TleError::InvalidNumber
+pub siderust_tle::TleError::InvalidNumber::field: &'static str
+pub siderust_tle::TleError::InvalidNumber::raw: alloc::string::String
+pub siderust_tle::TleError::MismatchedSatelliteNumber
+pub siderust_tle::TleError::MismatchedSatelliteNumber::l1: u32
+pub siderust_tle::TleError::MismatchedSatelliteNumber::l2: u32
+pub siderust_tle::TleError::OmmInvalidEpoch
+pub siderust_tle::TleError::OmmInvalidEpoch::raw: alloc::string::String
+pub siderust_tle::TleError::OmmInvalidEpoch::reason: &'static str
+pub siderust_tle::TleError::OmmJson(alloc::string::String)
+pub siderust_tle::TleError::OmmMalformed
+pub siderust_tle::TleError::OmmMalformed::format: &'static str
+pub siderust_tle::TleError::OmmMalformed::reason: alloc::string::String
+pub siderust_tle::TleError::OmmMissingField(&'static str)
+pub siderust_tle::TleError::OmmUnsupportedTheory(alloc::string::String)
+impl core::cmp::PartialEq for siderust_tle::TleError
+pub fn siderust_tle::TleError::eq(&self, other: &siderust_tle::TleError) -> bool
+impl core::error::Error for siderust_tle::TleError
+impl core::fmt::Debug for siderust_tle::TleError
+pub fn siderust_tle::TleError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_tle::TleError
+pub fn siderust_tle::TleError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_tle::TleError
+impl core::marker::Freeze for siderust_tle::TleError
+impl core::marker::Send for siderust_tle::TleError
+impl core::marker::Sync for siderust_tle::TleError
+impl core::marker::Unpin for siderust_tle::TleError
+impl core::marker::UnsafeUnpin for siderust_tle::TleError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_tle::TleError
+impl core::panic::unwind_safe::UnwindSafe for siderust_tle::TleError
+pub struct siderust_tle::InternationalDesignator(pub alloc::string::String)
+impl core::clone::Clone for siderust_tle::InternationalDesignator
+pub fn siderust_tle::InternationalDesignator::clone(&self) -> siderust_tle::InternationalDesignator
+impl core::cmp::Eq for siderust_tle::InternationalDesignator
+impl core::cmp::PartialEq for siderust_tle::InternationalDesignator
+pub fn siderust_tle::InternationalDesignator::eq(&self, other: &siderust_tle::InternationalDesignator) -> bool
+impl core::fmt::Debug for siderust_tle::InternationalDesignator
+pub fn siderust_tle::InternationalDesignator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for siderust_tle::InternationalDesignator
+pub fn siderust_tle::InternationalDesignator::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::StructuralPartialEq for siderust_tle::InternationalDesignator
+impl core::marker::Freeze for siderust_tle::InternationalDesignator
+impl core::marker::Send for siderust_tle::InternationalDesignator
+impl core::marker::Sync for siderust_tle::InternationalDesignator
+impl core::marker::Unpin for siderust_tle::InternationalDesignator
+impl core::marker::UnsafeUnpin for siderust_tle::InternationalDesignator
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_tle::InternationalDesignator
+impl core::panic::unwind_safe::UnwindSafe for siderust_tle::InternationalDesignator
+pub struct siderust_tle::SatelliteNumber(pub u32)
+impl siderust_tle::SatelliteNumber
+pub fn siderust_tle::SatelliteNumber::format_alpha5(self) -> core::result::Result<alloc::string::String, siderust_tle::TleError>
+pub fn siderust_tle::SatelliteNumber::parse(field: &str) -> core::result::Result<Self, siderust_tle::TleError>
+impl core::clone::Clone for siderust_tle::SatelliteNumber
+pub fn siderust_tle::SatelliteNumber::clone(&self) -> siderust_tle::SatelliteNumber
+impl core::cmp::Eq for siderust_tle::SatelliteNumber
+impl core::cmp::PartialEq for siderust_tle::SatelliteNumber
+pub fn siderust_tle::SatelliteNumber::eq(&self, other: &siderust_tle::SatelliteNumber) -> bool
+impl core::fmt::Debug for siderust_tle::SatelliteNumber
+pub fn siderust_tle::SatelliteNumber::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for siderust_tle::SatelliteNumber
+pub fn siderust_tle::SatelliteNumber::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for siderust_tle::SatelliteNumber
+impl core::marker::StructuralPartialEq for siderust_tle::SatelliteNumber
+impl core::marker::Freeze for siderust_tle::SatelliteNumber
+impl core::marker::Send for siderust_tle::SatelliteNumber
+impl core::marker::Sync for siderust_tle::SatelliteNumber
+impl core::marker::Unpin for siderust_tle::SatelliteNumber
+impl core::marker::UnsafeUnpin for siderust_tle::SatelliteNumber
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_tle::SatelliteNumber
+impl core::panic::unwind_safe::UnwindSafe for siderust_tle::SatelliteNumber
+pub struct siderust_tle::Tle
+pub siderust_tle::Tle::argument_of_perigee: qtty_core::units::angular::Degrees
+pub siderust_tle::Tle::bstar: f64
+pub siderust_tle::Tle::classification: siderust_tle::Classification
+pub siderust_tle::Tle::eccentricity: f64
+pub siderust_tle::Tle::element_set_number: u16
+pub siderust_tle::Tle::epoch: tempoch_core::time::Time<tempoch_core::scale::UTC>
+pub siderust_tle::Tle::inclination: qtty_core::units::angular::Degrees
+pub siderust_tle::Tle::international_designator: siderust_tle::InternationalDesignator
+pub siderust_tle::Tle::mean_anomaly: qtty_core::units::angular::Degrees
+pub siderust_tle::Tle::mean_motion: qtty_core::units::angular_rate::AngularRate<qtty_core::units::angular::Turn, qtty_core::units::time::Day>
+pub siderust_tle::Tle::mean_motion_ddot: f64
+pub siderust_tle::Tle::mean_motion_dot: f64
+pub siderust_tle::Tle::name: core::option::Option<alloc::string::String>
+pub siderust_tle::Tle::norad_id: siderust_tle::SatelliteNumber
+pub siderust_tle::Tle::raan: qtty_core::units::angular::Degrees
+pub siderust_tle::Tle::revolution_number_at_epoch: u32
+impl core::clone::Clone for siderust_tle::Tle
+pub fn siderust_tle::Tle::clone(&self) -> siderust_tle::Tle
+impl core::fmt::Debug for siderust_tle::Tle
+pub fn siderust_tle::Tle::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_tle::Tle
+impl core::marker::Send for siderust_tle::Tle
+impl core::marker::Sync for siderust_tle::Tle
+impl core::marker::Unpin for siderust_tle::Tle
+impl core::marker::UnsafeUnpin for siderust_tle::Tle
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_tle::Tle
+impl core::panic::unwind_safe::UnwindSafe for siderust_tle::Tle
+pub struct siderust_tle::TleBuilder
+impl siderust_tle::TleBuilder
+pub fn siderust_tle::TleBuilder::argument_of_perigee(self, v: qtty_core::units::angular::Degrees) -> Self
+pub fn siderust_tle::TleBuilder::bstar(self, v: f64) -> Self
+pub fn siderust_tle::TleBuilder::build(self) -> core::result::Result<siderust_tle::Tle, siderust_tle::TleError>
+pub fn siderust_tle::TleBuilder::classification(self, c: siderust_tle::Classification) -> Self
+pub fn siderust_tle::TleBuilder::eccentricity(self, v: f64) -> Self
+pub fn siderust_tle::TleBuilder::element_set_number(self, v: u16) -> Self
+pub fn siderust_tle::TleBuilder::epoch(self, t: tempoch_core::time::Time<tempoch_core::scale::UTC>) -> Self
+pub fn siderust_tle::TleBuilder::inclination(self, v: qtty_core::units::angular::Degrees) -> Self
+pub fn siderust_tle::TleBuilder::international_designator(self, d: siderust_tle::InternationalDesignator) -> Self
+pub fn siderust_tle::TleBuilder::mean_anomaly(self, v: qtty_core::units::angular::Degrees) -> Self
+pub fn siderust_tle::TleBuilder::mean_motion(self, v: qtty_core::units::angular_rate::AngularRate<qtty_core::units::angular::Turn, qtty_core::units::time::Day>) -> Self
+pub fn siderust_tle::TleBuilder::mean_motion_ddot(self, v: f64) -> Self
+pub fn siderust_tle::TleBuilder::mean_motion_dot(self, v: f64) -> Self
+pub fn siderust_tle::TleBuilder::name(self, name: impl core::convert::Into<alloc::string::String>) -> Self
+pub fn siderust_tle::TleBuilder::new() -> Self
+pub fn siderust_tle::TleBuilder::norad_id(self, n: siderust_tle::SatelliteNumber) -> Self
+pub fn siderust_tle::TleBuilder::raan(self, v: qtty_core::units::angular::Degrees) -> Self
+pub fn siderust_tle::TleBuilder::revolution_number_at_epoch(self, v: u32) -> Self
+impl core::clone::Clone for siderust_tle::TleBuilder
+pub fn siderust_tle::TleBuilder::clone(&self) -> siderust_tle::TleBuilder
+impl core::default::Default for siderust_tle::TleBuilder
+pub fn siderust_tle::TleBuilder::default() -> siderust_tle::TleBuilder
+impl core::fmt::Debug for siderust_tle::TleBuilder
+pub fn siderust_tle::TleBuilder::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_tle::TleBuilder
+impl core::marker::Send for siderust_tle::TleBuilder
+impl core::marker::Sync for siderust_tle::TleBuilder
+impl core::marker::Unpin for siderust_tle::TleBuilder
+impl core::marker::UnsafeUnpin for siderust_tle::TleBuilder
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_tle::TleBuilder
+impl core::panic::unwind_safe::UnwindSafe for siderust_tle::TleBuilder
+pub fn siderust_tle::compute_tle_checksum(prefix_68: &str) -> u8
+pub fn siderust_tle::format_tle(tle: &siderust_tle::Tle) -> core::result::Result<(alloc::string::String, alloc::string::String), siderust_tle::TleError>
+pub fn siderust_tle::parse_3le(name: &str, line1: &str, line2: &str) -> core::result::Result<siderust_tle::Tle, siderust_tle::TleError>
+pub fn siderust_tle::parse_tle(line1: &str, line2: &str) -> core::result::Result<siderust_tle::Tle, siderust_tle::TleError>
+pub fn siderust_tle::validate_tle_checksum(line: &str) -> core::result::Result<(), siderust_tle::TleError>

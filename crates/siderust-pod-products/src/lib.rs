@@ -9,15 +9,20 @@
 //! shapes.
 //!
 //! Current outputs target deterministic MVP workflows: precise orbit
-//! histories, CCSDS ephemerides, grouped QC JSON, and tabular residual
-//! exports.
+//! histories, CCSDS ephemerides, grouped QC JSON, tabular residual
+//! exports, Parquet residual tables (feature-gated), and run manifests.
 //!
 //! ## Technical scope
 //!
-//! The crate re-exports helpers for writing SP3 and OEM orbit products,
-//! residual CSV tables, and the workspace `qc.json` summary. Inputs are
-//! typed orbit states, metadata, and precomputed statistics supplied by
-//! service and QC modules.
+//! | Module | Surface |
+//! |---|---|
+//! | [`orbit`] | `write_sp3_from_states`, `write_oem_from_states`, `write_oem_from_spacecraft_states`, `Sp3ProductWriter`, `OemProductWriter` |
+//! | [`naming`] | IGS Long File Name helpers: `igs_lfn`, `sp3_filename`, `sp3_lfn`, `sp3_short_filename`, `clk_filename`, … |
+//! | [`residuals_csv`] | `ResidualRecord`, `ResidualCsvWriter` (streaming); `ResidualRow`, `write_residuals_csv` (batch legacy) |
+//! | `residuals_parquet` | `ResidualParquetWriter` (feature `parquet`) |
+//! | [`manifest`] | `ManifestWriter` for [`RunManifest`][siderust_pod_core::manifest::RunManifest] |
+//! | [`qc_json`] | `QcDocument`, `write_qc_json` |
+//! | [`error`] | [`PodProductsError`] |
 //!
 //! No estimation, propagation, or measurement modelling is performed here.
 //!
@@ -30,10 +35,20 @@
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 
+pub mod error;
+pub mod manifest;
+pub mod naming;
 pub mod orbit;
 pub mod qc_json;
 pub mod residuals_csv;
+#[cfg(feature = "parquet")]
+pub mod residuals_parquet;
 
-pub use orbit::{write_oem_from_states, write_sp3_from_states};
+pub use error::PodProductsError;
+pub use manifest::ManifestWriter;
+pub use orbit::{
+    write_oem_from_spacecraft_states, write_oem_from_states, write_sp3_from_states,
+    OemProductWriter, Sp3ProductWriter,
+};
 pub use qc_json::write_qc_json;
-pub use residuals_csv::{write_residuals_csv, ResidualRow};
+pub use residuals_csv::{write_residuals_csv, ResidualCsvWriter, ResidualRecord, ResidualRow};

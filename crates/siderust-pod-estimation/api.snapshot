@@ -1,0 +1,419 @@
+pub mod siderust_pod_estimation
+pub mod siderust_pod_estimation::nonlinear
+pub enum siderust_pod_estimation::nonlinear::NonlinearError
+pub siderust_pod_estimation::nonlinear::NonlinearError::DidNotConverge(usize)
+pub siderust_pod_estimation::nonlinear::NonlinearError::Solver(siderust_pod_estimation::wls::WlsSolverError)
+impl core::convert::From<siderust_pod_estimation::wls::WlsSolverError> for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::from(source: siderust_pod_estimation::wls::WlsSolverError) -> Self
+impl core::error::Error for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::marker::Send for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::marker::Sync for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::marker::Unpin for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::nonlinear::NonlinearError
+pub struct siderust_pod_estimation::nonlinear::NonlinearOptions
+pub siderust_pod_estimation::nonlinear::NonlinearOptions::max_iter: usize
+pub siderust_pod_estimation::nonlinear::NonlinearOptions::tol_chi2_rel: f64
+pub siderust_pod_estimation::nonlinear::NonlinearOptions::tol_rel: f64
+impl core::clone::Clone for siderust_pod_estimation::nonlinear::NonlinearOptions
+pub fn siderust_pod_estimation::nonlinear::NonlinearOptions::clone(&self) -> siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::default::Default for siderust_pod_estimation::nonlinear::NonlinearOptions
+pub fn siderust_pod_estimation::nonlinear::NonlinearOptions::default() -> Self
+impl core::fmt::Debug for siderust_pod_estimation::nonlinear::NonlinearOptions
+pub fn siderust_pod_estimation::nonlinear::NonlinearOptions::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::Freeze for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::Send for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::Sync for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::Unpin for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::nonlinear::NonlinearOptions
+pub struct siderust_pod_estimation::nonlinear::NonlinearReport
+pub siderust_pod_estimation::nonlinear::NonlinearReport::iterations: usize
+pub siderust_pod_estimation::nonlinear::NonlinearReport::last: siderust_pod_estimation::wls::WlsResult
+pub siderust_pod_estimation::nonlinear::NonlinearReport::parameters: alloc::vec::Vec<f64>
+impl core::clone::Clone for siderust_pod_estimation::nonlinear::NonlinearReport
+pub fn siderust_pod_estimation::nonlinear::NonlinearReport::clone(&self) -> siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::fmt::Debug for siderust_pod_estimation::nonlinear::NonlinearReport
+pub fn siderust_pod_estimation::nonlinear::NonlinearReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::marker::Send for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::marker::Sync for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::marker::Unpin for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::nonlinear::NonlinearReport
+pub fn siderust_pod_estimation::nonlinear::gauss_newton<F>(initial: alloc::vec::Vec<f64>, opts: siderust_pod_estimation::nonlinear::NonlinearOptions, assemble: F) -> core::result::Result<siderust_pod_estimation::nonlinear::NonlinearReport, siderust_pod_estimation::nonlinear::NonlinearError> where F: core::ops::function::FnMut(&[f64]) -> core::result::Result<siderust_pod_estimation::wls::NormalEquations, siderust_pod_estimation::nonlinear::NonlinearError>
+pub mod siderust_pod_estimation::parameter
+pub enum siderust_pod_estimation::parameter::ParameterKind
+pub siderust_pod_estimation::parameter::ParameterKind::DragCoefficient
+pub siderust_pod_estimation::parameter::ParameterKind::FloatAmbiguity
+pub siderust_pod_estimation::parameter::ParameterKind::FloatAmbiguity::sat_id: u32
+pub siderust_pod_estimation::parameter::ParameterKind::FloatAmbiguity::signal: u8
+pub siderust_pod_estimation::parameter::ParameterKind::Position(u8)
+pub siderust_pod_estimation::parameter::ParameterKind::ReceiverClockBias
+pub siderust_pod_estimation::parameter::ParameterKind::SrpCoefficient
+pub siderust_pod_estimation::parameter::ParameterKind::Velocity(u8)
+impl core::clone::Clone for siderust_pod_estimation::parameter::ParameterKind
+pub fn siderust_pod_estimation::parameter::ParameterKind::clone(&self) -> siderust_pod_estimation::parameter::ParameterKind
+impl core::cmp::Eq for siderust_pod_estimation::parameter::ParameterKind
+impl core::cmp::PartialEq for siderust_pod_estimation::parameter::ParameterKind
+pub fn siderust_pod_estimation::parameter::ParameterKind::eq(&self, other: &siderust_pod_estimation::parameter::ParameterKind) -> bool
+impl core::fmt::Debug for siderust_pod_estimation::parameter::ParameterKind
+pub fn siderust_pod_estimation::parameter::ParameterKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for siderust_pod_estimation::parameter::ParameterKind
+pub fn siderust_pod_estimation::parameter::ParameterKind::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::StructuralPartialEq for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::Freeze for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::Send for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::Sync for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::Unpin for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::parameter::ParameterKind
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::parameter::ParameterKind
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::parameter::ParameterKind
+pub struct siderust_pod_estimation::parameter::Parameter
+pub siderust_pod_estimation::parameter::Parameter::a_priori: f64
+pub siderust_pod_estimation::parameter::Parameter::a_priori_sigma: f64
+pub siderust_pod_estimation::parameter::Parameter::kind: siderust_pod_estimation::parameter::ParameterKind
+impl core::clone::Clone for siderust_pod_estimation::parameter::Parameter
+pub fn siderust_pod_estimation::parameter::Parameter::clone(&self) -> siderust_pod_estimation::parameter::Parameter
+impl core::fmt::Debug for siderust_pod_estimation::parameter::Parameter
+pub fn siderust_pod_estimation::parameter::Parameter::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_estimation::parameter::Parameter
+impl core::marker::Freeze for siderust_pod_estimation::parameter::Parameter
+impl core::marker::Send for siderust_pod_estimation::parameter::Parameter
+impl core::marker::Sync for siderust_pod_estimation::parameter::Parameter
+impl core::marker::Unpin for siderust_pod_estimation::parameter::Parameter
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::parameter::Parameter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::parameter::Parameter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::parameter::Parameter
+pub mod siderust_pod_estimation::sequential
+pub enum siderust_pod_estimation::sequential::EkfError
+pub siderust_pod_estimation::sequential::EkfError::Singular(f64)
+impl core::error::Error for siderust_pod_estimation::sequential::EkfError
+impl core::fmt::Debug for siderust_pod_estimation::sequential::EkfError
+pub fn siderust_pod_estimation::sequential::EkfError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_estimation::sequential::EkfError
+pub fn siderust_pod_estimation::sequential::EkfError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::sequential::EkfError
+impl core::marker::Send for siderust_pod_estimation::sequential::EkfError
+impl core::marker::Sync for siderust_pod_estimation::sequential::EkfError
+impl core::marker::Unpin for siderust_pod_estimation::sequential::EkfError
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::sequential::EkfError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::sequential::EkfError
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::sequential::EkfError
+pub struct siderust_pod_estimation::sequential::InnovationRecord
+pub siderust_pod_estimation::sequential::InnovationRecord::innovation: f64
+pub siderust_pod_estimation::sequential::InnovationRecord::nis: f64
+pub siderust_pod_estimation::sequential::InnovationRecord::variance: f64
+impl core::clone::Clone for siderust_pod_estimation::sequential::InnovationRecord
+pub fn siderust_pod_estimation::sequential::InnovationRecord::clone(&self) -> siderust_pod_estimation::sequential::InnovationRecord
+impl core::fmt::Debug for siderust_pod_estimation::sequential::InnovationRecord
+pub fn siderust_pod_estimation::sequential::InnovationRecord::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::Freeze for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::Send for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::Sync for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::Unpin for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::sequential::InnovationRecord
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::sequential::InnovationRecord
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::sequential::InnovationRecord
+pub struct siderust_pod_estimation::sequential::OrbitEkf
+impl siderust_pod_estimation::sequential::OrbitEkf
+pub fn siderust_pod_estimation::sequential::OrbitEkf::covariance(&self) -> &siderust::astro::dynamics::covariance::StateCovariance<affn::frames::astro::GCRS>
+pub fn siderust_pod_estimation::sequential::OrbitEkf::from_stddevs(state: siderust::astro::dynamics::state::OrbitState, sigma_pos: [f64; 3], sigma_vel: [f64; 3]) -> Self
+pub fn siderust_pod_estimation::sequential::OrbitEkf::new(state: siderust::astro::dynamics::state::OrbitState, cov: siderust::astro::dynamics::covariance::StateCovariance<affn::frames::astro::GCRS>) -> Self
+pub fn siderust_pod_estimation::sequential::OrbitEkf::predict(&mut self, state_pred: siderust::astro::dynamics::state::OrbitState, phi: [[f64; 6]; 6], q: core::option::Option<siderust::astro::dynamics::covariance::StateCovariance<affn::frames::astro::GCRS>>)
+pub fn siderust_pod_estimation::sequential::OrbitEkf::state(&self) -> &siderust::astro::dynamics::state::OrbitState
+pub fn siderust_pod_estimation::sequential::OrbitEkf::update_scalar(&mut self, h: [f64; 6], innovation: f64, r: f64) -> core::result::Result<siderust_pod_estimation::sequential::InnovationRecord, siderust_pod_estimation::sequential::EkfError>
+impl core::clone::Clone for siderust_pod_estimation::sequential::OrbitEkf
+pub fn siderust_pod_estimation::sequential::OrbitEkf::clone(&self) -> siderust_pod_estimation::sequential::OrbitEkf
+impl core::fmt::Debug for siderust_pod_estimation::sequential::OrbitEkf
+pub fn siderust_pod_estimation::sequential::OrbitEkf::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::sequential::OrbitEkf
+impl core::marker::Send for siderust_pod_estimation::sequential::OrbitEkf
+impl core::marker::Sync for siderust_pod_estimation::sequential::OrbitEkf
+impl core::marker::Unpin for siderust_pod_estimation::sequential::OrbitEkf
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::sequential::OrbitEkf
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::sequential::OrbitEkf
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::sequential::OrbitEkf
+pub mod siderust_pod_estimation::wls
+pub enum siderust_pod_estimation::wls::WlsSolverError
+pub siderust_pod_estimation::wls::WlsSolverError::InvalidIndex
+pub siderust_pod_estimation::wls::WlsSolverError::InvalidIndex::index: usize
+pub siderust_pod_estimation::wls::WlsSolverError::InvalidIndex::n_params: usize
+pub siderust_pod_estimation::wls::WlsSolverError::NotPositiveDefinite(alloc::string::String)
+pub siderust_pod_estimation::wls::WlsSolverError::Other(alloc::string::String)
+impl siderust_pod_estimation::wls::WlsSolverError
+pub fn siderust_pod_estimation::wls::WlsSolverError::other<S: core::convert::Into<alloc::string::String>>(msg: S) -> Self
+impl core::convert::From<siderust_pod_estimation::wls::WlsSolverError> for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::from(source: siderust_pod_estimation::wls::WlsSolverError) -> Self
+impl core::error::Error for siderust_pod_estimation::wls::WlsSolverError
+impl core::fmt::Debug for siderust_pod_estimation::wls::WlsSolverError
+pub fn siderust_pod_estimation::wls::WlsSolverError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_estimation::wls::WlsSolverError
+pub fn siderust_pod_estimation::wls::WlsSolverError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::wls::WlsSolverError
+impl core::marker::Send for siderust_pod_estimation::wls::WlsSolverError
+impl core::marker::Sync for siderust_pod_estimation::wls::WlsSolverError
+impl core::marker::Unpin for siderust_pod_estimation::wls::WlsSolverError
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::wls::WlsSolverError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::wls::WlsSolverError
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::wls::WlsSolverError
+pub struct siderust_pod_estimation::wls::NormalEquations
+pub siderust_pod_estimation::wls::NormalEquations::b: faer::mat::Mat<f64>
+pub siderust_pod_estimation::wls::NormalEquations::chi2: f64
+pub siderust_pod_estimation::wls::NormalEquations::n_matrix: faer::mat::Mat<f64>
+pub siderust_pod_estimation::wls::NormalEquations::n_obs: usize
+impl siderust_pod_estimation::wls::NormalEquations
+pub fn siderust_pod_estimation::wls::NormalEquations::add_row(&mut self, partials: &[(usize, f64)], residual: f64, sigma: f64) -> core::result::Result<(), siderust_pod_estimation::wls::WlsSolverError>
+pub fn siderust_pod_estimation::wls::NormalEquations::n_params(&self) -> usize
+pub fn siderust_pod_estimation::wls::NormalEquations::new(n_params: usize) -> Self
+pub fn siderust_pod_estimation::wls::NormalEquations::solve(self) -> core::result::Result<siderust_pod_estimation::wls::WlsResult, siderust_pod_estimation::wls::WlsSolverError>
+impl core::clone::Clone for siderust_pod_estimation::wls::NormalEquations
+pub fn siderust_pod_estimation::wls::NormalEquations::clone(&self) -> siderust_pod_estimation::wls::NormalEquations
+impl core::fmt::Debug for siderust_pod_estimation::wls::NormalEquations
+pub fn siderust_pod_estimation::wls::NormalEquations::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::wls::NormalEquations
+impl core::marker::Send for siderust_pod_estimation::wls::NormalEquations
+impl core::marker::Sync for siderust_pod_estimation::wls::NormalEquations
+impl core::marker::Unpin for siderust_pod_estimation::wls::NormalEquations
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::wls::NormalEquations
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::wls::NormalEquations
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::wls::NormalEquations
+pub struct siderust_pod_estimation::wls::WlsResult
+pub siderust_pod_estimation::wls::WlsResult::chi2: f64
+pub siderust_pod_estimation::wls::WlsResult::covariance: alloc::vec::Vec<alloc::vec::Vec<f64>>
+pub siderust_pod_estimation::wls::WlsResult::n_obs: usize
+pub siderust_pod_estimation::wls::WlsResult::n_params: usize
+pub siderust_pod_estimation::wls::WlsResult::update: alloc::vec::Vec<f64>
+impl siderust_pod_estimation::wls::WlsResult
+pub fn siderust_pod_estimation::wls::WlsResult::reduced_chi2(&self) -> f64
+pub fn siderust_pod_estimation::wls::WlsResult::to_state_covariance(&self) -> core::option::Option<siderust::astro::dynamics::covariance::StateCovariance<affn::frames::astro::GCRS>>
+impl core::clone::Clone for siderust_pod_estimation::wls::WlsResult
+pub fn siderust_pod_estimation::wls::WlsResult::clone(&self) -> siderust_pod_estimation::wls::WlsResult
+impl core::fmt::Debug for siderust_pod_estimation::wls::WlsResult
+pub fn siderust_pod_estimation::wls::WlsResult::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::wls::WlsResult
+impl core::marker::Send for siderust_pod_estimation::wls::WlsResult
+impl core::marker::Sync for siderust_pod_estimation::wls::WlsResult
+impl core::marker::Unpin for siderust_pod_estimation::wls::WlsResult
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::wls::WlsResult
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::wls::WlsResult
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::wls::WlsResult
+pub enum siderust_pod_estimation::EkfError
+pub siderust_pod_estimation::EkfError::Singular(f64)
+impl core::error::Error for siderust_pod_estimation::sequential::EkfError
+impl core::fmt::Debug for siderust_pod_estimation::sequential::EkfError
+pub fn siderust_pod_estimation::sequential::EkfError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_estimation::sequential::EkfError
+pub fn siderust_pod_estimation::sequential::EkfError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::sequential::EkfError
+impl core::marker::Send for siderust_pod_estimation::sequential::EkfError
+impl core::marker::Sync for siderust_pod_estimation::sequential::EkfError
+impl core::marker::Unpin for siderust_pod_estimation::sequential::EkfError
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::sequential::EkfError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::sequential::EkfError
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::sequential::EkfError
+pub enum siderust_pod_estimation::NonlinearError
+pub siderust_pod_estimation::NonlinearError::DidNotConverge(usize)
+pub siderust_pod_estimation::NonlinearError::Solver(siderust_pod_estimation::wls::WlsSolverError)
+impl core::convert::From<siderust_pod_estimation::wls::WlsSolverError> for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::from(source: siderust_pod_estimation::wls::WlsSolverError) -> Self
+impl core::error::Error for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::marker::Send for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::marker::Sync for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::marker::Unpin for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::nonlinear::NonlinearError
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::nonlinear::NonlinearError
+pub enum siderust_pod_estimation::ParameterKind
+pub siderust_pod_estimation::ParameterKind::DragCoefficient
+pub siderust_pod_estimation::ParameterKind::FloatAmbiguity
+pub siderust_pod_estimation::ParameterKind::FloatAmbiguity::sat_id: u32
+pub siderust_pod_estimation::ParameterKind::FloatAmbiguity::signal: u8
+pub siderust_pod_estimation::ParameterKind::Position(u8)
+pub siderust_pod_estimation::ParameterKind::ReceiverClockBias
+pub siderust_pod_estimation::ParameterKind::SrpCoefficient
+pub siderust_pod_estimation::ParameterKind::Velocity(u8)
+impl core::clone::Clone for siderust_pod_estimation::parameter::ParameterKind
+pub fn siderust_pod_estimation::parameter::ParameterKind::clone(&self) -> siderust_pod_estimation::parameter::ParameterKind
+impl core::cmp::Eq for siderust_pod_estimation::parameter::ParameterKind
+impl core::cmp::PartialEq for siderust_pod_estimation::parameter::ParameterKind
+pub fn siderust_pod_estimation::parameter::ParameterKind::eq(&self, other: &siderust_pod_estimation::parameter::ParameterKind) -> bool
+impl core::fmt::Debug for siderust_pod_estimation::parameter::ParameterKind
+pub fn siderust_pod_estimation::parameter::ParameterKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for siderust_pod_estimation::parameter::ParameterKind
+pub fn siderust_pod_estimation::parameter::ParameterKind::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::StructuralPartialEq for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::Freeze for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::Send for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::Sync for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::Unpin for siderust_pod_estimation::parameter::ParameterKind
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::parameter::ParameterKind
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::parameter::ParameterKind
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::parameter::ParameterKind
+pub enum siderust_pod_estimation::WlsSolverError
+pub siderust_pod_estimation::WlsSolverError::InvalidIndex
+pub siderust_pod_estimation::WlsSolverError::InvalidIndex::index: usize
+pub siderust_pod_estimation::WlsSolverError::InvalidIndex::n_params: usize
+pub siderust_pod_estimation::WlsSolverError::NotPositiveDefinite(alloc::string::String)
+pub siderust_pod_estimation::WlsSolverError::Other(alloc::string::String)
+impl siderust_pod_estimation::wls::WlsSolverError
+pub fn siderust_pod_estimation::wls::WlsSolverError::other<S: core::convert::Into<alloc::string::String>>(msg: S) -> Self
+impl core::convert::From<siderust_pod_estimation::wls::WlsSolverError> for siderust_pod_estimation::nonlinear::NonlinearError
+pub fn siderust_pod_estimation::nonlinear::NonlinearError::from(source: siderust_pod_estimation::wls::WlsSolverError) -> Self
+impl core::error::Error for siderust_pod_estimation::wls::WlsSolverError
+impl core::fmt::Debug for siderust_pod_estimation::wls::WlsSolverError
+pub fn siderust_pod_estimation::wls::WlsSolverError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_estimation::wls::WlsSolverError
+pub fn siderust_pod_estimation::wls::WlsSolverError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::wls::WlsSolverError
+impl core::marker::Send for siderust_pod_estimation::wls::WlsSolverError
+impl core::marker::Sync for siderust_pod_estimation::wls::WlsSolverError
+impl core::marker::Unpin for siderust_pod_estimation::wls::WlsSolverError
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::wls::WlsSolverError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::wls::WlsSolverError
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::wls::WlsSolverError
+pub struct siderust_pod_estimation::InnovationRecord
+pub siderust_pod_estimation::InnovationRecord::innovation: f64
+pub siderust_pod_estimation::InnovationRecord::nis: f64
+pub siderust_pod_estimation::InnovationRecord::variance: f64
+impl core::clone::Clone for siderust_pod_estimation::sequential::InnovationRecord
+pub fn siderust_pod_estimation::sequential::InnovationRecord::clone(&self) -> siderust_pod_estimation::sequential::InnovationRecord
+impl core::fmt::Debug for siderust_pod_estimation::sequential::InnovationRecord
+pub fn siderust_pod_estimation::sequential::InnovationRecord::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::Freeze for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::Send for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::Sync for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::Unpin for siderust_pod_estimation::sequential::InnovationRecord
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::sequential::InnovationRecord
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::sequential::InnovationRecord
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::sequential::InnovationRecord
+pub struct siderust_pod_estimation::NonlinearOptions
+pub siderust_pod_estimation::NonlinearOptions::max_iter: usize
+pub siderust_pod_estimation::NonlinearOptions::tol_chi2_rel: f64
+pub siderust_pod_estimation::NonlinearOptions::tol_rel: f64
+impl core::clone::Clone for siderust_pod_estimation::nonlinear::NonlinearOptions
+pub fn siderust_pod_estimation::nonlinear::NonlinearOptions::clone(&self) -> siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::default::Default for siderust_pod_estimation::nonlinear::NonlinearOptions
+pub fn siderust_pod_estimation::nonlinear::NonlinearOptions::default() -> Self
+impl core::fmt::Debug for siderust_pod_estimation::nonlinear::NonlinearOptions
+pub fn siderust_pod_estimation::nonlinear::NonlinearOptions::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::Freeze for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::Send for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::Sync for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::Unpin for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::nonlinear::NonlinearOptions
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::nonlinear::NonlinearOptions
+pub struct siderust_pod_estimation::NonlinearReport
+pub siderust_pod_estimation::NonlinearReport::iterations: usize
+pub siderust_pod_estimation::NonlinearReport::last: siderust_pod_estimation::wls::WlsResult
+pub siderust_pod_estimation::NonlinearReport::parameters: alloc::vec::Vec<f64>
+impl core::clone::Clone for siderust_pod_estimation::nonlinear::NonlinearReport
+pub fn siderust_pod_estimation::nonlinear::NonlinearReport::clone(&self) -> siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::fmt::Debug for siderust_pod_estimation::nonlinear::NonlinearReport
+pub fn siderust_pod_estimation::nonlinear::NonlinearReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::marker::Send for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::marker::Sync for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::marker::Unpin for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::nonlinear::NonlinearReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::nonlinear::NonlinearReport
+pub struct siderust_pod_estimation::NormalEquations
+pub siderust_pod_estimation::NormalEquations::b: faer::mat::Mat<f64>
+pub siderust_pod_estimation::NormalEquations::chi2: f64
+pub siderust_pod_estimation::NormalEquations::n_matrix: faer::mat::Mat<f64>
+pub siderust_pod_estimation::NormalEquations::n_obs: usize
+impl siderust_pod_estimation::wls::NormalEquations
+pub fn siderust_pod_estimation::wls::NormalEquations::add_row(&mut self, partials: &[(usize, f64)], residual: f64, sigma: f64) -> core::result::Result<(), siderust_pod_estimation::wls::WlsSolverError>
+pub fn siderust_pod_estimation::wls::NormalEquations::n_params(&self) -> usize
+pub fn siderust_pod_estimation::wls::NormalEquations::new(n_params: usize) -> Self
+pub fn siderust_pod_estimation::wls::NormalEquations::solve(self) -> core::result::Result<siderust_pod_estimation::wls::WlsResult, siderust_pod_estimation::wls::WlsSolverError>
+impl core::clone::Clone for siderust_pod_estimation::wls::NormalEquations
+pub fn siderust_pod_estimation::wls::NormalEquations::clone(&self) -> siderust_pod_estimation::wls::NormalEquations
+impl core::fmt::Debug for siderust_pod_estimation::wls::NormalEquations
+pub fn siderust_pod_estimation::wls::NormalEquations::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::wls::NormalEquations
+impl core::marker::Send for siderust_pod_estimation::wls::NormalEquations
+impl core::marker::Sync for siderust_pod_estimation::wls::NormalEquations
+impl core::marker::Unpin for siderust_pod_estimation::wls::NormalEquations
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::wls::NormalEquations
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::wls::NormalEquations
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::wls::NormalEquations
+pub struct siderust_pod_estimation::OrbitEkf
+impl siderust_pod_estimation::sequential::OrbitEkf
+pub fn siderust_pod_estimation::sequential::OrbitEkf::covariance(&self) -> &siderust::astro::dynamics::covariance::StateCovariance<affn::frames::astro::GCRS>
+pub fn siderust_pod_estimation::sequential::OrbitEkf::from_stddevs(state: siderust::astro::dynamics::state::OrbitState, sigma_pos: [f64; 3], sigma_vel: [f64; 3]) -> Self
+pub fn siderust_pod_estimation::sequential::OrbitEkf::new(state: siderust::astro::dynamics::state::OrbitState, cov: siderust::astro::dynamics::covariance::StateCovariance<affn::frames::astro::GCRS>) -> Self
+pub fn siderust_pod_estimation::sequential::OrbitEkf::predict(&mut self, state_pred: siderust::astro::dynamics::state::OrbitState, phi: [[f64; 6]; 6], q: core::option::Option<siderust::astro::dynamics::covariance::StateCovariance<affn::frames::astro::GCRS>>)
+pub fn siderust_pod_estimation::sequential::OrbitEkf::state(&self) -> &siderust::astro::dynamics::state::OrbitState
+pub fn siderust_pod_estimation::sequential::OrbitEkf::update_scalar(&mut self, h: [f64; 6], innovation: f64, r: f64) -> core::result::Result<siderust_pod_estimation::sequential::InnovationRecord, siderust_pod_estimation::sequential::EkfError>
+impl core::clone::Clone for siderust_pod_estimation::sequential::OrbitEkf
+pub fn siderust_pod_estimation::sequential::OrbitEkf::clone(&self) -> siderust_pod_estimation::sequential::OrbitEkf
+impl core::fmt::Debug for siderust_pod_estimation::sequential::OrbitEkf
+pub fn siderust_pod_estimation::sequential::OrbitEkf::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::sequential::OrbitEkf
+impl core::marker::Send for siderust_pod_estimation::sequential::OrbitEkf
+impl core::marker::Sync for siderust_pod_estimation::sequential::OrbitEkf
+impl core::marker::Unpin for siderust_pod_estimation::sequential::OrbitEkf
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::sequential::OrbitEkf
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::sequential::OrbitEkf
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::sequential::OrbitEkf
+pub struct siderust_pod_estimation::Parameter
+pub siderust_pod_estimation::Parameter::a_priori: f64
+pub siderust_pod_estimation::Parameter::a_priori_sigma: f64
+pub siderust_pod_estimation::Parameter::kind: siderust_pod_estimation::parameter::ParameterKind
+impl core::clone::Clone for siderust_pod_estimation::parameter::Parameter
+pub fn siderust_pod_estimation::parameter::Parameter::clone(&self) -> siderust_pod_estimation::parameter::Parameter
+impl core::fmt::Debug for siderust_pod_estimation::parameter::Parameter
+pub fn siderust_pod_estimation::parameter::Parameter::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_estimation::parameter::Parameter
+impl core::marker::Freeze for siderust_pod_estimation::parameter::Parameter
+impl core::marker::Send for siderust_pod_estimation::parameter::Parameter
+impl core::marker::Sync for siderust_pod_estimation::parameter::Parameter
+impl core::marker::Unpin for siderust_pod_estimation::parameter::Parameter
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::parameter::Parameter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::parameter::Parameter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::parameter::Parameter
+pub struct siderust_pod_estimation::WlsResult
+pub siderust_pod_estimation::WlsResult::chi2: f64
+pub siderust_pod_estimation::WlsResult::covariance: alloc::vec::Vec<alloc::vec::Vec<f64>>
+pub siderust_pod_estimation::WlsResult::n_obs: usize
+pub siderust_pod_estimation::WlsResult::n_params: usize
+pub siderust_pod_estimation::WlsResult::update: alloc::vec::Vec<f64>
+impl siderust_pod_estimation::wls::WlsResult
+pub fn siderust_pod_estimation::wls::WlsResult::reduced_chi2(&self) -> f64
+pub fn siderust_pod_estimation::wls::WlsResult::to_state_covariance(&self) -> core::option::Option<siderust::astro::dynamics::covariance::StateCovariance<affn::frames::astro::GCRS>>
+impl core::clone::Clone for siderust_pod_estimation::wls::WlsResult
+pub fn siderust_pod_estimation::wls::WlsResult::clone(&self) -> siderust_pod_estimation::wls::WlsResult
+impl core::fmt::Debug for siderust_pod_estimation::wls::WlsResult
+pub fn siderust_pod_estimation::wls::WlsResult::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_estimation::wls::WlsResult
+impl core::marker::Send for siderust_pod_estimation::wls::WlsResult
+impl core::marker::Sync for siderust_pod_estimation::wls::WlsResult
+impl core::marker::Unpin for siderust_pod_estimation::wls::WlsResult
+impl core::marker::UnsafeUnpin for siderust_pod_estimation::wls::WlsResult
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_estimation::wls::WlsResult
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_estimation::wls::WlsResult
+pub fn siderust_pod_estimation::gauss_newton<F>(initial: alloc::vec::Vec<f64>, opts: siderust_pod_estimation::nonlinear::NonlinearOptions, assemble: F) -> core::result::Result<siderust_pod_estimation::nonlinear::NonlinearReport, siderust_pod_estimation::nonlinear::NonlinearError> where F: core::ops::function::FnMut(&[f64]) -> core::result::Result<siderust_pod_estimation::wls::NormalEquations, siderust_pod_estimation::nonlinear::NonlinearError>

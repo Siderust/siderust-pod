@@ -1,0 +1,319 @@
+pub mod siderust_pod_products
+pub mod siderust_pod_products::error
+pub enum siderust_pod_products::error::PodProductsError
+pub siderust_pod_products::error::PodProductsError::Io(std::io::error::Error)
+pub siderust_pod_products::error::PodProductsError::Json(serde_json::error::Error)
+pub siderust_pod_products::error::PodProductsError::Parquet(alloc::string::String)
+pub siderust_pod_products::error::PodProductsError::PodIo(siderust_pod_io::PodIoError)
+pub siderust_pod_products::error::PodProductsError::Sp3(siderust_pod_io::sp3::Sp3Error)
+impl core::convert::From<serde_json::error::Error> for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::from(source: serde_json::error::Error) -> Self
+impl core::convert::From<siderust_pod_io::PodIoError> for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::from(source: siderust_pod_io::PodIoError) -> Self
+impl core::convert::From<siderust_pod_io::sp3::Sp3Error> for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::from(source: siderust_pod_io::sp3::Sp3Error) -> Self
+impl core::convert::From<std::io::error::Error> for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::from(source: std::io::error::Error) -> Self
+impl core::error::Error for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_products::error::PodProductsError
+impl core::marker::Send for siderust_pod_products::error::PodProductsError
+impl core::marker::Sync for siderust_pod_products::error::PodProductsError
+impl core::marker::Unpin for siderust_pod_products::error::PodProductsError
+impl core::marker::UnsafeUnpin for siderust_pod_products::error::PodProductsError
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::error::PodProductsError
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_products::error::PodProductsError
+pub mod siderust_pod_products::manifest
+pub struct siderust_pod_products::manifest::ManifestWriter
+impl siderust_pod_products::manifest::ManifestWriter
+pub fn siderust_pod_products::manifest::ManifestWriter::write<W: std::io::Write>(w: &mut W, manifest: &siderust_pod_core::manifest::RunManifest) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+impl core::marker::Freeze for siderust_pod_products::manifest::ManifestWriter
+impl core::marker::Send for siderust_pod_products::manifest::ManifestWriter
+impl core::marker::Sync for siderust_pod_products::manifest::ManifestWriter
+impl core::marker::Unpin for siderust_pod_products::manifest::ManifestWriter
+impl core::marker::UnsafeUnpin for siderust_pod_products::manifest::ManifestWriter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::manifest::ManifestWriter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::manifest::ManifestWriter
+pub mod siderust_pod_products::naming
+pub enum siderust_pod_products::naming::Sp3FileType
+pub siderust_pod_products::naming::Sp3FileType::PositionOnly
+pub siderust_pod_products::naming::Sp3FileType::PositionVelocity
+impl siderust_pod_products::naming::Sp3FileType
+pub fn siderust_pod_products::naming::Sp3FileType::lfn_file_type_tag(self) -> &'static str
+impl core::clone::Clone for siderust_pod_products::naming::Sp3FileType
+pub fn siderust_pod_products::naming::Sp3FileType::clone(&self) -> siderust_pod_products::naming::Sp3FileType
+impl core::cmp::Eq for siderust_pod_products::naming::Sp3FileType
+impl core::cmp::PartialEq for siderust_pod_products::naming::Sp3FileType
+pub fn siderust_pod_products::naming::Sp3FileType::eq(&self, other: &siderust_pod_products::naming::Sp3FileType) -> bool
+impl core::fmt::Debug for siderust_pod_products::naming::Sp3FileType
+pub fn siderust_pod_products::naming::Sp3FileType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_products::naming::Sp3FileType
+impl core::marker::StructuralPartialEq for siderust_pod_products::naming::Sp3FileType
+impl core::marker::Freeze for siderust_pod_products::naming::Sp3FileType
+impl core::marker::Send for siderust_pod_products::naming::Sp3FileType
+impl core::marker::Sync for siderust_pod_products::naming::Sp3FileType
+impl core::marker::Unpin for siderust_pod_products::naming::Sp3FileType
+impl core::marker::UnsafeUnpin for siderust_pod_products::naming::Sp3FileType
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::naming::Sp3FileType
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::naming::Sp3FileType
+pub enum siderust_pod_products::naming::Sp3Version
+pub siderust_pod_products::naming::Sp3Version::A
+pub siderust_pod_products::naming::Sp3Version::C
+pub siderust_pod_products::naming::Sp3Version::D
+impl siderust_pod_products::naming::Sp3Version
+pub fn siderust_pod_products::naming::Sp3Version::lfn_version_char(self) -> char
+impl core::clone::Clone for siderust_pod_products::naming::Sp3Version
+pub fn siderust_pod_products::naming::Sp3Version::clone(&self) -> siderust_pod_products::naming::Sp3Version
+impl core::cmp::Eq for siderust_pod_products::naming::Sp3Version
+impl core::cmp::PartialEq for siderust_pod_products::naming::Sp3Version
+pub fn siderust_pod_products::naming::Sp3Version::eq(&self, other: &siderust_pod_products::naming::Sp3Version) -> bool
+impl core::fmt::Debug for siderust_pod_products::naming::Sp3Version
+pub fn siderust_pod_products::naming::Sp3Version::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_products::naming::Sp3Version
+impl core::marker::StructuralPartialEq for siderust_pod_products::naming::Sp3Version
+impl core::marker::Freeze for siderust_pod_products::naming::Sp3Version
+impl core::marker::Send for siderust_pod_products::naming::Sp3Version
+impl core::marker::Sync for siderust_pod_products::naming::Sp3Version
+impl core::marker::Unpin for siderust_pod_products::naming::Sp3Version
+impl core::marker::UnsafeUnpin for siderust_pod_products::naming::Sp3Version
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::naming::Sp3Version
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::naming::Sp3Version
+pub fn siderust_pod_products::naming::clk_filename(ac: &str, version: char, campaign: &str, year: i32, doy: u32, hour: u32, minute: u32, span: &str, sample: &str) -> std::path::PathBuf
+pub fn siderust_pod_products::naming::igs_lfn(ac: &str, version: char, campaign: &str, year: i32, doy: u32, hour: u32, minute: u32, span: &str, sample: &str, file_type: &str, ext: &str) -> std::path::PathBuf
+pub fn siderust_pod_products::naming::rnx_obs_filename(ac: &str, version: char, campaign: &str, year: i32, doy: u32, hour: u32, minute: u32, span: &str, sample: &str) -> std::path::PathBuf
+pub fn siderust_pod_products::naming::sample_rate_to_lfn(sample_rate_sec: u32) -> alloc::string::String
+pub fn siderust_pod_products::naming::sp3_filename(satellite: &str, date: chrono::naive::date::NaiveDate, file_type: siderust_pod_products::naming::Sp3FileType, sample_rate_sec: u32, version: siderust_pod_products::naming::Sp3Version) -> std::path::PathBuf
+pub fn siderust_pod_products::naming::sp3_lfn(ac: &str, version: char, campaign: &str, year: i32, doy: u32, hour: u32, minute: u32, span: &str, sample: &str) -> std::path::PathBuf
+pub fn siderust_pod_products::naming::sp3_short_filename(ac: &str, date: chrono::naive::date::NaiveDate, _version: siderust_pod_products::naming::Sp3Version) -> std::path::PathBuf
+pub mod siderust_pod_products::orbit
+pub struct siderust_pod_products::orbit::OemProductWriter
+impl siderust_pod_products::orbit::OemProductWriter
+pub fn siderust_pod_products::orbit::OemProductWriter::new(object_id: impl core::convert::Into<alloc::string::String>, object_name: impl core::convert::Into<alloc::string::String>) -> Self
+pub fn siderust_pod_products::orbit::OemProductWriter::write_from_states(&self, path: &std::path::Path, states: &[siderust::astro::dynamics::state::SpacecraftState]) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+impl core::marker::Freeze for siderust_pod_products::orbit::OemProductWriter
+impl core::marker::Send for siderust_pod_products::orbit::OemProductWriter
+impl core::marker::Sync for siderust_pod_products::orbit::OemProductWriter
+impl core::marker::Unpin for siderust_pod_products::orbit::OemProductWriter
+impl core::marker::UnsafeUnpin for siderust_pod_products::orbit::OemProductWriter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::orbit::OemProductWriter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::orbit::OemProductWriter
+pub struct siderust_pod_products::orbit::Sp3ProductWriter
+impl siderust_pod_products::orbit::Sp3ProductWriter
+pub fn siderust_pod_products::orbit::Sp3ProductWriter::new(sat_id: impl core::convert::Into<alloc::string::String>) -> Self
+pub fn siderust_pod_products::orbit::Sp3ProductWriter::write_from_states(&self, path: &std::path::Path, states: &[siderust::astro::dynamics::state::SpacecraftState]) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+impl core::marker::Freeze for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::marker::Send for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::marker::Sync for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::marker::Unpin for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::marker::UnsafeUnpin for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::orbit::Sp3ProductWriter
+pub fn siderust_pod_products::orbit::write_oem_from_spacecraft_states<W: std::io::Write>(w: &mut W, object_id: &str, object_name: &str, states: &[siderust::astro::dynamics::state::SpacecraftState]) -> core::result::Result<(), siderust_pod_io::PodIoError>
+pub fn siderust_pod_products::orbit::write_oem_from_states<W: std::io::Write>(w: &mut W, object_id: &str, object_name: &str, states: &[siderust::astro::dynamics::state::OrbitState]) -> core::result::Result<(), siderust_pod_io::PodIoError>
+pub fn siderust_pod_products::orbit::write_sp3_from_states<W: std::io::Write>(w: &mut W, sat_id: &str, states: &[siderust::astro::dynamics::state::OrbitState]) -> core::result::Result<(), siderust_pod_io::sp3::Sp3Error>
+pub mod siderust_pod_products::qc_json
+pub struct siderust_pod_products::qc_json::QcDocument<S>
+pub siderust_pod_products::qc_json::QcDocument::iterations: usize
+pub siderust_pod_products::qc_json::QcDocument::n_obs: usize
+pub siderust_pod_products::qc_json::QcDocument::n_params: usize
+pub siderust_pod_products::qc_json::QcDocument::reduced_chi2: f64
+pub siderust_pod_products::qc_json::QcDocument::residuals: S
+pub siderust_pod_products::qc_json::QcDocument::run_id: alloc::string::String
+pub siderust_pod_products::qc_json::QcDocument::schema_version: alloc::string::String
+pub siderust_pod_products::qc_json::QcDocument::software_version: alloc::string::String
+impl<S: core::clone::Clone> core::clone::Clone for siderust_pod_products::qc_json::QcDocument<S>
+pub fn siderust_pod_products::qc_json::QcDocument<S>::clone(&self) -> siderust_pod_products::qc_json::QcDocument<S>
+impl<S: core::fmt::Debug> core::fmt::Debug for siderust_pod_products::qc_json::QcDocument<S>
+pub fn siderust_pod_products::qc_json::QcDocument<S>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<S> serde_core::ser::Serialize for siderust_pod_products::qc_json::QcDocument<S> where S: serde_core::ser::Serialize
+pub fn siderust_pod_products::qc_json::QcDocument<S>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<S> core::marker::Freeze for siderust_pod_products::qc_json::QcDocument<S> where S: core::marker::Freeze
+impl<S> core::marker::Send for siderust_pod_products::qc_json::QcDocument<S> where S: core::marker::Send
+impl<S> core::marker::Sync for siderust_pod_products::qc_json::QcDocument<S> where S: core::marker::Sync
+impl<S> core::marker::Unpin for siderust_pod_products::qc_json::QcDocument<S> where S: core::marker::Unpin
+impl<S> core::marker::UnsafeUnpin for siderust_pod_products::qc_json::QcDocument<S> where S: core::marker::UnsafeUnpin
+impl<S> core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::qc_json::QcDocument<S> where S: core::panic::unwind_safe::RefUnwindSafe
+impl<S> core::panic::unwind_safe::UnwindSafe for siderust_pod_products::qc_json::QcDocument<S> where S: core::panic::unwind_safe::UnwindSafe
+pub fn siderust_pod_products::qc_json::write_qc_json<W: std::io::Write, S: serde_core::ser::Serialize>(w: &mut W, doc: &siderust_pod_products::qc_json::QcDocument<S>) -> core::result::Result<(), std::io::error::Error>
+pub mod siderust_pod_products::residuals_csv
+pub struct siderust_pod_products::residuals_csv::ResidualCsvWriter<W: std::io::Write>
+impl<W: std::io::Write> siderust_pod_products::residuals_csv::ResidualCsvWriter<W>
+pub fn siderust_pod_products::residuals_csv::ResidualCsvWriter<W>::flush(&mut self) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+pub fn siderust_pod_products::residuals_csv::ResidualCsvWriter<W>::new(writer: W) -> core::result::Result<Self, siderust_pod_products::error::PodProductsError>
+pub fn siderust_pod_products::residuals_csv::ResidualCsvWriter<W>::write_record(&mut self, r: &siderust_pod_products::residuals_csv::ResidualRecord) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+impl<W> core::marker::Freeze for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::Freeze
+impl<W> core::marker::Send for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::Send
+impl<W> core::marker::Sync for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::Sync
+impl<W> core::marker::Unpin for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::Unpin
+impl<W> core::marker::UnsafeUnpin for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::UnsafeUnpin
+impl<W> core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::panic::unwind_safe::RefUnwindSafe
+impl<W> core::panic::unwind_safe::UnwindSafe for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::panic::unwind_safe::UnwindSafe
+pub struct siderust_pod_products::residuals_csv::ResidualRecord
+pub siderust_pod_products::residuals_csv::ResidualRecord::epoch_jd_tt: f64
+pub siderust_pod_products::residuals_csv::ResidualRecord::obs_type: alloc::string::String
+pub siderust_pod_products::residuals_csv::ResidualRecord::rejected: bool
+pub siderust_pod_products::residuals_csv::ResidualRecord::residual_m: f64
+pub siderust_pod_products::residuals_csv::ResidualRecord::satellite: alloc::string::String
+pub siderust_pod_products::residuals_csv::ResidualRecord::sigma_m: f64
+impl core::clone::Clone for siderust_pod_products::residuals_csv::ResidualRecord
+pub fn siderust_pod_products::residuals_csv::ResidualRecord::clone(&self) -> siderust_pod_products::residuals_csv::ResidualRecord
+impl core::fmt::Debug for siderust_pod_products::residuals_csv::ResidualRecord
+pub fn siderust_pod_products::residuals_csv::ResidualRecord::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_products::residuals_csv::ResidualRecord
+pub fn siderust_pod_products::residuals_csv::ResidualRecord::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_products::residuals_csv::ResidualRecord
+pub fn siderust_pod_products::residuals_csv::ResidualRecord::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::marker::Send for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::marker::Sync for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::marker::Unpin for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::marker::UnsafeUnpin for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::residuals_csv::ResidualRecord
+pub struct siderust_pod_products::residuals_csv::ResidualRow
+pub siderust_pod_products::residuals_csv::ResidualRow::jd_tt: f64
+pub siderust_pod_products::residuals_csv::ResidualRow::kind: alloc::string::String
+pub siderust_pod_products::residuals_csv::ResidualRow::measured_m: f64
+pub siderust_pod_products::residuals_csv::ResidualRow::predicted_m: f64
+pub siderust_pod_products::residuals_csv::ResidualRow::residual_m: f64
+pub siderust_pod_products::residuals_csv::ResidualRow::sigma_m: f64
+impl core::clone::Clone for siderust_pod_products::residuals_csv::ResidualRow
+pub fn siderust_pod_products::residuals_csv::ResidualRow::clone(&self) -> siderust_pod_products::residuals_csv::ResidualRow
+impl core::fmt::Debug for siderust_pod_products::residuals_csv::ResidualRow
+pub fn siderust_pod_products::residuals_csv::ResidualRow::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_products::residuals_csv::ResidualRow
+pub fn siderust_pod_products::residuals_csv::ResidualRow::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_products::residuals_csv::ResidualRow
+pub fn siderust_pod_products::residuals_csv::ResidualRow::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_products::residuals_csv::ResidualRow
+impl core::marker::Send for siderust_pod_products::residuals_csv::ResidualRow
+impl core::marker::Sync for siderust_pod_products::residuals_csv::ResidualRow
+impl core::marker::Unpin for siderust_pod_products::residuals_csv::ResidualRow
+impl core::marker::UnsafeUnpin for siderust_pod_products::residuals_csv::ResidualRow
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::residuals_csv::ResidualRow
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::residuals_csv::ResidualRow
+pub fn siderust_pod_products::residuals_csv::write_residuals_csv<W: std::io::Write>(w: &mut W, rows: &[siderust_pod_products::residuals_csv::ResidualRow]) -> core::result::Result<(), std::io::error::Error>
+pub enum siderust_pod_products::PodProductsError
+pub siderust_pod_products::PodProductsError::Io(std::io::error::Error)
+pub siderust_pod_products::PodProductsError::Json(serde_json::error::Error)
+pub siderust_pod_products::PodProductsError::Parquet(alloc::string::String)
+pub siderust_pod_products::PodProductsError::PodIo(siderust_pod_io::PodIoError)
+pub siderust_pod_products::PodProductsError::Sp3(siderust_pod_io::sp3::Sp3Error)
+impl core::convert::From<serde_json::error::Error> for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::from(source: serde_json::error::Error) -> Self
+impl core::convert::From<siderust_pod_io::PodIoError> for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::from(source: siderust_pod_io::PodIoError) -> Self
+impl core::convert::From<siderust_pod_io::sp3::Sp3Error> for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::from(source: siderust_pod_io::sp3::Sp3Error) -> Self
+impl core::convert::From<std::io::error::Error> for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::from(source: std::io::error::Error) -> Self
+impl core::error::Error for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_products::error::PodProductsError
+pub fn siderust_pod_products::error::PodProductsError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_products::error::PodProductsError
+impl core::marker::Send for siderust_pod_products::error::PodProductsError
+impl core::marker::Sync for siderust_pod_products::error::PodProductsError
+impl core::marker::Unpin for siderust_pod_products::error::PodProductsError
+impl core::marker::UnsafeUnpin for siderust_pod_products::error::PodProductsError
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::error::PodProductsError
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_products::error::PodProductsError
+pub struct siderust_pod_products::ManifestWriter
+impl siderust_pod_products::manifest::ManifestWriter
+pub fn siderust_pod_products::manifest::ManifestWriter::write<W: std::io::Write>(w: &mut W, manifest: &siderust_pod_core::manifest::RunManifest) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+impl core::marker::Freeze for siderust_pod_products::manifest::ManifestWriter
+impl core::marker::Send for siderust_pod_products::manifest::ManifestWriter
+impl core::marker::Sync for siderust_pod_products::manifest::ManifestWriter
+impl core::marker::Unpin for siderust_pod_products::manifest::ManifestWriter
+impl core::marker::UnsafeUnpin for siderust_pod_products::manifest::ManifestWriter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::manifest::ManifestWriter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::manifest::ManifestWriter
+pub struct siderust_pod_products::OemProductWriter
+impl siderust_pod_products::orbit::OemProductWriter
+pub fn siderust_pod_products::orbit::OemProductWriter::new(object_id: impl core::convert::Into<alloc::string::String>, object_name: impl core::convert::Into<alloc::string::String>) -> Self
+pub fn siderust_pod_products::orbit::OemProductWriter::write_from_states(&self, path: &std::path::Path, states: &[siderust::astro::dynamics::state::SpacecraftState]) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+impl core::marker::Freeze for siderust_pod_products::orbit::OemProductWriter
+impl core::marker::Send for siderust_pod_products::orbit::OemProductWriter
+impl core::marker::Sync for siderust_pod_products::orbit::OemProductWriter
+impl core::marker::Unpin for siderust_pod_products::orbit::OemProductWriter
+impl core::marker::UnsafeUnpin for siderust_pod_products::orbit::OemProductWriter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::orbit::OemProductWriter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::orbit::OemProductWriter
+pub struct siderust_pod_products::ResidualCsvWriter<W: std::io::Write>
+impl<W: std::io::Write> siderust_pod_products::residuals_csv::ResidualCsvWriter<W>
+pub fn siderust_pod_products::residuals_csv::ResidualCsvWriter<W>::flush(&mut self) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+pub fn siderust_pod_products::residuals_csv::ResidualCsvWriter<W>::new(writer: W) -> core::result::Result<Self, siderust_pod_products::error::PodProductsError>
+pub fn siderust_pod_products::residuals_csv::ResidualCsvWriter<W>::write_record(&mut self, r: &siderust_pod_products::residuals_csv::ResidualRecord) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+impl<W> core::marker::Freeze for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::Freeze
+impl<W> core::marker::Send for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::Send
+impl<W> core::marker::Sync for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::Sync
+impl<W> core::marker::Unpin for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::Unpin
+impl<W> core::marker::UnsafeUnpin for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::marker::UnsafeUnpin
+impl<W> core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::panic::unwind_safe::RefUnwindSafe
+impl<W> core::panic::unwind_safe::UnwindSafe for siderust_pod_products::residuals_csv::ResidualCsvWriter<W> where W: core::panic::unwind_safe::UnwindSafe
+pub struct siderust_pod_products::ResidualRecord
+pub siderust_pod_products::ResidualRecord::epoch_jd_tt: f64
+pub siderust_pod_products::ResidualRecord::obs_type: alloc::string::String
+pub siderust_pod_products::ResidualRecord::rejected: bool
+pub siderust_pod_products::ResidualRecord::residual_m: f64
+pub siderust_pod_products::ResidualRecord::satellite: alloc::string::String
+pub siderust_pod_products::ResidualRecord::sigma_m: f64
+impl core::clone::Clone for siderust_pod_products::residuals_csv::ResidualRecord
+pub fn siderust_pod_products::residuals_csv::ResidualRecord::clone(&self) -> siderust_pod_products::residuals_csv::ResidualRecord
+impl core::fmt::Debug for siderust_pod_products::residuals_csv::ResidualRecord
+pub fn siderust_pod_products::residuals_csv::ResidualRecord::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_products::residuals_csv::ResidualRecord
+pub fn siderust_pod_products::residuals_csv::ResidualRecord::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_products::residuals_csv::ResidualRecord
+pub fn siderust_pod_products::residuals_csv::ResidualRecord::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::marker::Send for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::marker::Sync for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::marker::Unpin for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::marker::UnsafeUnpin for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::residuals_csv::ResidualRecord
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::residuals_csv::ResidualRecord
+pub struct siderust_pod_products::ResidualRow
+pub siderust_pod_products::ResidualRow::jd_tt: f64
+pub siderust_pod_products::ResidualRow::kind: alloc::string::String
+pub siderust_pod_products::ResidualRow::measured_m: f64
+pub siderust_pod_products::ResidualRow::predicted_m: f64
+pub siderust_pod_products::ResidualRow::residual_m: f64
+pub siderust_pod_products::ResidualRow::sigma_m: f64
+impl core::clone::Clone for siderust_pod_products::residuals_csv::ResidualRow
+pub fn siderust_pod_products::residuals_csv::ResidualRow::clone(&self) -> siderust_pod_products::residuals_csv::ResidualRow
+impl core::fmt::Debug for siderust_pod_products::residuals_csv::ResidualRow
+pub fn siderust_pod_products::residuals_csv::ResidualRow::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_products::residuals_csv::ResidualRow
+pub fn siderust_pod_products::residuals_csv::ResidualRow::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_products::residuals_csv::ResidualRow
+pub fn siderust_pod_products::residuals_csv::ResidualRow::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_products::residuals_csv::ResidualRow
+impl core::marker::Send for siderust_pod_products::residuals_csv::ResidualRow
+impl core::marker::Sync for siderust_pod_products::residuals_csv::ResidualRow
+impl core::marker::Unpin for siderust_pod_products::residuals_csv::ResidualRow
+impl core::marker::UnsafeUnpin for siderust_pod_products::residuals_csv::ResidualRow
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::residuals_csv::ResidualRow
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::residuals_csv::ResidualRow
+pub struct siderust_pod_products::Sp3ProductWriter
+impl siderust_pod_products::orbit::Sp3ProductWriter
+pub fn siderust_pod_products::orbit::Sp3ProductWriter::new(sat_id: impl core::convert::Into<alloc::string::String>) -> Self
+pub fn siderust_pod_products::orbit::Sp3ProductWriter::write_from_states(&self, path: &std::path::Path, states: &[siderust::astro::dynamics::state::SpacecraftState]) -> core::result::Result<(), siderust_pod_products::error::PodProductsError>
+impl core::marker::Freeze for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::marker::Send for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::marker::Sync for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::marker::Unpin for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::marker::UnsafeUnpin for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_products::orbit::Sp3ProductWriter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_products::orbit::Sp3ProductWriter
+pub fn siderust_pod_products::write_oem_from_spacecraft_states<W: std::io::Write>(w: &mut W, object_id: &str, object_name: &str, states: &[siderust::astro::dynamics::state::SpacecraftState]) -> core::result::Result<(), siderust_pod_io::PodIoError>
+pub fn siderust_pod_products::write_oem_from_states<W: std::io::Write>(w: &mut W, object_id: &str, object_name: &str, states: &[siderust::astro::dynamics::state::OrbitState]) -> core::result::Result<(), siderust_pod_io::PodIoError>
+pub fn siderust_pod_products::write_qc_json<W: std::io::Write, S: serde_core::ser::Serialize>(w: &mut W, doc: &siderust_pod_products::qc_json::QcDocument<S>) -> core::result::Result<(), std::io::error::Error>
+pub fn siderust_pod_products::write_residuals_csv<W: std::io::Write>(w: &mut W, rows: &[siderust_pod_products::residuals_csv::ResidualRow]) -> core::result::Result<(), std::io::error::Error>
+pub fn siderust_pod_products::write_sp3_from_states<W: std::io::Write>(w: &mut W, sat_id: &str, states: &[siderust::astro::dynamics::state::OrbitState]) -> core::result::Result<(), siderust_pod_io::sp3::Sp3Error>

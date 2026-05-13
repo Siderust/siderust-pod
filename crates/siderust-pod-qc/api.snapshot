@@ -1,0 +1,237 @@
+pub mod siderust_pod_qc
+pub mod siderust_pod_qc::html
+pub fn siderust_pod_qc::html::render_html(qc: &serde_json::value::Value) -> alloc::string::String
+pub mod siderust_pod_qc::orbit_compare
+pub struct siderust_pod_qc::orbit_compare::RtnDiff
+pub siderust_pod_qc::orbit_compare::RtnDiff::jd_tt: f64
+pub siderust_pod_qc::orbit_compare::RtnDiff::n_m: f64
+pub siderust_pod_qc::orbit_compare::RtnDiff::r_m: f64
+pub siderust_pod_qc::orbit_compare::RtnDiff::t_m: f64
+impl siderust_pod_qc::orbit_compare::RtnDiff
+pub fn siderust_pod_qc::orbit_compare::RtnDiff::position_rtn_km(&self) -> affn::cartesian::vector::Displacement<siderust::astro::dynamics::frames::RTN, qtty_core::units::length::Kilometer>
+impl core::clone::Clone for siderust_pod_qc::orbit_compare::RtnDiff
+pub fn siderust_pod_qc::orbit_compare::RtnDiff::clone(&self) -> siderust_pod_qc::orbit_compare::RtnDiff
+impl core::fmt::Debug for siderust_pod_qc::orbit_compare::RtnDiff
+pub fn siderust_pod_qc::orbit_compare::RtnDiff::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::marker::Send for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::marker::Sync for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::marker::Unpin for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::marker::UnsafeUnpin for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::orbit_compare::RtnDiff
+pub struct siderust_pod_qc::orbit_compare::RtnSummary
+pub siderust_pod_qc::orbit_compare::RtnSummary::n: usize
+pub siderust_pod_qc::orbit_compare::RtnSummary::rms_3d_m: f64
+pub siderust_pod_qc::orbit_compare::RtnSummary::rms_n_m: f64
+pub siderust_pod_qc::orbit_compare::RtnSummary::rms_r_m: f64
+pub siderust_pod_qc::orbit_compare::RtnSummary::rms_t_m: f64
+impl core::clone::Clone for siderust_pod_qc::orbit_compare::RtnSummary
+pub fn siderust_pod_qc::orbit_compare::RtnSummary::clone(&self) -> siderust_pod_qc::orbit_compare::RtnSummary
+impl core::fmt::Debug for siderust_pod_qc::orbit_compare::RtnSummary
+pub fn siderust_pod_qc::orbit_compare::RtnSummary::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::marker::Send for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::marker::Sync for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::marker::Unpin for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::marker::UnsafeUnpin for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::orbit_compare::RtnSummary
+pub fn siderust_pod_qc::orbit_compare::rtn_diff(estimated: &[siderust::astro::dynamics::state::OrbitState], reference: &[siderust::astro::dynamics::state::OrbitState]) -> alloc::vec::Vec<siderust_pod_qc::orbit_compare::RtnDiff>
+pub fn siderust_pod_qc::orbit_compare::rtn_summary(diffs: &[siderust_pod_qc::orbit_compare::RtnDiff]) -> siderust_pod_qc::orbit_compare::RtnSummary
+pub mod siderust_pod_qc::residuals
+pub struct siderust_pod_qc::residuals::ResidualStats
+pub siderust_pod_qc::residuals::ResidualStats::max: f64
+pub siderust_pod_qc::residuals::ResidualStats::mean: f64
+pub siderust_pod_qc::residuals::ResidualStats::min: f64
+pub siderust_pod_qc::residuals::ResidualStats::n: usize
+pub siderust_pod_qc::residuals::ResidualStats::rms: f64
+pub siderust_pod_qc::residuals::ResidualStats::std: f64
+impl siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::from_slice(values: &[f64]) -> Self
+impl core::clone::Clone for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::clone(&self) -> siderust_pod_qc::residuals::ResidualStats
+impl core::default::Default for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::default() -> siderust_pod_qc::residuals::ResidualStats
+impl core::fmt::Debug for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_qc::residuals::ResidualStats
+impl core::marker::Send for siderust_pod_qc::residuals::ResidualStats
+impl core::marker::Sync for siderust_pod_qc::residuals::ResidualStats
+impl core::marker::Unpin for siderust_pod_qc::residuals::ResidualStats
+impl core::marker::UnsafeUnpin for siderust_pod_qc::residuals::ResidualStats
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::residuals::ResidualStats
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::residuals::ResidualStats
+pub struct siderust_pod_qc::residuals::ResidualsByGroup
+pub siderust_pod_qc::residuals::ResidualsByGroup::groups: alloc::collections::btree::map::BTreeMap<alloc::string::String, siderust_pod_qc::residuals::ResidualStats>
+pub siderust_pod_qc::residuals::ResidualsByGroup::overall: siderust_pod_qc::residuals::ResidualStats
+impl siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::from_pairs<'a, I>(items: I) -> Self where I: core::iter::traits::collect::IntoIterator<Item = (&'a str, f64)>
+impl core::clone::Clone for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::clone(&self) -> siderust_pod_qc::residuals::ResidualsByGroup
+impl core::default::Default for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::default() -> siderust_pod_qc::residuals::ResidualsByGroup
+impl core::fmt::Debug for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::marker::Send for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::marker::Sync for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::marker::Unpin for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::marker::UnsafeUnpin for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::residuals::ResidualsByGroup
+pub mod siderust_pod_qc::slr_validation
+pub struct siderust_pod_qc::slr_validation::SlrResidual
+pub siderust_pod_qc::slr_validation::SlrResidual::jd_tt: f64
+pub siderust_pod_qc::slr_validation::SlrResidual::residual_m: f64
+impl core::clone::Clone for siderust_pod_qc::slr_validation::SlrResidual
+pub fn siderust_pod_qc::slr_validation::SlrResidual::clone(&self) -> siderust_pod_qc::slr_validation::SlrResidual
+impl core::fmt::Debug for siderust_pod_qc::slr_validation::SlrResidual
+pub fn siderust_pod_qc::slr_validation::SlrResidual::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_qc::slr_validation::SlrResidual
+impl core::marker::Send for siderust_pod_qc::slr_validation::SlrResidual
+impl core::marker::Sync for siderust_pod_qc::slr_validation::SlrResidual
+impl core::marker::Unpin for siderust_pod_qc::slr_validation::SlrResidual
+impl core::marker::UnsafeUnpin for siderust_pod_qc::slr_validation::SlrResidual
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::slr_validation::SlrResidual
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::slr_validation::SlrResidual
+pub struct siderust_pod_qc::slr_validation::SlrValidationReport
+pub siderust_pod_qc::slr_validation::SlrValidationReport::residuals: alloc::vec::Vec<siderust_pod_qc::slr_validation::SlrResidual>
+pub siderust_pod_qc::slr_validation::SlrValidationReport::stats: siderust_pod_qc::residuals::ResidualStats
+impl siderust_pod_qc::slr_validation::SlrValidationReport
+pub fn siderust_pod_qc::slr_validation::SlrValidationReport::from_pairs<I: core::iter::traits::collect::IntoIterator<Item = (f64, f64)>>(pairs: I) -> Self
+impl core::clone::Clone for siderust_pod_qc::slr_validation::SlrValidationReport
+pub fn siderust_pod_qc::slr_validation::SlrValidationReport::clone(&self) -> siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::fmt::Debug for siderust_pod_qc::slr_validation::SlrValidationReport
+pub fn siderust_pod_qc::slr_validation::SlrValidationReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::marker::Send for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::marker::Sync for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::marker::Unpin for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::marker::UnsafeUnpin for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::slr_validation::SlrValidationReport
+pub struct siderust_pod_qc::ResidualStats
+pub siderust_pod_qc::ResidualStats::max: f64
+pub siderust_pod_qc::ResidualStats::mean: f64
+pub siderust_pod_qc::ResidualStats::min: f64
+pub siderust_pod_qc::ResidualStats::n: usize
+pub siderust_pod_qc::ResidualStats::rms: f64
+pub siderust_pod_qc::ResidualStats::std: f64
+impl siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::from_slice(values: &[f64]) -> Self
+impl core::clone::Clone for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::clone(&self) -> siderust_pod_qc::residuals::ResidualStats
+impl core::default::Default for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::default() -> siderust_pod_qc::residuals::ResidualStats
+impl core::fmt::Debug for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_qc::residuals::ResidualStats
+pub fn siderust_pod_qc::residuals::ResidualStats::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_qc::residuals::ResidualStats
+impl core::marker::Send for siderust_pod_qc::residuals::ResidualStats
+impl core::marker::Sync for siderust_pod_qc::residuals::ResidualStats
+impl core::marker::Unpin for siderust_pod_qc::residuals::ResidualStats
+impl core::marker::UnsafeUnpin for siderust_pod_qc::residuals::ResidualStats
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::residuals::ResidualStats
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::residuals::ResidualStats
+pub struct siderust_pod_qc::ResidualsByGroup
+pub siderust_pod_qc::ResidualsByGroup::groups: alloc::collections::btree::map::BTreeMap<alloc::string::String, siderust_pod_qc::residuals::ResidualStats>
+pub siderust_pod_qc::ResidualsByGroup::overall: siderust_pod_qc::residuals::ResidualStats
+impl siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::from_pairs<'a, I>(items: I) -> Self where I: core::iter::traits::collect::IntoIterator<Item = (&'a str, f64)>
+impl core::clone::Clone for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::clone(&self) -> siderust_pod_qc::residuals::ResidualsByGroup
+impl core::default::Default for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::default() -> siderust_pod_qc::residuals::ResidualsByGroup
+impl core::fmt::Debug for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl serde_core::ser::Serialize for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for siderust_pod_qc::residuals::ResidualsByGroup
+pub fn siderust_pod_qc::residuals::ResidualsByGroup::deserialize<__D>(__deserializer: __D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::marker::Send for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::marker::Sync for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::marker::Unpin for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::marker::UnsafeUnpin for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::residuals::ResidualsByGroup
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::residuals::ResidualsByGroup
+pub struct siderust_pod_qc::RtnDiff
+pub siderust_pod_qc::RtnDiff::jd_tt: f64
+pub siderust_pod_qc::RtnDiff::n_m: f64
+pub siderust_pod_qc::RtnDiff::r_m: f64
+pub siderust_pod_qc::RtnDiff::t_m: f64
+impl siderust_pod_qc::orbit_compare::RtnDiff
+pub fn siderust_pod_qc::orbit_compare::RtnDiff::position_rtn_km(&self) -> affn::cartesian::vector::Displacement<siderust::astro::dynamics::frames::RTN, qtty_core::units::length::Kilometer>
+impl core::clone::Clone for siderust_pod_qc::orbit_compare::RtnDiff
+pub fn siderust_pod_qc::orbit_compare::RtnDiff::clone(&self) -> siderust_pod_qc::orbit_compare::RtnDiff
+impl core::fmt::Debug for siderust_pod_qc::orbit_compare::RtnDiff
+pub fn siderust_pod_qc::orbit_compare::RtnDiff::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::marker::Send for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::marker::Sync for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::marker::Unpin for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::marker::UnsafeUnpin for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::orbit_compare::RtnDiff
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::orbit_compare::RtnDiff
+pub struct siderust_pod_qc::RtnSummary
+pub siderust_pod_qc::RtnSummary::n: usize
+pub siderust_pod_qc::RtnSummary::rms_3d_m: f64
+pub siderust_pod_qc::RtnSummary::rms_n_m: f64
+pub siderust_pod_qc::RtnSummary::rms_r_m: f64
+pub siderust_pod_qc::RtnSummary::rms_t_m: f64
+impl core::clone::Clone for siderust_pod_qc::orbit_compare::RtnSummary
+pub fn siderust_pod_qc::orbit_compare::RtnSummary::clone(&self) -> siderust_pod_qc::orbit_compare::RtnSummary
+impl core::fmt::Debug for siderust_pod_qc::orbit_compare::RtnSummary
+pub fn siderust_pod_qc::orbit_compare::RtnSummary::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::marker::Send for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::marker::Sync for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::marker::Unpin for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::marker::UnsafeUnpin for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::orbit_compare::RtnSummary
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::orbit_compare::RtnSummary
+pub struct siderust_pod_qc::SlrResidual
+pub siderust_pod_qc::SlrResidual::jd_tt: f64
+pub siderust_pod_qc::SlrResidual::residual_m: f64
+impl core::clone::Clone for siderust_pod_qc::slr_validation::SlrResidual
+pub fn siderust_pod_qc::slr_validation::SlrResidual::clone(&self) -> siderust_pod_qc::slr_validation::SlrResidual
+impl core::fmt::Debug for siderust_pod_qc::slr_validation::SlrResidual
+pub fn siderust_pod_qc::slr_validation::SlrResidual::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_qc::slr_validation::SlrResidual
+impl core::marker::Send for siderust_pod_qc::slr_validation::SlrResidual
+impl core::marker::Sync for siderust_pod_qc::slr_validation::SlrResidual
+impl core::marker::Unpin for siderust_pod_qc::slr_validation::SlrResidual
+impl core::marker::UnsafeUnpin for siderust_pod_qc::slr_validation::SlrResidual
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::slr_validation::SlrResidual
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::slr_validation::SlrResidual
+pub struct siderust_pod_qc::SlrValidationReport
+pub siderust_pod_qc::SlrValidationReport::residuals: alloc::vec::Vec<siderust_pod_qc::slr_validation::SlrResidual>
+pub siderust_pod_qc::SlrValidationReport::stats: siderust_pod_qc::residuals::ResidualStats
+impl siderust_pod_qc::slr_validation::SlrValidationReport
+pub fn siderust_pod_qc::slr_validation::SlrValidationReport::from_pairs<I: core::iter::traits::collect::IntoIterator<Item = (f64, f64)>>(pairs: I) -> Self
+impl core::clone::Clone for siderust_pod_qc::slr_validation::SlrValidationReport
+pub fn siderust_pod_qc::slr_validation::SlrValidationReport::clone(&self) -> siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::fmt::Debug for siderust_pod_qc::slr_validation::SlrValidationReport
+pub fn siderust_pod_qc::slr_validation::SlrValidationReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::marker::Send for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::marker::Sync for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::marker::Unpin for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::marker::UnsafeUnpin for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_qc::slr_validation::SlrValidationReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_qc::slr_validation::SlrValidationReport
+pub fn siderust_pod_qc::render_html(qc: &serde_json::value::Value) -> alloc::string::String
+pub fn siderust_pod_qc::rtn_diff(estimated: &[siderust::astro::dynamics::state::OrbitState], reference: &[siderust::astro::dynamics::state::OrbitState]) -> alloc::vec::Vec<siderust_pod_qc::orbit_compare::RtnDiff>
+pub fn siderust_pod_qc::rtn_summary(diffs: &[siderust_pod_qc::orbit_compare::RtnDiff]) -> siderust_pod_qc::orbit_compare::RtnSummary

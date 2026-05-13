@@ -30,6 +30,26 @@ use serde::Serialize;
 use std::io::Write;
 
 /// Top-level shape of `qc.json`.
+///
+/// # Examples
+///
+/// ```
+/// use siderust_pod_products::qc_json::{QcDocument, write_qc_json};
+///
+/// let doc = QcDocument {
+///     schema_version: "qc.v1".into(),
+///     run_id: "test-run".into(),
+///     software_version: "0.0.0".into(),
+///     n_obs: 1000,
+///     n_params: 6,
+///     reduced_chi2: 1.02,
+///     iterations: 3,
+///     residuals: serde_json::json!({"C1C": {"rms_m": 0.45}}),
+/// };
+/// let mut buf = Vec::new();
+/// write_qc_json(&mut buf, &doc).unwrap();
+/// assert!(String::from_utf8(buf).unwrap().contains("reduced_chi2"));
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct QcDocument<S> {
     /// Schema version of the QC document.
@@ -51,6 +71,26 @@ pub struct QcDocument<S> {
 }
 
 /// Write a `qc.json` file pretty-printed.
+///
+/// # Examples
+///
+/// ```
+/// use siderust_pod_products::qc_json::{QcDocument, write_qc_json};
+///
+/// let doc = QcDocument {
+///     schema_version: "qc.v1".into(),
+///     run_id: "r1".into(),
+///     software_version: "0.0.0".into(),
+///     n_obs: 500,
+///     n_params: 6,
+///     reduced_chi2: 0.99,
+///     iterations: 2,
+///     residuals: Vec::<()>::new(),
+/// };
+/// let mut buf = Vec::new();
+/// write_qc_json(&mut buf, &doc).unwrap();
+/// assert!(buf.ends_with(b"\n"));
+/// ```
 pub fn write_qc_json<W: Write, S: Serialize>(
     w: &mut W,
     doc: &QcDocument<S>,

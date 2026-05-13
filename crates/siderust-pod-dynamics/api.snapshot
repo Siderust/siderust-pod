@@ -1,0 +1,1043 @@
+pub mod siderust_pod_dynamics
+pub use siderust_pod_dynamics::Dop853Integrator
+pub use siderust_pod_dynamics::Dopri5Integrator
+pub use siderust_pod_dynamics::Integrator
+pub use siderust_pod_dynamics::Rk4Integrator
+pub mod siderust_pod_dynamics::empirical_periodic
+pub enum siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::OncePerRev
+pub siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::TwicePerRev
+impl siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub fn siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::multiplier(self) -> f64
+impl core::clone::Clone for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub fn siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::clone(&self) -> siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::cmp::Eq for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::cmp::PartialEq for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub fn siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::eq(&self, other: &siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub fn siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::Freeze for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::Send for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::Sync for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::Unpin for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub struct siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::epoch_ref: siderust::time::JulianDate
+pub siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::harmonic: siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::n_cos: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::n_sin: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::period: qtty::Second
+pub siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::r_cos: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::r_sin: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::t_cos: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::t_sin: qtty::dynamics::KmPerSecondsSquared
+impl siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub fn siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::new(harmonic: siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic, epoch_ref: siderust::time::JulianDate, period: qtty::Second, r_cos: qtty::dynamics::KmPerSecondsSquared, r_sin: qtty::dynamics::KmPerSecondsSquared, t_cos: qtty::dynamics::KmPerSecondsSquared, t_sin: qtty::dynamics::KmPerSecondsSquared, n_cos: qtty::dynamics::KmPerSecondsSquared, n_sin: qtty::dynamics::KmPerSecondsSquared) -> Self
+impl core::clone::Clone for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub fn siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::clone(&self) -> siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::fmt::Debug for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub fn siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl siderust::astro::dynamics::forces::traits::ForceModel for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub fn siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::acceleration(&self, s: &siderust::astro::dynamics::state::OrbitState, _ctx: &siderust::astro::dynamics::context::DynamicsContext) -> core::result::Result<siderust::astro::dynamics::state::Acceleration<affn::frames::astro::GCRS, siderust::astro::dynamics::state::AccelerationUnit>, siderust::astro::dynamics::errors::DynamicsError>
+impl core::marker::Freeze for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::marker::Send for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::marker::Sync for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::marker::Unpin for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub mod siderust_pod_dynamics::error
+pub enum siderust_pod_dynamics::error::PodDynamicsError
+pub siderust_pod_dynamics::error::PodDynamicsError::Dynamics(siderust_dynamics::error::DynamicsError)
+pub siderust_pod_dynamics::error::PodDynamicsError::FeatureNotImplemented(&'static str)
+pub siderust_pod_dynamics::error::PodDynamicsError::InvalidParamStep(&'static str)
+pub siderust_pod_dynamics::error::PodDynamicsError::InvalidParameters
+pub siderust_pod_dynamics::error::PodDynamicsError::InvalidParameters::name: alloc::string::String
+pub siderust_pod_dynamics::error::PodDynamicsError::InvalidParameters::reason: &'static str
+pub siderust_pod_dynamics::error::PodDynamicsError::InvalidProcessNoise(&'static str)
+pub siderust_pod_dynamics::error::PodDynamicsError::UnknownModel(alloc::string::String)
+impl core::convert::From<siderust_dynamics::error::DynamicsError> for siderust_pod_dynamics::error::PodDynamicsError
+pub fn siderust_pod_dynamics::error::PodDynamicsError::from(source: siderust_dynamics::error::DynamicsError) -> Self
+impl core::error::Error for siderust_pod_dynamics::error::PodDynamicsError
+pub fn siderust_pod_dynamics::error::PodDynamicsError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for siderust_pod_dynamics::error::PodDynamicsError
+pub fn siderust_pod_dynamics::error::PodDynamicsError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_dynamics::error::PodDynamicsError
+pub fn siderust_pod_dynamics::error::PodDynamicsError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_dynamics::error::PodDynamicsError
+impl core::marker::Send for siderust_pod_dynamics::error::PodDynamicsError
+impl core::marker::Sync for siderust_pod_dynamics::error::PodDynamicsError
+impl core::marker::Unpin for siderust_pod_dynamics::error::PodDynamicsError
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::error::PodDynamicsError
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::error::PodDynamicsError
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::error::PodDynamicsError
+pub mod siderust_pod_dynamics::force_config
+pub struct siderust_pod_dynamics::force_config::ForceModelConfig
+pub siderust_pod_dynamics::force_config::ForceModelConfig::drag: core::option::Option<(qtty::dynamics::DragCoefficient, qtty::dynamics::AreaToMass)>
+pub siderust_pod_dynamics::force_config::ForceModelConfig::empirical_1cpr: core::option::Option<(siderust::time::JulianDate, qtty::Second, [qtty::dynamics::KmPerSecondsSquared; 6])>
+pub siderust_pod_dynamics::force_config::ForceModelConfig::empirical_2cpr: core::option::Option<(siderust::time::JulianDate, qtty::Second, [qtty::dynamics::KmPerSecondsSquared; 6])>
+pub siderust_pod_dynamics::force_config::ForceModelConfig::empirical_constant: core::option::Option<(qtty::dynamics::KmPerSecondsSquared, qtty::dynamics::KmPerSecondsSquared, qtty::dynamics::KmPerSecondsSquared)>
+pub siderust_pod_dynamics::force_config::ForceModelConfig::harmonics: core::option::Option<(usize, usize)>
+pub siderust_pod_dynamics::force_config::ForceModelConfig::j2: bool
+pub siderust_pod_dynamics::force_config::ForceModelConfig::relativity: bool
+pub siderust_pod_dynamics::force_config::ForceModelConfig::srp: core::option::Option<(qtty::dynamics::SrpCoefficient, qtty::dynamics::AreaToMass, siderust::astro::dynamics::forces::srp::ShadowModel)>
+pub siderust_pod_dynamics::force_config::ForceModelConfig::third_body_moon: bool
+pub siderust_pod_dynamics::force_config::ForceModelConfig::third_body_sun: bool
+pub siderust_pod_dynamics::force_config::ForceModelConfig::two_body: bool
+impl siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::to_specs(&self) -> alloc::vec::Vec<siderust_pod_dynamics::registry::ForceModelSpec>
+impl core::clone::Clone for siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::clone(&self) -> siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::cmp::PartialEq for siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::eq(&self, other: &siderust_pod_dynamics::force_config::ForceModelConfig) -> bool
+impl core::default::Default for siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::default() -> Self
+impl core::fmt::Debug for siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::Freeze for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::Send for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::Sync for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::Unpin for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::force_config::ForceModelConfig
+pub mod siderust_pod_dynamics::forces
+pub struct siderust_pod_dynamics::forces::AccelPartials
+pub siderust_pod_dynamics::forces::AccelPartials::d_acc_d_pos: [[f64; 3]; 3]
+pub siderust_pod_dynamics::forces::AccelPartials::d_acc_d_vel: [[f64; 3]; 3]
+impl siderust_pod_dynamics::forces::AccelPartials
+pub fn siderust_pod_dynamics::forces::AccelPartials::add_assign(&mut self, other: &siderust_pod_dynamics::forces::AccelPartials)
+pub fn siderust_pod_dynamics::forces::AccelPartials::zero() -> Self
+impl core::clone::Clone for siderust_pod_dynamics::forces::AccelPartials
+pub fn siderust_pod_dynamics::forces::AccelPartials::clone(&self) -> siderust_pod_dynamics::forces::AccelPartials
+impl core::cmp::PartialEq for siderust_pod_dynamics::forces::AccelPartials
+pub fn siderust_pod_dynamics::forces::AccelPartials::eq(&self, other: &siderust_pod_dynamics::forces::AccelPartials) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::forces::AccelPartials
+pub fn siderust_pod_dynamics::forces::AccelPartials::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::Freeze for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::Send for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::Sync for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::Unpin for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::AccelPartials
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::AccelPartials
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::AccelPartials
+pub struct siderust_pod_dynamics::forces::Acceleration3(pub [f64; 3])
+impl siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::add_assign(&mut self, other: siderust_pod_dynamics::forces::Acceleration3)
+pub fn siderust_pod_dynamics::forces::Acceleration3::magnitude(&self) -> f64
+pub fn siderust_pod_dynamics::forces::Acceleration3::zero() -> Self
+impl core::clone::Clone for siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::clone(&self) -> siderust_pod_dynamics::forces::Acceleration3
+impl core::cmp::PartialEq for siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::eq(&self, other: &siderust_pod_dynamics::forces::Acceleration3) -> bool
+impl core::convert::From<affn::cartesian::vector::Vector<affn::frames::astro::GCRS, qtty_core::unit::Per<qtty_core::unit::Per<qtty_core::units::length::Kilometer, qtty_core::units::time::Second>, qtty_core::units::time::Second>>> for siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::from(a: siderust::astro::dynamics::state::Acceleration<affn::frames::astro::GCRS, siderust::astro::dynamics::state::AccelerationUnit>) -> Self
+impl core::fmt::Debug for siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::Freeze for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::Send for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::Sync for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::Unpin for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::Acceleration3
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::Acceleration3
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::Acceleration3
+pub struct siderust_pod_dynamics::forces::DragForce
+impl siderust_pod_dynamics::forces::DragForce
+pub fn siderust_pod_dynamics::forces::DragForce::area_to_mass(&self) -> qtty::dynamics::AreaToMass
+pub fn siderust_pod_dynamics::forces::DragForce::cd(&self) -> qtty::dynamics::DragCoefficient
+pub fn siderust_pod_dynamics::forces::DragForce::new(cd: qtty::dynamics::DragCoefficient, area_to_mass: qtty::dynamics::AreaToMass, atmosphere: alloc::sync::Arc<(dyn siderust::astro::dynamics::atmosphere::DensityProvider + core::marker::Send + core::marker::Sync)>) -> Self
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::DragForce
+pub fn siderust_pod_dynamics::forces::DragForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::DragForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::DragForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::DragForce::partials(&self, _state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::marker::Freeze for siderust_pod_dynamics::forces::DragForce
+impl core::marker::Send for siderust_pod_dynamics::forces::DragForce
+impl core::marker::Sync for siderust_pod_dynamics::forces::DragForce
+impl core::marker::Unpin for siderust_pod_dynamics::forces::DragForce
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::DragForce
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::DragForce
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::DragForce
+pub struct siderust_pod_dynamics::forces::ForceModelRegistry
+impl siderust_pod_dynamics::forces::ForceModelRegistry
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::is_empty(&self) -> bool
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::len(&self) -> usize
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::new() -> Self
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::push(self, model: alloc::boxed::Box<dyn siderust_pod_dynamics::forces::ForceModel>) -> Self
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::total_acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::total_partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::default::Default for siderust_pod_dynamics::forces::ForceModelRegistry
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::default() -> Self
+impl core::marker::Freeze for siderust_pod_dynamics::forces::ForceModelRegistry
+impl core::marker::Send for siderust_pod_dynamics::forces::ForceModelRegistry
+impl core::marker::Sync for siderust_pod_dynamics::forces::ForceModelRegistry
+impl core::marker::Unpin for siderust_pod_dynamics::forces::ForceModelRegistry
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::ForceModelRegistry
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::ForceModelRegistry
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::ForceModelRegistry
+pub struct siderust_pod_dynamics::forces::J2PerturbationForce
+impl siderust_pod_dynamics::forces::J2PerturbationForce
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::earth() -> Self
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::J2PerturbationForce
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::marker::Freeze for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::marker::Send for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::marker::Sync for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::marker::Unpin for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::J2PerturbationForce
+pub struct siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl siderust_pod_dynamics::forces::SolarRadiationPressureForce
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::area_to_mass(&self) -> qtty::dynamics::AreaToMass
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::cr(&self) -> qtty::dynamics::SrpCoefficient
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::new(cr: qtty::dynamics::SrpCoefficient, area_to_mass: qtty::dynamics::AreaToMass) -> Self
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::partials(&self, _state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::marker::Freeze for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::marker::Send for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::marker::Sync for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::marker::Unpin for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+pub struct siderust_pod_dynamics::forces::TwoBodyForce
+impl siderust_pod_dynamics::forces::TwoBodyForce
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::earth() -> Self
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::TwoBodyForce
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::marker::Freeze for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::marker::Send for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::marker::Sync for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::marker::Unpin for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::TwoBodyForce
+pub trait siderust_pod_dynamics::forces::ForceModel: core::marker::Send + core::marker::Sync
+pub fn siderust_pod_dynamics::forces::ForceModel::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::ForceModel::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::ForceModel::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::ForceModel::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::DragForce
+pub fn siderust_pod_dynamics::forces::DragForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::DragForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::DragForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::DragForce::partials(&self, _state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::J2PerturbationForce
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::partials(&self, _state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::TwoBodyForce
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+pub type siderust_pod_dynamics::forces::CartesianState = siderust::astro::dynamics::state::OrbitState<siderust::coordinates::centers::Geocentric, affn::frames::astro::GCRS>
+pub type siderust_pod_dynamics::forces::Epoch = siderust::time::JulianDate
+pub mod siderust_pod_dynamics::integrator_adapter
+pub fn siderust_pod_dynamics::integrator_adapter::propagate_orbit<I, F>(integrator: &I, force: &F, state: siderust::astro::dynamics::state::OrbitState, dt: qtty::Second, ctx: &siderust::astro::dynamics::context::DynamicsContext) -> core::result::Result<siderust::astro::dynamics::state::OrbitState, siderust_pod_dynamics::error::PodDynamicsError> where I: siderust_dynamics::integrators::Integrator, F: siderust::astro::dynamics::forces::traits::ForceModel
+pub fn siderust_pod_dynamics::integrator_adapter::propagate_spacecraft<I, F>(integrator: &I, force: &F, state: siderust::astro::dynamics::state::SpacecraftState, dt: qtty::Second, ctx: &siderust::astro::dynamics::context::DynamicsContext) -> core::result::Result<siderust::astro::dynamics::state::SpacecraftState, siderust_pod_dynamics::error::PodDynamicsError> where I: siderust_dynamics::integrators::Integrator, F: siderust::astro::dynamics::forces::traits::ForceModel
+pub mod siderust_pod_dynamics::process_noise
+pub enum siderust_pod_dynamics::process_noise::ProcessNoise
+pub siderust_pod_dynamics::process_noise::ProcessNoise::None
+pub siderust_pod_dynamics::process_noise::ProcessNoise::PiecewiseConstant
+pub siderust_pod_dynamics::process_noise::ProcessNoise::PiecewiseConstant::intervals: alloc::vec::Vec<siderust_pod_dynamics::process_noise::PiecewiseSegment>
+pub siderust_pod_dynamics::process_noise::ProcessNoise::WhiteNoise
+pub siderust_pod_dynamics::process_noise::ProcessNoise::WhiteNoise::sigma_pos_m: f64
+pub siderust_pod_dynamics::process_noise::ProcessNoise::WhiteNoise::sigma_vel_mps: f64
+impl siderust_pod_dynamics::process_noise::ProcessNoise
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::is_active(&self) -> bool
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::sigma_at(&self, elapsed: qtty::Second) -> (f64, f64)
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::ProcessNoise
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::clone(&self) -> siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::cmp::PartialEq for siderust_pod_dynamics::process_noise::ProcessNoise
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::eq(&self, other: &siderust_pod_dynamics::process_noise::ProcessNoise) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::ProcessNoise
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::Send for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::ProcessNoise
+pub struct siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub siderust_pod_dynamics::process_noise::GaussMarkovParams::sigma: f64
+pub siderust_pod_dynamics::process_noise::GaussMarkovParams::tau: qtty::Second
+impl siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub fn siderust_pod_dynamics::process_noise::GaussMarkovParams::variance_after(&self, dt: qtty::Second) -> core::result::Result<f64, siderust_pod_dynamics::error::PodDynamicsError>
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub fn siderust_pod_dynamics::process_noise::GaussMarkovParams::clone(&self) -> siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::cmp::PartialEq for siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub fn siderust_pod_dynamics::process_noise::GaussMarkovParams::eq(&self, other: &siderust_pod_dynamics::process_noise::GaussMarkovParams) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub fn siderust_pod_dynamics::process_noise::GaussMarkovParams::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::Send for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub struct siderust_pod_dynamics::process_noise::PiecewiseSegment
+pub siderust_pod_dynamics::process_noise::PiecewiseSegment::duration: qtty::Second
+pub siderust_pod_dynamics::process_noise::PiecewiseSegment::sigma_pos_m: f64
+pub siderust_pod_dynamics::process_noise::PiecewiseSegment::sigma_vel_mps: f64
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::PiecewiseSegment
+pub fn siderust_pod_dynamics::process_noise::PiecewiseSegment::clone(&self) -> siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::cmp::PartialEq for siderust_pod_dynamics::process_noise::PiecewiseSegment
+pub fn siderust_pod_dynamics::process_noise::PiecewiseSegment::eq(&self, other: &siderust_pod_dynamics::process_noise::PiecewiseSegment) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::PiecewiseSegment
+pub fn siderust_pod_dynamics::process_noise::PiecewiseSegment::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::Send for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::PiecewiseSegment
+pub struct siderust_pod_dynamics::process_noise::ProcessNoiseModel
+pub siderust_pod_dynamics::process_noise::ProcessNoiseModel::drag_scale: core::option::Option<siderust_pod_dynamics::process_noise::GaussMarkovParams>
+pub siderust_pod_dynamics::process_noise::ProcessNoiseModel::empirical_white: core::option::Option<[qtty::dynamics::KmPerSecondsSquared; 3]>
+pub siderust_pod_dynamics::process_noise::ProcessNoiseModel::position_velocity: siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub siderust_pod_dynamics::process_noise::ProcessNoiseModel::srp_scale: core::option::Option<siderust_pod_dynamics::process_noise::GaussMarkovParams>
+impl siderust_pod_dynamics::process_noise::ProcessNoiseModel
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::dim(&self) -> usize
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::is_psd(&self, dt: qtty::Second) -> core::result::Result<bool, siderust_pod_dynamics::error::PodDynamicsError>
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::q_matrix(&self, dt: qtty::Second) -> core::result::Result<alloc::vec::Vec<alloc::vec::Vec<f64>>, siderust_pod_dynamics::error::PodDynamicsError>
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::clone(&self) -> siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::Send for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+pub struct siderust_pod_dynamics::process_noise::WhiteAccelPsd(pub [f64; 3])
+impl siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub fn siderust_pod_dynamics::process_noise::WhiteAccelPsd::isotropic(sigma: qtty::dynamics::KmPerSecondsSquared) -> Self
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub fn siderust_pod_dynamics::process_noise::WhiteAccelPsd::clone(&self) -> siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::cmp::PartialEq for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub fn siderust_pod_dynamics::process_noise::WhiteAccelPsd::eq(&self, other: &siderust_pod_dynamics::process_noise::WhiteAccelPsd) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub fn siderust_pod_dynamics::process_noise::WhiteAccelPsd::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::Send for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub mod siderust_pod_dynamics::registry
+#[non_exhaustive] pub enum siderust_pod_dynamics::registry::ForceModelParams
+pub siderust_pod_dynamics::registry::ForceModelParams::Custom(alloc::string::String)
+pub siderust_pod_dynamics::registry::ForceModelParams::Drag
+pub siderust_pod_dynamics::registry::ForceModelParams::Drag::area_to_mass: qtty::dynamics::AreaToMass
+pub siderust_pod_dynamics::registry::ForceModelParams::Drag::cd: qtty::dynamics::DragCoefficient
+pub siderust_pod_dynamics::registry::ForceModelParams::EmpiricalConstant
+pub siderust_pod_dynamics::registry::ForceModelParams::EmpiricalConstant::normal: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::registry::ForceModelParams::EmpiricalConstant::radial: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::registry::ForceModelParams::EmpiricalConstant::transverse: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::registry::ForceModelParams::EmpiricalPeriodic
+pub siderust_pod_dynamics::registry::ForceModelParams::EmpiricalPeriodic::coeffs: [qtty::dynamics::KmPerSecondsSquared; 6]
+pub siderust_pod_dynamics::registry::ForceModelParams::EmpiricalPeriodic::epoch_ref: siderust::time::JulianDate
+pub siderust_pod_dynamics::registry::ForceModelParams::EmpiricalPeriodic::harmonic: siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub siderust_pod_dynamics::registry::ForceModelParams::EmpiricalPeriodic::period: qtty::Second
+pub siderust_pod_dynamics::registry::ForceModelParams::Geopotential
+pub siderust_pod_dynamics::registry::ForceModelParams::Geopotential::degree: usize
+pub siderust_pod_dynamics::registry::ForceModelParams::Geopotential::order: usize
+pub siderust_pod_dynamics::registry::ForceModelParams::None
+pub siderust_pod_dynamics::registry::ForceModelParams::SrpCannonball
+pub siderust_pod_dynamics::registry::ForceModelParams::SrpCannonball::area_to_mass: qtty::dynamics::AreaToMass
+pub siderust_pod_dynamics::registry::ForceModelParams::SrpCannonball::cr: qtty::dynamics::SrpCoefficient
+pub siderust_pod_dynamics::registry::ForceModelParams::SrpCannonball::shadow: siderust::astro::dynamics::forces::srp::ShadowModel
+impl core::clone::Clone for siderust_pod_dynamics::registry::ForceModelParams
+pub fn siderust_pod_dynamics::registry::ForceModelParams::clone(&self) -> siderust_pod_dynamics::registry::ForceModelParams
+impl core::fmt::Debug for siderust_pod_dynamics::registry::ForceModelParams
+pub fn siderust_pod_dynamics::registry::ForceModelParams::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_dynamics::registry::ForceModelParams
+impl core::marker::Send for siderust_pod_dynamics::registry::ForceModelParams
+impl core::marker::Sync for siderust_pod_dynamics::registry::ForceModelParams
+impl core::marker::Unpin for siderust_pod_dynamics::registry::ForceModelParams
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::registry::ForceModelParams
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::registry::ForceModelParams
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::registry::ForceModelParams
+pub struct siderust_pod_dynamics::registry::ForceModelRegistry
+impl siderust_pod_dynamics::registry::ForceModelRegistry
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::build(&self, specs: &[siderust_pod_dynamics::registry::ForceModelSpec]) -> core::result::Result<siderust::astro::dynamics::forces::composite::CompositeForce, siderust_pod_dynamics::error::PodDynamicsError>
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::build_one(&self, spec: &siderust_pod_dynamics::registry::ForceModelSpec) -> core::result::Result<alloc::boxed::Box<dyn siderust::astro::dynamics::forces::traits::ForceModel>, siderust_pod_dynamics::error::PodDynamicsError>
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::is_registered(&self, name: &str) -> bool
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::names(&self) -> alloc::vec::Vec<&str>
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::new() -> Self
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::register(&mut self, f: alloc::boxed::Box<dyn siderust_pod_dynamics::registry::ForceModelFactory>)
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::with_builtins() -> Self
+impl core::default::Default for siderust_pod_dynamics::registry::ForceModelRegistry
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::default() -> Self
+impl core::marker::Freeze for siderust_pod_dynamics::registry::ForceModelRegistry
+impl core::marker::Send for siderust_pod_dynamics::registry::ForceModelRegistry
+impl core::marker::Sync for siderust_pod_dynamics::registry::ForceModelRegistry
+impl core::marker::Unpin for siderust_pod_dynamics::registry::ForceModelRegistry
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::registry::ForceModelRegistry
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::registry::ForceModelRegistry
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::registry::ForceModelRegistry
+pub struct siderust_pod_dynamics::registry::ForceModelSpec
+pub siderust_pod_dynamics::registry::ForceModelSpec::name: alloc::string::String
+pub siderust_pod_dynamics::registry::ForceModelSpec::params: siderust_pod_dynamics::registry::ForceModelParams
+impl siderust_pod_dynamics::registry::ForceModelSpec
+pub fn siderust_pod_dynamics::registry::ForceModelSpec::named(name: impl core::convert::Into<alloc::string::String>) -> Self
+pub fn siderust_pod_dynamics::registry::ForceModelSpec::with_params(name: impl core::convert::Into<alloc::string::String>, params: siderust_pod_dynamics::registry::ForceModelParams) -> Self
+impl core::clone::Clone for siderust_pod_dynamics::registry::ForceModelSpec
+pub fn siderust_pod_dynamics::registry::ForceModelSpec::clone(&self) -> siderust_pod_dynamics::registry::ForceModelSpec
+impl core::fmt::Debug for siderust_pod_dynamics::registry::ForceModelSpec
+pub fn siderust_pod_dynamics::registry::ForceModelSpec::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::marker::Send for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::marker::Sync for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::marker::Unpin for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::registry::ForceModelSpec
+pub trait siderust_pod_dynamics::registry::ForceModelFactory: core::marker::Send + core::marker::Sync
+pub fn siderust_pod_dynamics::registry::ForceModelFactory::build(&self, params: &siderust_pod_dynamics::registry::ForceModelParams) -> core::result::Result<alloc::boxed::Box<dyn siderust::astro::dynamics::forces::traits::ForceModel>, siderust_pod_dynamics::error::PodDynamicsError>
+pub fn siderust_pod_dynamics::registry::ForceModelFactory::name(&self) -> &'static str
+pub type siderust_pod_dynamics::registry::AtmosphereDensityProvider = (dyn siderust::astro::dynamics::atmosphere::DensityProvider + core::marker::Send + core::marker::Sync)
+pub mod siderust_pod_dynamics::thrust_arc
+pub struct siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub siderust_pod_dynamics::thrust_arc::ThrustArcConfig::estimate_delta_v: bool
+pub siderust_pod_dynamics::thrust_arc::ThrustArcConfig::estimate_thrust_scale: bool
+pub siderust_pod_dynamics::thrust_arc::ThrustArcConfig::id: alloc::string::String
+pub siderust_pod_dynamics::thrust_arc::ThrustArcConfig::start_seconds_tdb: f64
+pub siderust_pod_dynamics::thrust_arc::ThrustArcConfig::stop_seconds_tdb: f64
+impl siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub fn siderust_pod_dynamics::thrust_arc::ThrustArcConfig::parameters(&self) -> alloc::vec::Vec<siderust_pod_core::parameter::Parameter>
+impl core::clone::Clone for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub fn siderust_pod_dynamics::thrust_arc::ThrustArcConfig::clone(&self) -> siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::cmp::PartialEq for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub fn siderust_pod_dynamics::thrust_arc::ThrustArcConfig::eq(&self, other: &siderust_pod_dynamics::thrust_arc::ThrustArcConfig) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub fn siderust_pod_dynamics::thrust_arc::ThrustArcConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::Freeze for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::Send for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::Sync for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::Unpin for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub mod siderust_pod_dynamics::variational
+pub struct siderust_pod_dynamics::variational::ParamColumn(pub [f64; 6])
+impl siderust_pod_dynamics::variational::ParamColumn
+pub fn siderust_pod_dynamics::variational::ParamColumn::max_relative_difference(&self, other: &siderust_pod_dynamics::variational::ParamColumn) -> f64
+impl core::clone::Clone for siderust_pod_dynamics::variational::ParamColumn
+pub fn siderust_pod_dynamics::variational::ParamColumn::clone(&self) -> siderust_pod_dynamics::variational::ParamColumn
+impl core::cmp::PartialEq for siderust_pod_dynamics::variational::ParamColumn
+pub fn siderust_pod_dynamics::variational::ParamColumn::eq(&self, other: &siderust_pod_dynamics::variational::ParamColumn) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::variational::ParamColumn
+pub fn siderust_pod_dynamics::variational::ParamColumn::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::Freeze for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::Send for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::Sync for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::Unpin for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::variational::ParamColumn
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::variational::ParamColumn
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::variational::ParamColumn
+pub struct siderust_pod_dynamics::variational::ParamStmReport
+pub siderust_pod_dynamics::variational::ParamStmReport::coarse: siderust_pod_dynamics::variational::ParamColumn
+pub siderust_pod_dynamics::variational::ParamStmReport::max_rel_diff: f64
+pub siderust_pod_dynamics::variational::ParamStmReport::refined: siderust_pod_dynamics::variational::ParamColumn
+impl core::clone::Clone for siderust_pod_dynamics::variational::ParamStmReport
+pub fn siderust_pod_dynamics::variational::ParamStmReport::clone(&self) -> siderust_pod_dynamics::variational::ParamStmReport
+impl core::fmt::Debug for siderust_pod_dynamics::variational::ParamStmReport
+pub fn siderust_pod_dynamics::variational::ParamStmReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::Freeze for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::Send for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::Sync for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::Unpin for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::variational::ParamStmReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::variational::ParamStmReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::variational::ParamStmReport
+pub struct siderust_pod_dynamics::variational::PropagatedArc
+pub siderust_pod_dynamics::variational::PropagatedArc::steps: alloc::vec::Vec<(siderust::astro::dynamics::state::OrbitState, siderust::astro::dynamics::variational::propagator::StateTransitionMatrix<affn::frames::astro::GCRS>)>
+impl siderust_pod_dynamics::variational::PropagatedArc
+pub fn siderust_pod_dynamics::variational::PropagatedArc::final_state(&self) -> core::option::Option<&siderust::astro::dynamics::state::OrbitState>
+pub fn siderust_pod_dynamics::variational::PropagatedArc::final_stm(&self) -> core::option::Option<&siderust::astro::dynamics::variational::propagator::StateTransitionMatrix<affn::frames::astro::GCRS>>
+pub fn siderust_pod_dynamics::variational::PropagatedArc::is_empty(&self) -> bool
+pub fn siderust_pod_dynamics::variational::PropagatedArc::len(&self) -> usize
+impl core::clone::Clone for siderust_pod_dynamics::variational::PropagatedArc
+pub fn siderust_pod_dynamics::variational::PropagatedArc::clone(&self) -> siderust_pod_dynamics::variational::PropagatedArc
+impl core::fmt::Debug for siderust_pod_dynamics::variational::PropagatedArc
+pub fn siderust_pod_dynamics::variational::PropagatedArc::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_dynamics::variational::PropagatedArc
+impl core::marker::Send for siderust_pod_dynamics::variational::PropagatedArc
+impl core::marker::Sync for siderust_pod_dynamics::variational::PropagatedArc
+impl core::marker::Unpin for siderust_pod_dynamics::variational::PropagatedArc
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::variational::PropagatedArc
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::variational::PropagatedArc
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::variational::PropagatedArc
+pub struct siderust_pod_dynamics::variational::VariationalPropagator
+pub siderust_pod_dynamics::variational::VariationalPropagator::step: qtty::Second
+impl siderust_pod_dynamics::variational::VariationalPropagator
+pub fn siderust_pod_dynamics::variational::VariationalPropagator::propagate<FM>(&self, force: &FM, initial: siderust::astro::dynamics::state::OrbitState, n_steps: usize, ctx: &siderust::astro::dynamics::context::DynamicsContext) -> core::result::Result<siderust_pod_dynamics::variational::PropagatedArc, siderust_pod_dynamics::error::PodDynamicsError> where FM: siderust::astro::dynamics::forces::traits::ForceModel
+impl core::marker::Freeze for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::marker::Send for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::marker::Sync for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::marker::Unpin for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::variational::VariationalPropagator
+pub fn siderust_pod_dynamics::variational::param_partials_central_diff<I, FM, B>(integrator: &I, state: siderust::astro::dynamics::state::OrbitState, dt: qtty::Second, ctx: &siderust::astro::dynamics::context::DynamicsContext, p_nominal: f64, epsilon: f64, build_force: B) -> core::result::Result<siderust_pod_dynamics::variational::ParamColumn, siderust_pod_dynamics::error::PodDynamicsError> where I: siderust_dynamics::integrators::Integrator, FM: siderust::astro::dynamics::forces::traits::ForceModel, B: core::ops::function::FnMut(f64) -> FM
+#[non_exhaustive] pub enum siderust_pod_dynamics::ForceModelParams
+pub siderust_pod_dynamics::ForceModelParams::Custom(alloc::string::String)
+pub siderust_pod_dynamics::ForceModelParams::Drag
+pub siderust_pod_dynamics::ForceModelParams::Drag::area_to_mass: qtty::dynamics::AreaToMass
+pub siderust_pod_dynamics::ForceModelParams::Drag::cd: qtty::dynamics::DragCoefficient
+pub siderust_pod_dynamics::ForceModelParams::EmpiricalConstant
+pub siderust_pod_dynamics::ForceModelParams::EmpiricalConstant::normal: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::ForceModelParams::EmpiricalConstant::radial: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::ForceModelParams::EmpiricalConstant::transverse: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::ForceModelParams::EmpiricalPeriodic
+pub siderust_pod_dynamics::ForceModelParams::EmpiricalPeriodic::coeffs: [qtty::dynamics::KmPerSecondsSquared; 6]
+pub siderust_pod_dynamics::ForceModelParams::EmpiricalPeriodic::epoch_ref: siderust::time::JulianDate
+pub siderust_pod_dynamics::ForceModelParams::EmpiricalPeriodic::harmonic: siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub siderust_pod_dynamics::ForceModelParams::EmpiricalPeriodic::period: qtty::Second
+pub siderust_pod_dynamics::ForceModelParams::Geopotential
+pub siderust_pod_dynamics::ForceModelParams::Geopotential::degree: usize
+pub siderust_pod_dynamics::ForceModelParams::Geopotential::order: usize
+pub siderust_pod_dynamics::ForceModelParams::None
+pub siderust_pod_dynamics::ForceModelParams::SrpCannonball
+pub siderust_pod_dynamics::ForceModelParams::SrpCannonball::area_to_mass: qtty::dynamics::AreaToMass
+pub siderust_pod_dynamics::ForceModelParams::SrpCannonball::cr: qtty::dynamics::SrpCoefficient
+pub siderust_pod_dynamics::ForceModelParams::SrpCannonball::shadow: siderust::astro::dynamics::forces::srp::ShadowModel
+impl core::clone::Clone for siderust_pod_dynamics::registry::ForceModelParams
+pub fn siderust_pod_dynamics::registry::ForceModelParams::clone(&self) -> siderust_pod_dynamics::registry::ForceModelParams
+impl core::fmt::Debug for siderust_pod_dynamics::registry::ForceModelParams
+pub fn siderust_pod_dynamics::registry::ForceModelParams::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_dynamics::registry::ForceModelParams
+impl core::marker::Send for siderust_pod_dynamics::registry::ForceModelParams
+impl core::marker::Sync for siderust_pod_dynamics::registry::ForceModelParams
+impl core::marker::Unpin for siderust_pod_dynamics::registry::ForceModelParams
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::registry::ForceModelParams
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::registry::ForceModelParams
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::registry::ForceModelParams
+pub enum siderust_pod_dynamics::PeriodicHarmonic
+pub siderust_pod_dynamics::PeriodicHarmonic::OncePerRev
+pub siderust_pod_dynamics::PeriodicHarmonic::TwicePerRev
+impl siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub fn siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::multiplier(self) -> f64
+impl core::clone::Clone for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub fn siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::clone(&self) -> siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::cmp::Eq for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::cmp::PartialEq for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub fn siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::eq(&self, other: &siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub fn siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::Freeze for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::Send for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::Sync for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::Unpin for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub enum siderust_pod_dynamics::PodDynamicsError
+pub siderust_pod_dynamics::PodDynamicsError::Dynamics(siderust_dynamics::error::DynamicsError)
+pub siderust_pod_dynamics::PodDynamicsError::FeatureNotImplemented(&'static str)
+pub siderust_pod_dynamics::PodDynamicsError::InvalidParamStep(&'static str)
+pub siderust_pod_dynamics::PodDynamicsError::InvalidParameters
+pub siderust_pod_dynamics::PodDynamicsError::InvalidParameters::name: alloc::string::String
+pub siderust_pod_dynamics::PodDynamicsError::InvalidParameters::reason: &'static str
+pub siderust_pod_dynamics::PodDynamicsError::InvalidProcessNoise(&'static str)
+pub siderust_pod_dynamics::PodDynamicsError::UnknownModel(alloc::string::String)
+impl core::convert::From<siderust_dynamics::error::DynamicsError> for siderust_pod_dynamics::error::PodDynamicsError
+pub fn siderust_pod_dynamics::error::PodDynamicsError::from(source: siderust_dynamics::error::DynamicsError) -> Self
+impl core::error::Error for siderust_pod_dynamics::error::PodDynamicsError
+pub fn siderust_pod_dynamics::error::PodDynamicsError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for siderust_pod_dynamics::error::PodDynamicsError
+pub fn siderust_pod_dynamics::error::PodDynamicsError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_dynamics::error::PodDynamicsError
+pub fn siderust_pod_dynamics::error::PodDynamicsError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_dynamics::error::PodDynamicsError
+impl core::marker::Send for siderust_pod_dynamics::error::PodDynamicsError
+impl core::marker::Sync for siderust_pod_dynamics::error::PodDynamicsError
+impl core::marker::Unpin for siderust_pod_dynamics::error::PodDynamicsError
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::error::PodDynamicsError
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::error::PodDynamicsError
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::error::PodDynamicsError
+pub enum siderust_pod_dynamics::ProcessNoise
+pub siderust_pod_dynamics::ProcessNoise::None
+pub siderust_pod_dynamics::ProcessNoise::PiecewiseConstant
+pub siderust_pod_dynamics::ProcessNoise::PiecewiseConstant::intervals: alloc::vec::Vec<siderust_pod_dynamics::process_noise::PiecewiseSegment>
+pub siderust_pod_dynamics::ProcessNoise::WhiteNoise
+pub siderust_pod_dynamics::ProcessNoise::WhiteNoise::sigma_pos_m: f64
+pub siderust_pod_dynamics::ProcessNoise::WhiteNoise::sigma_vel_mps: f64
+impl siderust_pod_dynamics::process_noise::ProcessNoise
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::is_active(&self) -> bool
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::sigma_at(&self, elapsed: qtty::Second) -> (f64, f64)
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::ProcessNoise
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::clone(&self) -> siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::cmp::PartialEq for siderust_pod_dynamics::process_noise::ProcessNoise
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::eq(&self, other: &siderust_pod_dynamics::process_noise::ProcessNoise) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::ProcessNoise
+pub fn siderust_pod_dynamics::process_noise::ProcessNoise::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::Send for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::ProcessNoise
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::ProcessNoise
+pub struct siderust_pod_dynamics::AccelPartials
+pub siderust_pod_dynamics::AccelPartials::d_acc_d_pos: [[f64; 3]; 3]
+pub siderust_pod_dynamics::AccelPartials::d_acc_d_vel: [[f64; 3]; 3]
+impl siderust_pod_dynamics::forces::AccelPartials
+pub fn siderust_pod_dynamics::forces::AccelPartials::add_assign(&mut self, other: &siderust_pod_dynamics::forces::AccelPartials)
+pub fn siderust_pod_dynamics::forces::AccelPartials::zero() -> Self
+impl core::clone::Clone for siderust_pod_dynamics::forces::AccelPartials
+pub fn siderust_pod_dynamics::forces::AccelPartials::clone(&self) -> siderust_pod_dynamics::forces::AccelPartials
+impl core::cmp::PartialEq for siderust_pod_dynamics::forces::AccelPartials
+pub fn siderust_pod_dynamics::forces::AccelPartials::eq(&self, other: &siderust_pod_dynamics::forces::AccelPartials) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::forces::AccelPartials
+pub fn siderust_pod_dynamics::forces::AccelPartials::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::Freeze for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::Send for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::Sync for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::Unpin for siderust_pod_dynamics::forces::AccelPartials
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::AccelPartials
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::AccelPartials
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::AccelPartials
+pub struct siderust_pod_dynamics::Acceleration3(pub [f64; 3])
+impl siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::add_assign(&mut self, other: siderust_pod_dynamics::forces::Acceleration3)
+pub fn siderust_pod_dynamics::forces::Acceleration3::magnitude(&self) -> f64
+pub fn siderust_pod_dynamics::forces::Acceleration3::zero() -> Self
+impl core::clone::Clone for siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::clone(&self) -> siderust_pod_dynamics::forces::Acceleration3
+impl core::cmp::PartialEq for siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::eq(&self, other: &siderust_pod_dynamics::forces::Acceleration3) -> bool
+impl core::convert::From<affn::cartesian::vector::Vector<affn::frames::astro::GCRS, qtty_core::unit::Per<qtty_core::unit::Per<qtty_core::units::length::Kilometer, qtty_core::units::time::Second>, qtty_core::units::time::Second>>> for siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::from(a: siderust::astro::dynamics::state::Acceleration<affn::frames::astro::GCRS, siderust::astro::dynamics::state::AccelerationUnit>) -> Self
+impl core::fmt::Debug for siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::Acceleration3::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::Freeze for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::Send for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::Sync for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::Unpin for siderust_pod_dynamics::forces::Acceleration3
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::Acceleration3
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::Acceleration3
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::Acceleration3
+pub struct siderust_pod_dynamics::DragForce
+impl siderust_pod_dynamics::forces::DragForce
+pub fn siderust_pod_dynamics::forces::DragForce::area_to_mass(&self) -> qtty::dynamics::AreaToMass
+pub fn siderust_pod_dynamics::forces::DragForce::cd(&self) -> qtty::dynamics::DragCoefficient
+pub fn siderust_pod_dynamics::forces::DragForce::new(cd: qtty::dynamics::DragCoefficient, area_to_mass: qtty::dynamics::AreaToMass, atmosphere: alloc::sync::Arc<(dyn siderust::astro::dynamics::atmosphere::DensityProvider + core::marker::Send + core::marker::Sync)>) -> Self
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::DragForce
+pub fn siderust_pod_dynamics::forces::DragForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::DragForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::DragForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::DragForce::partials(&self, _state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::marker::Freeze for siderust_pod_dynamics::forces::DragForce
+impl core::marker::Send for siderust_pod_dynamics::forces::DragForce
+impl core::marker::Sync for siderust_pod_dynamics::forces::DragForce
+impl core::marker::Unpin for siderust_pod_dynamics::forces::DragForce
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::DragForce
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::DragForce
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::DragForce
+pub struct siderust_pod_dynamics::EmpiricalPeriodicAcceleration
+pub siderust_pod_dynamics::EmpiricalPeriodicAcceleration::epoch_ref: siderust::time::JulianDate
+pub siderust_pod_dynamics::EmpiricalPeriodicAcceleration::harmonic: siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic
+pub siderust_pod_dynamics::EmpiricalPeriodicAcceleration::n_cos: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::EmpiricalPeriodicAcceleration::n_sin: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::EmpiricalPeriodicAcceleration::period: qtty::Second
+pub siderust_pod_dynamics::EmpiricalPeriodicAcceleration::r_cos: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::EmpiricalPeriodicAcceleration::r_sin: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::EmpiricalPeriodicAcceleration::t_cos: qtty::dynamics::KmPerSecondsSquared
+pub siderust_pod_dynamics::EmpiricalPeriodicAcceleration::t_sin: qtty::dynamics::KmPerSecondsSquared
+impl siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub fn siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::new(harmonic: siderust_pod_dynamics::empirical_periodic::PeriodicHarmonic, epoch_ref: siderust::time::JulianDate, period: qtty::Second, r_cos: qtty::dynamics::KmPerSecondsSquared, r_sin: qtty::dynamics::KmPerSecondsSquared, t_cos: qtty::dynamics::KmPerSecondsSquared, t_sin: qtty::dynamics::KmPerSecondsSquared, n_cos: qtty::dynamics::KmPerSecondsSquared, n_sin: qtty::dynamics::KmPerSecondsSquared) -> Self
+impl core::clone::Clone for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub fn siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::clone(&self) -> siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::fmt::Debug for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub fn siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl siderust::astro::dynamics::forces::traits::ForceModel for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub fn siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration::acceleration(&self, s: &siderust::astro::dynamics::state::OrbitState, _ctx: &siderust::astro::dynamics::context::DynamicsContext) -> core::result::Result<siderust::astro::dynamics::state::Acceleration<affn::frames::astro::GCRS, siderust::astro::dynamics::state::AccelerationUnit>, siderust::astro::dynamics::errors::DynamicsError>
+impl core::marker::Freeze for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::marker::Send for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::marker::Sync for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::marker::Unpin for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::empirical_periodic::EmpiricalPeriodicAcceleration
+pub struct siderust_pod_dynamics::EvaluatingForceModelRegistry
+impl siderust_pod_dynamics::forces::ForceModelRegistry
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::is_empty(&self) -> bool
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::len(&self) -> usize
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::new() -> Self
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::push(self, model: alloc::boxed::Box<dyn siderust_pod_dynamics::forces::ForceModel>) -> Self
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::total_acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::total_partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::default::Default for siderust_pod_dynamics::forces::ForceModelRegistry
+pub fn siderust_pod_dynamics::forces::ForceModelRegistry::default() -> Self
+impl core::marker::Freeze for siderust_pod_dynamics::forces::ForceModelRegistry
+impl core::marker::Send for siderust_pod_dynamics::forces::ForceModelRegistry
+impl core::marker::Sync for siderust_pod_dynamics::forces::ForceModelRegistry
+impl core::marker::Unpin for siderust_pod_dynamics::forces::ForceModelRegistry
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::ForceModelRegistry
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::ForceModelRegistry
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::ForceModelRegistry
+pub struct siderust_pod_dynamics::ForceModelConfig
+pub siderust_pod_dynamics::ForceModelConfig::drag: core::option::Option<(qtty::dynamics::DragCoefficient, qtty::dynamics::AreaToMass)>
+pub siderust_pod_dynamics::ForceModelConfig::empirical_1cpr: core::option::Option<(siderust::time::JulianDate, qtty::Second, [qtty::dynamics::KmPerSecondsSquared; 6])>
+pub siderust_pod_dynamics::ForceModelConfig::empirical_2cpr: core::option::Option<(siderust::time::JulianDate, qtty::Second, [qtty::dynamics::KmPerSecondsSquared; 6])>
+pub siderust_pod_dynamics::ForceModelConfig::empirical_constant: core::option::Option<(qtty::dynamics::KmPerSecondsSquared, qtty::dynamics::KmPerSecondsSquared, qtty::dynamics::KmPerSecondsSquared)>
+pub siderust_pod_dynamics::ForceModelConfig::harmonics: core::option::Option<(usize, usize)>
+pub siderust_pod_dynamics::ForceModelConfig::j2: bool
+pub siderust_pod_dynamics::ForceModelConfig::relativity: bool
+pub siderust_pod_dynamics::ForceModelConfig::srp: core::option::Option<(qtty::dynamics::SrpCoefficient, qtty::dynamics::AreaToMass, siderust::astro::dynamics::forces::srp::ShadowModel)>
+pub siderust_pod_dynamics::ForceModelConfig::third_body_moon: bool
+pub siderust_pod_dynamics::ForceModelConfig::third_body_sun: bool
+pub siderust_pod_dynamics::ForceModelConfig::two_body: bool
+impl siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::to_specs(&self) -> alloc::vec::Vec<siderust_pod_dynamics::registry::ForceModelSpec>
+impl core::clone::Clone for siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::clone(&self) -> siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::cmp::PartialEq for siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::eq(&self, other: &siderust_pod_dynamics::force_config::ForceModelConfig) -> bool
+impl core::default::Default for siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::default() -> Self
+impl core::fmt::Debug for siderust_pod_dynamics::force_config::ForceModelConfig
+pub fn siderust_pod_dynamics::force_config::ForceModelConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::Freeze for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::Send for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::Sync for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::Unpin for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::force_config::ForceModelConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::force_config::ForceModelConfig
+pub struct siderust_pod_dynamics::ForceModelRegistry
+impl siderust_pod_dynamics::registry::ForceModelRegistry
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::build(&self, specs: &[siderust_pod_dynamics::registry::ForceModelSpec]) -> core::result::Result<siderust::astro::dynamics::forces::composite::CompositeForce, siderust_pod_dynamics::error::PodDynamicsError>
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::build_one(&self, spec: &siderust_pod_dynamics::registry::ForceModelSpec) -> core::result::Result<alloc::boxed::Box<dyn siderust::astro::dynamics::forces::traits::ForceModel>, siderust_pod_dynamics::error::PodDynamicsError>
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::is_registered(&self, name: &str) -> bool
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::names(&self) -> alloc::vec::Vec<&str>
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::new() -> Self
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::register(&mut self, f: alloc::boxed::Box<dyn siderust_pod_dynamics::registry::ForceModelFactory>)
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::with_builtins() -> Self
+impl core::default::Default for siderust_pod_dynamics::registry::ForceModelRegistry
+pub fn siderust_pod_dynamics::registry::ForceModelRegistry::default() -> Self
+impl core::marker::Freeze for siderust_pod_dynamics::registry::ForceModelRegistry
+impl core::marker::Send for siderust_pod_dynamics::registry::ForceModelRegistry
+impl core::marker::Sync for siderust_pod_dynamics::registry::ForceModelRegistry
+impl core::marker::Unpin for siderust_pod_dynamics::registry::ForceModelRegistry
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::registry::ForceModelRegistry
+impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::registry::ForceModelRegistry
+impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::registry::ForceModelRegistry
+pub struct siderust_pod_dynamics::ForceModelSpec
+pub siderust_pod_dynamics::ForceModelSpec::name: alloc::string::String
+pub siderust_pod_dynamics::ForceModelSpec::params: siderust_pod_dynamics::registry::ForceModelParams
+impl siderust_pod_dynamics::registry::ForceModelSpec
+pub fn siderust_pod_dynamics::registry::ForceModelSpec::named(name: impl core::convert::Into<alloc::string::String>) -> Self
+pub fn siderust_pod_dynamics::registry::ForceModelSpec::with_params(name: impl core::convert::Into<alloc::string::String>, params: siderust_pod_dynamics::registry::ForceModelParams) -> Self
+impl core::clone::Clone for siderust_pod_dynamics::registry::ForceModelSpec
+pub fn siderust_pod_dynamics::registry::ForceModelSpec::clone(&self) -> siderust_pod_dynamics::registry::ForceModelSpec
+impl core::fmt::Debug for siderust_pod_dynamics::registry::ForceModelSpec
+pub fn siderust_pod_dynamics::registry::ForceModelSpec::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::marker::Send for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::marker::Sync for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::marker::Unpin for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::registry::ForceModelSpec
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::registry::ForceModelSpec
+pub struct siderust_pod_dynamics::GaussMarkovParams
+pub siderust_pod_dynamics::GaussMarkovParams::sigma: f64
+pub siderust_pod_dynamics::GaussMarkovParams::tau: qtty::Second
+impl siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub fn siderust_pod_dynamics::process_noise::GaussMarkovParams::variance_after(&self, dt: qtty::Second) -> core::result::Result<f64, siderust_pod_dynamics::error::PodDynamicsError>
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub fn siderust_pod_dynamics::process_noise::GaussMarkovParams::clone(&self) -> siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::cmp::PartialEq for siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub fn siderust_pod_dynamics::process_noise::GaussMarkovParams::eq(&self, other: &siderust_pod_dynamics::process_noise::GaussMarkovParams) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub fn siderust_pod_dynamics::process_noise::GaussMarkovParams::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::Send for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::GaussMarkovParams
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::GaussMarkovParams
+pub struct siderust_pod_dynamics::J2PerturbationForce
+impl siderust_pod_dynamics::forces::J2PerturbationForce
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::earth() -> Self
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::J2PerturbationForce
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::marker::Freeze for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::marker::Send for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::marker::Sync for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::marker::Unpin for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::J2PerturbationForce
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::J2PerturbationForce
+pub struct siderust_pod_dynamics::ParamColumn(pub [f64; 6])
+impl siderust_pod_dynamics::variational::ParamColumn
+pub fn siderust_pod_dynamics::variational::ParamColumn::max_relative_difference(&self, other: &siderust_pod_dynamics::variational::ParamColumn) -> f64
+impl core::clone::Clone for siderust_pod_dynamics::variational::ParamColumn
+pub fn siderust_pod_dynamics::variational::ParamColumn::clone(&self) -> siderust_pod_dynamics::variational::ParamColumn
+impl core::cmp::PartialEq for siderust_pod_dynamics::variational::ParamColumn
+pub fn siderust_pod_dynamics::variational::ParamColumn::eq(&self, other: &siderust_pod_dynamics::variational::ParamColumn) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::variational::ParamColumn
+pub fn siderust_pod_dynamics::variational::ParamColumn::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::Freeze for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::Send for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::Sync for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::Unpin for siderust_pod_dynamics::variational::ParamColumn
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::variational::ParamColumn
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::variational::ParamColumn
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::variational::ParamColumn
+pub struct siderust_pod_dynamics::ParamStmReport
+pub siderust_pod_dynamics::ParamStmReport::coarse: siderust_pod_dynamics::variational::ParamColumn
+pub siderust_pod_dynamics::ParamStmReport::max_rel_diff: f64
+pub siderust_pod_dynamics::ParamStmReport::refined: siderust_pod_dynamics::variational::ParamColumn
+impl core::clone::Clone for siderust_pod_dynamics::variational::ParamStmReport
+pub fn siderust_pod_dynamics::variational::ParamStmReport::clone(&self) -> siderust_pod_dynamics::variational::ParamStmReport
+impl core::fmt::Debug for siderust_pod_dynamics::variational::ParamStmReport
+pub fn siderust_pod_dynamics::variational::ParamStmReport::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::Freeze for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::Send for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::Sync for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::Unpin for siderust_pod_dynamics::variational::ParamStmReport
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::variational::ParamStmReport
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::variational::ParamStmReport
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::variational::ParamStmReport
+pub struct siderust_pod_dynamics::PiecewiseSegment
+pub siderust_pod_dynamics::PiecewiseSegment::duration: qtty::Second
+pub siderust_pod_dynamics::PiecewiseSegment::sigma_pos_m: f64
+pub siderust_pod_dynamics::PiecewiseSegment::sigma_vel_mps: f64
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::PiecewiseSegment
+pub fn siderust_pod_dynamics::process_noise::PiecewiseSegment::clone(&self) -> siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::cmp::PartialEq for siderust_pod_dynamics::process_noise::PiecewiseSegment
+pub fn siderust_pod_dynamics::process_noise::PiecewiseSegment::eq(&self, other: &siderust_pod_dynamics::process_noise::PiecewiseSegment) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::PiecewiseSegment
+pub fn siderust_pod_dynamics::process_noise::PiecewiseSegment::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::Send for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::PiecewiseSegment
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::PiecewiseSegment
+pub struct siderust_pod_dynamics::ProcessNoiseModel
+pub siderust_pod_dynamics::ProcessNoiseModel::drag_scale: core::option::Option<siderust_pod_dynamics::process_noise::GaussMarkovParams>
+pub siderust_pod_dynamics::ProcessNoiseModel::empirical_white: core::option::Option<[qtty::dynamics::KmPerSecondsSquared; 3]>
+pub siderust_pod_dynamics::ProcessNoiseModel::position_velocity: siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub siderust_pod_dynamics::ProcessNoiseModel::srp_scale: core::option::Option<siderust_pod_dynamics::process_noise::GaussMarkovParams>
+impl siderust_pod_dynamics::process_noise::ProcessNoiseModel
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::dim(&self) -> usize
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::is_psd(&self, dt: qtty::Second) -> core::result::Result<bool, siderust_pod_dynamics::error::PodDynamicsError>
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::q_matrix(&self, dt: qtty::Second) -> core::result::Result<alloc::vec::Vec<alloc::vec::Vec<f64>>, siderust_pod_dynamics::error::PodDynamicsError>
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::clone(&self) -> siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+pub fn siderust_pod_dynamics::process_noise::ProcessNoiseModel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::Send for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::ProcessNoiseModel
+pub struct siderust_pod_dynamics::PropagatedArc
+pub siderust_pod_dynamics::PropagatedArc::steps: alloc::vec::Vec<(siderust::astro::dynamics::state::OrbitState, siderust::astro::dynamics::variational::propagator::StateTransitionMatrix<affn::frames::astro::GCRS>)>
+impl siderust_pod_dynamics::variational::PropagatedArc
+pub fn siderust_pod_dynamics::variational::PropagatedArc::final_state(&self) -> core::option::Option<&siderust::astro::dynamics::state::OrbitState>
+pub fn siderust_pod_dynamics::variational::PropagatedArc::final_stm(&self) -> core::option::Option<&siderust::astro::dynamics::variational::propagator::StateTransitionMatrix<affn::frames::astro::GCRS>>
+pub fn siderust_pod_dynamics::variational::PropagatedArc::is_empty(&self) -> bool
+pub fn siderust_pod_dynamics::variational::PropagatedArc::len(&self) -> usize
+impl core::clone::Clone for siderust_pod_dynamics::variational::PropagatedArc
+pub fn siderust_pod_dynamics::variational::PropagatedArc::clone(&self) -> siderust_pod_dynamics::variational::PropagatedArc
+impl core::fmt::Debug for siderust_pod_dynamics::variational::PropagatedArc
+pub fn siderust_pod_dynamics::variational::PropagatedArc::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_dynamics::variational::PropagatedArc
+impl core::marker::Send for siderust_pod_dynamics::variational::PropagatedArc
+impl core::marker::Sync for siderust_pod_dynamics::variational::PropagatedArc
+impl core::marker::Unpin for siderust_pod_dynamics::variational::PropagatedArc
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::variational::PropagatedArc
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::variational::PropagatedArc
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::variational::PropagatedArc
+pub struct siderust_pod_dynamics::SolarRadiationPressureForce
+impl siderust_pod_dynamics::forces::SolarRadiationPressureForce
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::area_to_mass(&self) -> qtty::dynamics::AreaToMass
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::cr(&self) -> qtty::dynamics::SrpCoefficient
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::new(cr: qtty::dynamics::SrpCoefficient, area_to_mass: qtty::dynamics::AreaToMass) -> Self
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::partials(&self, _state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::marker::Freeze for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::marker::Send for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::marker::Sync for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::marker::Unpin for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+pub struct siderust_pod_dynamics::ThrustArcConfig
+pub siderust_pod_dynamics::ThrustArcConfig::estimate_delta_v: bool
+pub siderust_pod_dynamics::ThrustArcConfig::estimate_thrust_scale: bool
+pub siderust_pod_dynamics::ThrustArcConfig::id: alloc::string::String
+pub siderust_pod_dynamics::ThrustArcConfig::start_seconds_tdb: f64
+pub siderust_pod_dynamics::ThrustArcConfig::stop_seconds_tdb: f64
+impl siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub fn siderust_pod_dynamics::thrust_arc::ThrustArcConfig::parameters(&self) -> alloc::vec::Vec<siderust_pod_core::parameter::Parameter>
+impl core::clone::Clone for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub fn siderust_pod_dynamics::thrust_arc::ThrustArcConfig::clone(&self) -> siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::cmp::PartialEq for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub fn siderust_pod_dynamics::thrust_arc::ThrustArcConfig::eq(&self, other: &siderust_pod_dynamics::thrust_arc::ThrustArcConfig) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub fn siderust_pod_dynamics::thrust_arc::ThrustArcConfig::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::Freeze for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::Send for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::Sync for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::Unpin for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::thrust_arc::ThrustArcConfig
+pub struct siderust_pod_dynamics::TwoBodyForce
+impl siderust_pod_dynamics::forces::TwoBodyForce
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::earth() -> Self
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::TwoBodyForce
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl core::marker::Freeze for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::marker::Send for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::marker::Sync for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::marker::Unpin for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::forces::TwoBodyForce
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::forces::TwoBodyForce
+pub struct siderust_pod_dynamics::VariationalPropagator
+pub siderust_pod_dynamics::VariationalPropagator::step: qtty::Second
+impl siderust_pod_dynamics::variational::VariationalPropagator
+pub fn siderust_pod_dynamics::variational::VariationalPropagator::propagate<FM>(&self, force: &FM, initial: siderust::astro::dynamics::state::OrbitState, n_steps: usize, ctx: &siderust::astro::dynamics::context::DynamicsContext) -> core::result::Result<siderust_pod_dynamics::variational::PropagatedArc, siderust_pod_dynamics::error::PodDynamicsError> where FM: siderust::astro::dynamics::forces::traits::ForceModel
+impl core::marker::Freeze for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::marker::Send for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::marker::Sync for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::marker::Unpin for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::variational::VariationalPropagator
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::variational::VariationalPropagator
+pub struct siderust_pod_dynamics::WhiteAccelPsd(pub [f64; 3])
+impl siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub fn siderust_pod_dynamics::process_noise::WhiteAccelPsd::isotropic(sigma: qtty::dynamics::KmPerSecondsSquared) -> Self
+impl core::clone::Clone for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub fn siderust_pod_dynamics::process_noise::WhiteAccelPsd::clone(&self) -> siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::cmp::PartialEq for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub fn siderust_pod_dynamics::process_noise::WhiteAccelPsd::eq(&self, other: &siderust_pod_dynamics::process_noise::WhiteAccelPsd) -> bool
+impl core::fmt::Debug for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub fn siderust_pod_dynamics::process_noise::WhiteAccelPsd::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::StructuralPartialEq for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::Freeze for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::Send for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::Sync for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::Unpin for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::marker::UnsafeUnpin for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_dynamics::process_noise::WhiteAccelPsd
+pub trait siderust_pod_dynamics::ForceModel: core::marker::Send + core::marker::Sync
+pub fn siderust_pod_dynamics::ForceModel::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::ForceModel::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::ForceModel::name(&self) -> &str
+pub fn siderust_pod_dynamics::ForceModel::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::DragForce
+pub fn siderust_pod_dynamics::forces::DragForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::DragForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::DragForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::DragForce::partials(&self, _state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::J2PerturbationForce
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::J2PerturbationForce::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::SolarRadiationPressureForce
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::SolarRadiationPressureForce::partials(&self, _state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+impl siderust_pod_dynamics::forces::ForceModel for siderust_pod_dynamics::forces::TwoBodyForce
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::acceleration(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> siderust_pod_dynamics::forces::Acceleration3
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::is_variational(&self) -> bool
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::name(&self) -> &str
+pub fn siderust_pod_dynamics::forces::TwoBodyForce::partials(&self, state: &siderust_pod_dynamics::forces::CartesianState, _t: siderust_pod_dynamics::forces::Epoch) -> core::option::Option<siderust_pod_dynamics::forces::AccelPartials>
+pub trait siderust_pod_dynamics::ForceModelFactory: core::marker::Send + core::marker::Sync
+pub fn siderust_pod_dynamics::ForceModelFactory::build(&self, params: &siderust_pod_dynamics::registry::ForceModelParams) -> core::result::Result<alloc::boxed::Box<dyn siderust::astro::dynamics::forces::traits::ForceModel>, siderust_pod_dynamics::error::PodDynamicsError>
+pub fn siderust_pod_dynamics::ForceModelFactory::name(&self) -> &'static str
+pub fn siderust_pod_dynamics::param_partials_central_diff<I, FM, B>(integrator: &I, state: siderust::astro::dynamics::state::OrbitState, dt: qtty::Second, ctx: &siderust::astro::dynamics::context::DynamicsContext, p_nominal: f64, epsilon: f64, build_force: B) -> core::result::Result<siderust_pod_dynamics::variational::ParamColumn, siderust_pod_dynamics::error::PodDynamicsError> where I: siderust_dynamics::integrators::Integrator, FM: siderust::astro::dynamics::forces::traits::ForceModel, B: core::ops::function::FnMut(f64) -> FM
+pub fn siderust_pod_dynamics::propagate_orbit<I, F>(integrator: &I, force: &F, state: siderust::astro::dynamics::state::OrbitState, dt: qtty::Second, ctx: &siderust::astro::dynamics::context::DynamicsContext) -> core::result::Result<siderust::astro::dynamics::state::OrbitState, siderust_pod_dynamics::error::PodDynamicsError> where I: siderust_dynamics::integrators::Integrator, F: siderust::astro::dynamics::forces::traits::ForceModel
+pub fn siderust_pod_dynamics::propagate_spacecraft<I, F>(integrator: &I, force: &F, state: siderust::astro::dynamics::state::SpacecraftState, dt: qtty::Second, ctx: &siderust::astro::dynamics::context::DynamicsContext) -> core::result::Result<siderust::astro::dynamics::state::SpacecraftState, siderust_pod_dynamics::error::PodDynamicsError> where I: siderust_dynamics::integrators::Integrator, F: siderust::astro::dynamics::forces::traits::ForceModel
+pub type siderust_pod_dynamics::CartesianState = siderust::astro::dynamics::state::OrbitState<siderust::coordinates::centers::Geocentric, affn::frames::astro::GCRS>
+pub type siderust_pod_dynamics::Epoch = siderust::time::JulianDate

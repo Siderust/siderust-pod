@@ -22,15 +22,62 @@ impl core::marker::UnsafeUnpin for siderust_pod_io::antex::AntexNeu
 impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::antex::AntexNeu
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::antex::AntexNeu
 pub fn siderust_pod_io::antex::read_antex<R: std::io::Read>(rdr: R) -> core::result::Result<siderust_pod_io::antex::AntexCatalog, siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::antex::write_antex<W: std::io::Write>(w: &mut W, catalog: &siderust_pod_io::antex::AntexCatalog) -> core::result::Result<(), siderust_pod_io::PodIoError>
 pub type siderust_pod_io::antex::AntennaPco = std::collections::hash::map::HashMap<alloc::string::String, siderust_pod_io::antex::Pco>
 pub type siderust_pod_io::antex::AntexCatalog = std::collections::hash::map::HashMap<alloc::string::String, siderust_pod_io::antex::AntennaPco>
 pub type siderust_pod_io::antex::Pco = affn::cartesian::vector::Displacement<siderust_pod_io::antex::AntexNeu, qtty_core::units::length::Millimeter>
 pub mod siderust_pod_io::cpf
+pub struct siderust_pod_io::cpf::CpfEphemeris
+pub siderust_pod_io::cpf::CpfEphemeris::entries: alloc::vec::Vec<siderust_pod_io::cpf::CpfEphemerisEntry>
+impl siderust_pod_io::cpf::CpfEphemeris
+pub fn siderust_pod_io::cpf::CpfEphemeris::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = &siderust_pod_io::cpf::CpfEphemerisEntry>
+impl core::clone::Clone for siderust_pod_io::cpf::CpfEphemeris
+pub fn siderust_pod_io::cpf::CpfEphemeris::clone(&self) -> siderust_pod_io::cpf::CpfEphemeris
+impl core::cmp::PartialEq for siderust_pod_io::cpf::CpfEphemeris
+pub fn siderust_pod_io::cpf::CpfEphemeris::eq(&self, other: &siderust_pod_io::cpf::CpfEphemeris) -> bool
+impl core::default::Default for siderust_pod_io::cpf::CpfEphemeris
+pub fn siderust_pod_io::cpf::CpfEphemeris::default() -> siderust_pod_io::cpf::CpfEphemeris
+impl core::fmt::Debug for siderust_pod_io::cpf::CpfEphemeris
+pub fn siderust_pod_io::cpf::CpfEphemeris::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_io::cpf::CpfEphemeris
+impl core::ops::index::Index<usize> for siderust_pod_io::cpf::CpfEphemeris
+pub type siderust_pod_io::cpf::CpfEphemeris::Output = siderust_pod_io::cpf::CpfEphemerisEntry
+pub fn siderust_pod_io::cpf::CpfEphemeris::index(&self, i: usize) -> &siderust_pod_io::cpf::CpfEphemerisEntry
+impl core::marker::Freeze for siderust_pod_io::cpf::CpfEphemeris
+impl core::marker::Send for siderust_pod_io::cpf::CpfEphemeris
+impl core::marker::Sync for siderust_pod_io::cpf::CpfEphemeris
+impl core::marker::Unpin for siderust_pod_io::cpf::CpfEphemeris
+impl core::marker::UnsafeUnpin for siderust_pod_io::cpf::CpfEphemeris
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::cpf::CpfEphemeris
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::cpf::CpfEphemeris
+pub struct siderust_pod_io::cpf::CpfEphemerisEntry
+pub siderust_pod_io::cpf::CpfEphemerisEntry::epoch: tempoch_core::time::Time<tempoch_core::scale::UTC>
+pub siderust_pod_io::cpf::CpfEphemerisEntry::position: affn::cartesian::position::Position<siderust_pod_io::cpf::GeocentricCenter, affn::frames::astro::ITRF, qtty_core::units::length::Kilometer>
+impl core::clone::Clone for siderust_pod_io::cpf::CpfEphemerisEntry
+pub fn siderust_pod_io::cpf::CpfEphemerisEntry::clone(&self) -> siderust_pod_io::cpf::CpfEphemerisEntry
+impl core::cmp::PartialEq for siderust_pod_io::cpf::CpfEphemerisEntry
+pub fn siderust_pod_io::cpf::CpfEphemerisEntry::eq(&self, other: &siderust_pod_io::cpf::CpfEphemerisEntry) -> bool
+impl core::fmt::Debug for siderust_pod_io::cpf::CpfEphemerisEntry
+pub fn siderust_pod_io::cpf::CpfEphemerisEntry::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_io::cpf::CpfEphemerisEntry
+impl core::marker::Freeze for siderust_pod_io::cpf::CpfEphemerisEntry
+impl core::marker::Send for siderust_pod_io::cpf::CpfEphemerisEntry
+impl core::marker::Sync for siderust_pod_io::cpf::CpfEphemerisEntry
+impl core::marker::Unpin for siderust_pod_io::cpf::CpfEphemerisEntry
+impl core::marker::UnsafeUnpin for siderust_pod_io::cpf::CpfEphemerisEntry
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::cpf::CpfEphemerisEntry
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::cpf::CpfEphemerisEntry
 pub struct siderust_pod_io::cpf::CpfFile
+pub siderust_pod_io::cpf::CpfFile::cospar_id: alloc::string::String
+pub siderust_pod_io::cpf::CpfFile::ephemeris: siderust_pod_io::cpf::CpfEphemeris
+pub siderust_pod_io::cpf::CpfFile::norad: alloc::string::String
+pub siderust_pod_io::cpf::CpfFile::parse_mode: siderust_pod_io::ParseMode
 pub siderust_pod_io::cpf::CpfFile::positions: alloc::vec::Vec<siderust_pod_io::cpf::CpfPosition>
 pub siderust_pod_io::cpf::CpfFile::reference_frame: alloc::string::String
+pub siderust_pod_io::cpf::CpfFile::sic: i32
 pub siderust_pod_io::cpf::CpfFile::source: alloc::string::String
 pub siderust_pod_io::cpf::CpfFile::target_name: alloc::string::String
+pub siderust_pod_io::cpf::CpfFile::time_step_s: f64
 pub siderust_pod_io::cpf::CpfFile::version: alloc::string::String
 impl core::clone::Clone for siderust_pod_io::cpf::CpfFile
 pub fn siderust_pod_io::cpf::CpfFile::clone(&self) -> siderust_pod_io::cpf::CpfFile
@@ -60,17 +107,47 @@ impl core::marker::Unpin for siderust_pod_io::cpf::CpfPosition
 impl core::marker::UnsafeUnpin for siderust_pod_io::cpf::CpfPosition
 impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::cpf::CpfPosition
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::cpf::CpfPosition
+pub struct siderust_pod_io::cpf::GeocentricCenter
+impl affn::centers::AffineCenter for siderust_pod_io::cpf::GeocentricCenter
+impl affn::centers::ReferenceCenter for siderust_pod_io::cpf::GeocentricCenter
+pub type siderust_pod_io::cpf::GeocentricCenter::Params = ()
+pub fn siderust_pod_io::cpf::GeocentricCenter::center_name() -> &'static str
+impl core::clone::Clone for siderust_pod_io::cpf::GeocentricCenter
+pub fn siderust_pod_io::cpf::GeocentricCenter::clone(&self) -> siderust_pod_io::cpf::GeocentricCenter
+impl core::cmp::Eq for siderust_pod_io::cpf::GeocentricCenter
+impl core::cmp::PartialEq for siderust_pod_io::cpf::GeocentricCenter
+pub fn siderust_pod_io::cpf::GeocentricCenter::eq(&self, other: &siderust_pod_io::cpf::GeocentricCenter) -> bool
+impl core::default::Default for siderust_pod_io::cpf::GeocentricCenter
+pub fn siderust_pod_io::cpf::GeocentricCenter::default() -> siderust_pod_io::cpf::GeocentricCenter
+impl core::fmt::Debug for siderust_pod_io::cpf::GeocentricCenter
+pub fn siderust_pod_io::cpf::GeocentricCenter::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_io::cpf::GeocentricCenter
+impl core::marker::StructuralPartialEq for siderust_pod_io::cpf::GeocentricCenter
+impl core::marker::Freeze for siderust_pod_io::cpf::GeocentricCenter
+impl core::marker::Send for siderust_pod_io::cpf::GeocentricCenter
+impl core::marker::Sync for siderust_pod_io::cpf::GeocentricCenter
+impl core::marker::Unpin for siderust_pod_io::cpf::GeocentricCenter
+impl core::marker::UnsafeUnpin for siderust_pod_io::cpf::GeocentricCenter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::cpf::GeocentricCenter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::cpf::GeocentricCenter
 pub fn siderust_pod_io::cpf::parse_cpf(text: &str) -> core::result::Result<siderust_pod_io::cpf::CpfFile, siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::cpf::parse_cpf_with_mode(text: &str, mode: siderust_pod_io::ParseMode) -> core::result::Result<siderust_pod_io::cpf::CpfFile, siderust_pod_io::PodIoError>
 pub fn siderust_pod_io::cpf::read_cpf<P: core::convert::AsRef<std::path::Path>>(path: P) -> core::result::Result<siderust_pod_io::cpf::CpfFile, siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::cpf::write_cpf<W: std::io::Write>(f: &siderust_pod_io::cpf::CpfFile, w: &mut W) -> core::result::Result<(), siderust_pod_io::PodIoError>
 pub mod siderust_pod_io::crd
 pub struct siderust_pod_io::crd::CrdFile
+pub siderust_pod_io::crd::CrdFile::format_version: alloc::string::String
+pub siderust_pod_io::crd::CrdFile::normal_points: alloc::vec::Vec<siderust_pod_io::crd::NormalPoint>
+pub siderust_pod_io::crd::CrdFile::parse_mode: siderust_pod_io::ParseMode
 pub siderust_pod_io::crd::CrdFile::ranges: alloc::vec::Vec<siderust_pod_io::crd::CrdRange>
 pub siderust_pod_io::crd::CrdFile::satellite_name: alloc::string::String
 pub siderust_pod_io::crd::CrdFile::satellite_norad: alloc::string::String
 pub siderust_pod_io::crd::CrdFile::satellite_sic: i32
 pub siderust_pod_io::crd::CrdFile::session_date: core::option::Option<tempoch_core::time::Time<tempoch_core::scale::UTC>>
+pub siderust_pod_io::crd::CrdFile::station: siderust_pod_io::crd::CrdStation
 pub siderust_pod_io::crd::CrdFile::station_cdp_pad: i32
 pub siderust_pod_io::crd::CrdFile::station_name: alloc::string::String
+pub siderust_pod_io::crd::CrdFile::target: siderust_pod_io::crd::CrdTarget
 impl core::clone::Clone for siderust_pod_io::crd::CrdFile
 pub fn siderust_pod_io::crd::CrdFile::clone(&self) -> siderust_pod_io::crd::CrdFile
 impl core::default::Default for siderust_pod_io::crd::CrdFile
@@ -100,11 +177,81 @@ impl core::marker::Unpin for siderust_pod_io::crd::CrdRange
 impl core::marker::UnsafeUnpin for siderust_pod_io::crd::CrdRange
 impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::crd::CrdRange
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::crd::CrdRange
+pub struct siderust_pod_io::crd::CrdStation
+pub siderust_pod_io::crd::CrdStation::cdp_pad: i32
+pub siderust_pod_io::crd::CrdStation::name: alloc::string::String
+pub siderust_pod_io::crd::CrdStation::occ_no: i32
+pub siderust_pod_io::crd::CrdStation::sys_no: i32
+pub siderust_pod_io::crd::CrdStation::time_zone: i32
+impl core::clone::Clone for siderust_pod_io::crd::CrdStation
+pub fn siderust_pod_io::crd::CrdStation::clone(&self) -> siderust_pod_io::crd::CrdStation
+impl core::cmp::PartialEq for siderust_pod_io::crd::CrdStation
+pub fn siderust_pod_io::crd::CrdStation::eq(&self, other: &siderust_pod_io::crd::CrdStation) -> bool
+impl core::default::Default for siderust_pod_io::crd::CrdStation
+pub fn siderust_pod_io::crd::CrdStation::default() -> siderust_pod_io::crd::CrdStation
+impl core::fmt::Debug for siderust_pod_io::crd::CrdStation
+pub fn siderust_pod_io::crd::CrdStation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_io::crd::CrdStation
+impl core::marker::Freeze for siderust_pod_io::crd::CrdStation
+impl core::marker::Send for siderust_pod_io::crd::CrdStation
+impl core::marker::Sync for siderust_pod_io::crd::CrdStation
+impl core::marker::Unpin for siderust_pod_io::crd::CrdStation
+impl core::marker::UnsafeUnpin for siderust_pod_io::crd::CrdStation
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::crd::CrdStation
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::crd::CrdStation
+pub struct siderust_pod_io::crd::CrdTarget
+pub siderust_pod_io::crd::CrdTarget::epoch_id: i32
+pub siderust_pod_io::crd::CrdTarget::name: alloc::string::String
+pub siderust_pod_io::crd::CrdTarget::norad: alloc::string::String
+pub siderust_pod_io::crd::CrdTarget::sc_flag: i32
+pub siderust_pod_io::crd::CrdTarget::sic: i32
+impl core::clone::Clone for siderust_pod_io::crd::CrdTarget
+pub fn siderust_pod_io::crd::CrdTarget::clone(&self) -> siderust_pod_io::crd::CrdTarget
+impl core::cmp::PartialEq for siderust_pod_io::crd::CrdTarget
+pub fn siderust_pod_io::crd::CrdTarget::eq(&self, other: &siderust_pod_io::crd::CrdTarget) -> bool
+impl core::default::Default for siderust_pod_io::crd::CrdTarget
+pub fn siderust_pod_io::crd::CrdTarget::default() -> siderust_pod_io::crd::CrdTarget
+impl core::fmt::Debug for siderust_pod_io::crd::CrdTarget
+pub fn siderust_pod_io::crd::CrdTarget::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_io::crd::CrdTarget
+impl core::marker::Freeze for siderust_pod_io::crd::CrdTarget
+impl core::marker::Send for siderust_pod_io::crd::CrdTarget
+impl core::marker::Sync for siderust_pod_io::crd::CrdTarget
+impl core::marker::Unpin for siderust_pod_io::crd::CrdTarget
+impl core::marker::UnsafeUnpin for siderust_pod_io::crd::CrdTarget
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::crd::CrdTarget
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::crd::CrdTarget
+pub struct siderust_pod_io::crd::NormalPoint
+pub siderust_pod_io::crd::NormalPoint::bin_rms_m: core::option::Option<qtty_core::units::length::Meters>
+pub siderust_pod_io::crd::NormalPoint::bin_size_s: core::option::Option<qtty_core::units::time::Seconds>
+pub siderust_pod_io::crd::NormalPoint::data_quality: u8
+pub siderust_pod_io::crd::NormalPoint::epoch: core::option::Option<tempoch_core::time::Time<tempoch_core::scale::UTC>>
+pub siderust_pod_io::crd::NormalPoint::epoch_event: u8
+pub siderust_pod_io::crd::NormalPoint::filter_flag: u8
+pub siderust_pod_io::crd::NormalPoint::format_flag: u8
+pub siderust_pod_io::crd::NormalPoint::num_raws: core::option::Option<u32>
+pub siderust_pod_io::crd::NormalPoint::range_m: qtty_core::units::length::Meters
+pub siderust_pod_io::crd::NormalPoint::return_rate: core::option::Option<f64>
+pub siderust_pod_io::crd::NormalPoint::seconds_of_day: qtty_core::units::time::Seconds
+pub siderust_pod_io::crd::NormalPoint::system_config_id: alloc::string::String
+pub siderust_pod_io::crd::NormalPoint::time_of_flight: qtty_core::units::time::Seconds
+impl core::clone::Clone for siderust_pod_io::crd::NormalPoint
+pub fn siderust_pod_io::crd::NormalPoint::clone(&self) -> siderust_pod_io::crd::NormalPoint
+impl core::fmt::Debug for siderust_pod_io::crd::NormalPoint
+pub fn siderust_pod_io::crd::NormalPoint::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_io::crd::NormalPoint
+impl core::marker::Send for siderust_pod_io::crd::NormalPoint
+impl core::marker::Sync for siderust_pod_io::crd::NormalPoint
+impl core::marker::Unpin for siderust_pod_io::crd::NormalPoint
+impl core::marker::UnsafeUnpin for siderust_pod_io::crd::NormalPoint
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::crd::NormalPoint
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::crd::NormalPoint
 pub fn siderust_pod_io::crd::parse_crd(text: &str) -> core::result::Result<siderust_pod_io::crd::CrdFile, siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::crd::parse_crd_with_mode(text: &str, mode: siderust_pod_io::ParseMode) -> core::result::Result<siderust_pod_io::crd::CrdFile, siderust_pod_io::PodIoError>
 pub fn siderust_pod_io::crd::read_crd<P: core::convert::AsRef<std::path::Path>>(path: P) -> core::result::Result<siderust_pod_io::crd::CrdFile, siderust_pod_io::PodIoError>
 pub mod siderust_pod_io::eop
 pub struct siderust_pod_io::eop::EopRecord
-pub siderust_pod_io::eop::EopRecord::eop: siderust::astro::eop::EopValues
+pub siderust_pod_io::eop::EopRecord::eop: siderust_pod_io::eop::EopValues
 pub siderust_pod_io::eop::EopRecord::mjd: tempoch_core::representation::ModifiedJulianDate<tempoch_core::scale::UTC>
 impl core::clone::Clone for siderust_pod_io::eop::EopRecord
 pub fn siderust_pod_io::eop::EopRecord::clone(&self) -> siderust_pod_io::eop::EopRecord
@@ -118,8 +265,164 @@ impl core::marker::Unpin for siderust_pod_io::eop::EopRecord
 impl core::marker::UnsafeUnpin for siderust_pod_io::eop::EopRecord
 impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::eop::EopRecord
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::eop::EopRecord
+pub struct siderust_pod_io::eop::EopValues
+pub siderust_pod_io::eop::EopValues::dut1: qtty_core::units::time::Seconds
+pub siderust_pod_io::eop::EopValues::dx: qtty_core::units::angular::astro::MilliArcseconds
+pub siderust_pod_io::eop::EopValues::dy: qtty_core::units::angular::astro::MilliArcseconds
+pub siderust_pod_io::eop::EopValues::lod: qtty_core::units::time::Seconds
+pub siderust_pod_io::eop::EopValues::xp: qtty_core::units::angular::astro::Arcseconds
+pub siderust_pod_io::eop::EopValues::yp: qtty_core::units::angular::astro::Arcseconds
+impl core::clone::Clone for siderust_pod_io::eop::EopValues
+pub fn siderust_pod_io::eop::EopValues::clone(&self) -> siderust_pod_io::eop::EopValues
+impl core::fmt::Debug for siderust_pod_io::eop::EopValues
+pub fn siderust_pod_io::eop::EopValues::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_io::eop::EopValues
+impl core::marker::Freeze for siderust_pod_io::eop::EopValues
+impl core::marker::Send for siderust_pod_io::eop::EopValues
+impl core::marker::Sync for siderust_pod_io::eop::EopValues
+impl core::marker::Unpin for siderust_pod_io::eop::EopValues
+impl core::marker::UnsafeUnpin for siderust_pod_io::eop::EopValues
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::eop::EopValues
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::eop::EopValues
 pub fn siderust_pod_io::eop::interpolate(records: &[siderust_pod_io::eop::EopRecord], mjd: tempoch_core::representation::ModifiedJulianDate<tempoch_core::scale::UTC>) -> core::option::Option<siderust_pod_io::eop::EopRecord>
 pub fn siderust_pod_io::eop::read_eop_c04<R: std::io::Read>(rdr: R) -> core::result::Result<alloc::vec::Vec<siderust_pod_io::eop::EopRecord>, siderust_pod_io::PodIoError>
+pub mod siderust_pod_io::lisa
+pub enum siderust_pod_io::lisa::LisaProviderError
+pub siderust_pod_io::lisa::LisaProviderError::OutOfRange(f64, f64, f64)
+pub siderust_pod_io::lisa::LisaProviderError::UnknownBody(i32)
+impl core::error::Error for siderust_pod_io::lisa::LisaProviderError
+impl core::fmt::Debug for siderust_pod_io::lisa::LisaProviderError
+pub fn siderust_pod_io::lisa::LisaProviderError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_io::lisa::LisaProviderError
+pub fn siderust_pod_io::lisa::LisaProviderError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_io::lisa::LisaProviderError
+impl core::marker::Send for siderust_pod_io::lisa::LisaProviderError
+impl core::marker::Sync for siderust_pod_io::lisa::LisaProviderError
+impl core::marker::Unpin for siderust_pod_io::lisa::LisaProviderError
+impl core::marker::UnsafeUnpin for siderust_pod_io::lisa::LisaProviderError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::lisa::LisaProviderError
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::lisa::LisaProviderError
+pub enum siderust_pod_io::lisa::LisaSpacecraftId
+pub siderust_pod_io::lisa::LisaSpacecraftId::SC1
+pub siderust_pod_io::lisa::LisaSpacecraftId::SC2
+pub siderust_pod_io::lisa::LisaSpacecraftId::SC3
+impl siderust_pod_io::lisa::LisaSpacecraftId
+pub fn siderust_pod_io::lisa::LisaSpacecraftId::from_naif_id(id: i32) -> core::option::Option<Self>
+pub fn siderust_pod_io::lisa::LisaSpacecraftId::naif_id(self) -> i32
+impl core::clone::Clone for siderust_pod_io::lisa::LisaSpacecraftId
+pub fn siderust_pod_io::lisa::LisaSpacecraftId::clone(&self) -> siderust_pod_io::lisa::LisaSpacecraftId
+impl core::cmp::Eq for siderust_pod_io::lisa::LisaSpacecraftId
+impl core::cmp::PartialEq for siderust_pod_io::lisa::LisaSpacecraftId
+pub fn siderust_pod_io::lisa::LisaSpacecraftId::eq(&self, other: &siderust_pod_io::lisa::LisaSpacecraftId) -> bool
+impl core::fmt::Debug for siderust_pod_io::lisa::LisaSpacecraftId
+pub fn siderust_pod_io::lisa::LisaSpacecraftId::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for siderust_pod_io::lisa::LisaSpacecraftId
+pub fn siderust_pod_io::lisa::LisaSpacecraftId::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for siderust_pod_io::lisa::LisaSpacecraftId
+impl core::marker::StructuralPartialEq for siderust_pod_io::lisa::LisaSpacecraftId
+impl core::marker::Freeze for siderust_pod_io::lisa::LisaSpacecraftId
+impl core::marker::Send for siderust_pod_io::lisa::LisaSpacecraftId
+impl core::marker::Sync for siderust_pod_io::lisa::LisaSpacecraftId
+impl core::marker::Unpin for siderust_pod_io::lisa::LisaSpacecraftId
+impl core::marker::UnsafeUnpin for siderust_pod_io::lisa::LisaSpacecraftId
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::lisa::LisaSpacecraftId
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::lisa::LisaSpacecraftId
+pub struct siderust_pod_io::lisa::HeliocentricCenter
+impl affn::centers::AffineCenter for siderust_pod_io::lisa::HeliocentricCenter
+impl affn::centers::ReferenceCenter for siderust_pod_io::lisa::HeliocentricCenter
+pub type siderust_pod_io::lisa::HeliocentricCenter::Params = ()
+pub fn siderust_pod_io::lisa::HeliocentricCenter::center_name() -> &'static str
+impl core::clone::Clone for siderust_pod_io::lisa::HeliocentricCenter
+pub fn siderust_pod_io::lisa::HeliocentricCenter::clone(&self) -> siderust_pod_io::lisa::HeliocentricCenter
+impl core::cmp::Eq for siderust_pod_io::lisa::HeliocentricCenter
+impl core::cmp::PartialEq for siderust_pod_io::lisa::HeliocentricCenter
+pub fn siderust_pod_io::lisa::HeliocentricCenter::eq(&self, other: &siderust_pod_io::lisa::HeliocentricCenter) -> bool
+impl core::default::Default for siderust_pod_io::lisa::HeliocentricCenter
+pub fn siderust_pod_io::lisa::HeliocentricCenter::default() -> siderust_pod_io::lisa::HeliocentricCenter
+impl core::fmt::Debug for siderust_pod_io::lisa::HeliocentricCenter
+pub fn siderust_pod_io::lisa::HeliocentricCenter::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_io::lisa::HeliocentricCenter
+impl core::marker::StructuralPartialEq for siderust_pod_io::lisa::HeliocentricCenter
+impl core::marker::Freeze for siderust_pod_io::lisa::HeliocentricCenter
+impl core::marker::Send for siderust_pod_io::lisa::HeliocentricCenter
+impl core::marker::Sync for siderust_pod_io::lisa::HeliocentricCenter
+impl core::marker::Unpin for siderust_pod_io::lisa::HeliocentricCenter
+impl core::marker::UnsafeUnpin for siderust_pod_io::lisa::HeliocentricCenter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::lisa::HeliocentricCenter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::lisa::HeliocentricCenter
+pub struct siderust_pod_io::lisa::LisaEphemerisProvider
+impl siderust_pod_io::lisa::LisaEphemerisProvider
+pub fn siderust_pod_io::lisa::LisaEphemerisProvider::new(orbits: siderust_pod_io::lisa::LisaOrbitSet) -> Self
+impl siderust_pod_core::providers::ephemeris::EphemerisProvider for siderust_pod_io::lisa::LisaEphemerisProvider
+pub type siderust_pod_io::lisa::LisaEphemerisProvider::Error = siderust_pod_io::lisa::LisaProviderError
+pub type siderust_pod_io::lisa::LisaEphemerisProvider::State = siderust_pod_io::lisa::LisaOrbitPoint
+pub fn siderust_pod_io::lisa::LisaEphemerisProvider::state(&self, body_naif_id: i32, epoch_seconds_tdb: f64) -> core::result::Result<siderust_pod_io::lisa::LisaOrbitPoint, siderust_pod_io::lisa::LisaProviderError>
+impl core::marker::Freeze for siderust_pod_io::lisa::LisaEphemerisProvider
+impl core::marker::Send for siderust_pod_io::lisa::LisaEphemerisProvider
+impl core::marker::Sync for siderust_pod_io::lisa::LisaEphemerisProvider
+impl core::marker::Unpin for siderust_pod_io::lisa::LisaEphemerisProvider
+impl core::marker::UnsafeUnpin for siderust_pod_io::lisa::LisaEphemerisProvider
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::lisa::LisaEphemerisProvider
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::lisa::LisaEphemerisProvider
+pub struct siderust_pod_io::lisa::LisaOrbit
+pub siderust_pod_io::lisa::LisaOrbit::points: alloc::vec::Vec<siderust_pod_io::lisa::LisaOrbitPoint>
+pub siderust_pod_io::lisa::LisaOrbit::spacecraft_id: siderust_pod_io::lisa::LisaSpacecraftId
+impl core::clone::Clone for siderust_pod_io::lisa::LisaOrbit
+pub fn siderust_pod_io::lisa::LisaOrbit::clone(&self) -> siderust_pod_io::lisa::LisaOrbit
+impl core::fmt::Debug for siderust_pod_io::lisa::LisaOrbit
+pub fn siderust_pod_io::lisa::LisaOrbit::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_io::lisa::LisaOrbit
+impl core::marker::Send for siderust_pod_io::lisa::LisaOrbit
+impl core::marker::Sync for siderust_pod_io::lisa::LisaOrbit
+impl core::marker::Unpin for siderust_pod_io::lisa::LisaOrbit
+impl core::marker::UnsafeUnpin for siderust_pod_io::lisa::LisaOrbit
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::lisa::LisaOrbit
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::lisa::LisaOrbit
+pub struct siderust_pod_io::lisa::LisaOrbitPoint
+pub siderust_pod_io::lisa::LisaOrbitPoint::epoch: tempoch_core::time::Time<tempoch_core::scale::TDB>
+pub siderust_pod_io::lisa::LisaOrbitPoint::position: siderust_pod_io::lisa::LisaPosition
+pub siderust_pod_io::lisa::LisaOrbitPoint::velocity: siderust_pod_io::lisa::LisaVelocity
+impl core::clone::Clone for siderust_pod_io::lisa::LisaOrbitPoint
+pub fn siderust_pod_io::lisa::LisaOrbitPoint::clone(&self) -> siderust_pod_io::lisa::LisaOrbitPoint
+impl core::fmt::Debug for siderust_pod_io::lisa::LisaOrbitPoint
+pub fn siderust_pod_io::lisa::LisaOrbitPoint::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_io::lisa::LisaOrbitPoint
+impl core::marker::Send for siderust_pod_io::lisa::LisaOrbitPoint
+impl core::marker::Sync for siderust_pod_io::lisa::LisaOrbitPoint
+impl core::marker::Unpin for siderust_pod_io::lisa::LisaOrbitPoint
+impl core::marker::UnsafeUnpin for siderust_pod_io::lisa::LisaOrbitPoint
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::lisa::LisaOrbitPoint
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::lisa::LisaOrbitPoint
+pub struct siderust_pod_io::lisa::LisaOrbitReader
+impl siderust_pod_io::lisa::LisaOrbitReader
+pub fn siderust_pod_io::lisa::LisaOrbitReader::from_str(s: &str, spacecraft_id: siderust_pod_io::lisa::LisaSpacecraftId) -> core::result::Result<siderust_pod_io::lisa::LisaOrbit, siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::lisa::LisaOrbitReader::read<R: std::io::Read>(reader: R, spacecraft_id: siderust_pod_io::lisa::LisaSpacecraftId) -> core::result::Result<siderust_pod_io::lisa::LisaOrbit, siderust_pod_io::PodIoError>
+impl core::marker::Freeze for siderust_pod_io::lisa::LisaOrbitReader
+impl core::marker::Send for siderust_pod_io::lisa::LisaOrbitReader
+impl core::marker::Sync for siderust_pod_io::lisa::LisaOrbitReader
+impl core::marker::Unpin for siderust_pod_io::lisa::LisaOrbitReader
+impl core::marker::UnsafeUnpin for siderust_pod_io::lisa::LisaOrbitReader
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::lisa::LisaOrbitReader
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::lisa::LisaOrbitReader
+pub struct siderust_pod_io::lisa::LisaOrbitSet
+pub siderust_pod_io::lisa::LisaOrbitSet::sc1: siderust_pod_io::lisa::LisaOrbit
+pub siderust_pod_io::lisa::LisaOrbitSet::sc2: siderust_pod_io::lisa::LisaOrbit
+pub siderust_pod_io::lisa::LisaOrbitSet::sc3: siderust_pod_io::lisa::LisaOrbit
+impl siderust_pod_io::lisa::LisaOrbitSet
+pub fn siderust_pod_io::lisa::LisaOrbitSet::orbit(&self, sc: siderust_pod_io::lisa::LisaSpacecraftId) -> &siderust_pod_io::lisa::LisaOrbit
+impl core::clone::Clone for siderust_pod_io::lisa::LisaOrbitSet
+pub fn siderust_pod_io::lisa::LisaOrbitSet::clone(&self) -> siderust_pod_io::lisa::LisaOrbitSet
+impl core::fmt::Debug for siderust_pod_io::lisa::LisaOrbitSet
+pub fn siderust_pod_io::lisa::LisaOrbitSet::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for siderust_pod_io::lisa::LisaOrbitSet
+impl core::marker::Send for siderust_pod_io::lisa::LisaOrbitSet
+impl core::marker::Sync for siderust_pod_io::lisa::LisaOrbitSet
+impl core::marker::Unpin for siderust_pod_io::lisa::LisaOrbitSet
+impl core::marker::UnsafeUnpin for siderust_pod_io::lisa::LisaOrbitSet
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::lisa::LisaOrbitSet
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::lisa::LisaOrbitSet
+pub type siderust_pod_io::lisa::LisaPosition = affn::cartesian::position::Position<siderust_pod_io::lisa::HeliocentricCenter, affn::frames::astro::EME2000, qtty_core::units::length::Kilometer>
+pub type siderust_pod_io::lisa::LisaVelocity = affn::cartesian::vector::Velocity<affn::frames::astro::EME2000, qtty_core::unit::Per<qtty_core::units::length::Kilometer, qtty_core::units::time::Second>>
 pub mod siderust_pod_io::oem
 pub struct siderust_pod_io::oem::OemFile
 pub siderust_pod_io::oem::OemFile::creation_date: alloc::string::String
@@ -156,7 +459,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::oem::OemMetada
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::oem::OemMetadata
 pub struct siderust_pod_io::oem::OemSegment
 pub siderust_pod_io::oem::OemSegment::metadata: siderust_pod_io::oem::OemMetadata
-pub siderust_pod_io::oem::OemSegment::states: alloc::vec::Vec<siderust::astro::dynamics::state::OrbitState>
+pub siderust_pod_io::oem::OemSegment::states: alloc::vec::Vec<siderust_pod_io::oem::OemState>
 impl core::clone::Clone for siderust_pod_io::oem::OemSegment
 pub fn siderust_pod_io::oem::OemSegment::clone(&self) -> siderust_pod_io::oem::OemSegment
 impl core::fmt::Debug for siderust_pod_io::oem::OemSegment
@@ -168,8 +471,31 @@ impl core::marker::Unpin for siderust_pod_io::oem::OemSegment
 impl core::marker::UnsafeUnpin for siderust_pod_io::oem::OemSegment
 impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::oem::OemSegment
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::oem::OemSegment
+pub struct siderust_pod_io::oem::OemState
+pub siderust_pod_io::oem::OemState::epoch_jd: f64
+pub siderust_pod_io::oem::OemState::position_km: [f64; 3]
+pub siderust_pod_io::oem::OemState::velocity_km_s: [f64; 3]
+impl siderust_pod_io::oem::OemState
+pub fn siderust_pod_io::oem::OemState::new(epoch_jd: f64, position_km: [f64; 3], velocity_km_s: [f64; 3]) -> Self
+impl core::clone::Clone for siderust_pod_io::oem::OemState
+pub fn siderust_pod_io::oem::OemState::clone(&self) -> siderust_pod_io::oem::OemState
+impl core::cmp::PartialEq for siderust_pod_io::oem::OemState
+pub fn siderust_pod_io::oem::OemState::eq(&self, other: &siderust_pod_io::oem::OemState) -> bool
+impl core::fmt::Debug for siderust_pod_io::oem::OemState
+pub fn siderust_pod_io::oem::OemState::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_io::oem::OemState
+impl core::marker::StructuralPartialEq for siderust_pod_io::oem::OemState
+impl core::marker::Freeze for siderust_pod_io::oem::OemState
+impl core::marker::Send for siderust_pod_io::oem::OemState
+impl core::marker::Sync for siderust_pod_io::oem::OemState
+impl core::marker::Unpin for siderust_pod_io::oem::OemState
+impl core::marker::UnsafeUnpin for siderust_pod_io::oem::OemState
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::oem::OemState
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::oem::OemState
 pub fn siderust_pod_io::oem::read_oem<R: std::io::Read>(r: R) -> core::result::Result<siderust_pod_io::oem::OemFile, siderust_pod_io::PodIoError>
-pub fn siderust_pod_io::oem::write_oem<W: std::io::Write>(w: &mut W, meta: &siderust_pod_io::oem::OemMetadata, states: &[siderust::astro::dynamics::state::OrbitState]) -> core::result::Result<(), siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::oem::read_oem_xml<R: std::io::Read>(r: R) -> core::result::Result<siderust_pod_io::oem::OemFile, siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::oem::write_oem<W: std::io::Write>(w: &mut W, meta: &siderust_pod_io::oem::OemMetadata, states: &[siderust_pod_io::oem::OemState]) -> core::result::Result<(), siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::oem::write_oem_xml<W: std::io::Write>(w: &mut W, meta: &siderust_pod_io::oem::OemMetadata, states: &[siderust_pod_io::oem::OemState]) -> core::result::Result<(), siderust_pod_io::PodIoError>
 pub mod siderust_pod_io::rinex_nav
 pub struct siderust_pod_io::rinex_nav::GpsNavRecord
 pub siderust_pod_io::rinex_nav::GpsNavRecord::af0: qtty_core::units::time::Seconds
@@ -224,6 +550,8 @@ impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::rinex_nav::Rin
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::rinex_nav::RinexNavFile
 pub fn siderust_pod_io::rinex_nav::parse_rinex_nav(text: &str) -> core::result::Result<siderust_pod_io::rinex_nav::RinexNavFile, siderust_pod_io::PodIoError>
 pub fn siderust_pod_io::rinex_nav::read_rinex_nav<P: core::convert::AsRef<std::path::Path>>(path: P) -> core::result::Result<siderust_pod_io::rinex_nav::RinexNavFile, siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::rinex_nav::write_rinex_nav<W: std::io::Write>(w: &mut W, file: &siderust_pod_io::rinex_nav::RinexNavFile) -> core::result::Result<(), siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::rinex_nav::write_rinex_nav_to_path<P: core::convert::AsRef<std::path::Path>>(path: P, file: &siderust_pod_io::rinex_nav::RinexNavFile) -> core::result::Result<(), siderust_pod_io::PodIoError>
 pub mod siderust_pod_io::rinex_obs
 pub struct siderust_pod_io::rinex_obs::ObsEpoch
 pub siderust_pod_io::rinex_obs::ObsEpoch::satellites: std::collections::hash::map::HashMap<alloc::string::String, std::collections::hash::map::HashMap<alloc::string::String, f64>>
@@ -260,6 +588,7 @@ impl core::marker::UnsafeUnpin for siderust_pod_io::rinex_obs::RinexObs
 impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::rinex_obs::RinexObs
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::rinex_obs::RinexObs
 pub fn siderust_pod_io::rinex_obs::read_rinex_obs<R: std::io::Read>(rdr: R) -> core::result::Result<siderust_pod_io::rinex_obs::RinexObs, siderust_pod_io::PodIoError>
+pub fn siderust_pod_io::rinex_obs::write_rinex_obs<W: std::io::Write>(w: &mut W, obs: &siderust_pod_io::rinex_obs::RinexObs) -> core::result::Result<(), siderust_pod_io::PodIoError>
 pub mod siderust_pod_io::sp3
 pub enum siderust_pod_io::sp3::Sp3Error
 pub siderust_pod_io::sp3::Sp3Error::Header
@@ -284,6 +613,23 @@ impl core::marker::Unpin for siderust_pod_io::sp3::Sp3Error
 impl core::marker::UnsafeUnpin for siderust_pod_io::sp3::Sp3Error
 impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::sp3::Sp3Error
 impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_io::sp3::Sp3Error
+pub struct siderust_pod_io::sp3::EarthCenter
+impl affn::centers::AffineCenter for siderust_pod_io::sp3::EarthCenter
+impl affn::centers::ReferenceCenter for siderust_pod_io::sp3::EarthCenter
+pub type siderust_pod_io::sp3::EarthCenter::Params = ()
+pub fn siderust_pod_io::sp3::EarthCenter::center_name() -> &'static str
+impl core::clone::Clone for siderust_pod_io::sp3::EarthCenter
+pub fn siderust_pod_io::sp3::EarthCenter::clone(&self) -> siderust_pod_io::sp3::EarthCenter
+impl core::fmt::Debug for siderust_pod_io::sp3::EarthCenter
+pub fn siderust_pod_io::sp3::EarthCenter::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_io::sp3::EarthCenter
+impl core::marker::Freeze for siderust_pod_io::sp3::EarthCenter
+impl core::marker::Send for siderust_pod_io::sp3::EarthCenter
+impl core::marker::Sync for siderust_pod_io::sp3::EarthCenter
+impl core::marker::Unpin for siderust_pod_io::sp3::EarthCenter
+impl core::marker::UnsafeUnpin for siderust_pod_io::sp3::EarthCenter
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::sp3::EarthCenter
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::sp3::EarthCenter
 pub struct siderust_pod_io::sp3::Sp3Epoch
 pub siderust_pod_io::sp3::Sp3Epoch::positions: alloc::vec::Vec<siderust_pod_io::sp3::Sp3Position>
 pub siderust_pod_io::sp3::Sp3Epoch::time: tempoch_core::time::Time<tempoch_core::scale::UTC>
@@ -303,7 +649,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::sp3::Sp3Epoch
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::sp3::Sp3Epoch
 pub struct siderust_pod_io::sp3::Sp3Position
 pub siderust_pod_io::sp3::Sp3Position::clock: qtty_core::units::time::Microseconds
-pub siderust_pod_io::sp3::Sp3Position::position: siderust::astro::dynamics::state::Position<affn::frames::astro::GCRS, qtty_core::units::length::Kilometer>
+pub siderust_pod_io::sp3::Sp3Position::position: affn::cartesian::position::Position<siderust_pod_io::sp3::EarthCenter, affn::frames::astro::GCRS, qtty_core::units::length::Kilometer>
 pub siderust_pod_io::sp3::Sp3Position::sat_id: alloc::string::String
 impl core::clone::Clone for siderust_pod_io::sp3::Sp3Position
 pub fn siderust_pod_io::sp3::Sp3Position::clone(&self) -> siderust_pod_io::sp3::Sp3Position
@@ -336,11 +682,50 @@ impl core::marker::Unpin for siderust_pod_io::sp3::Sp3Record
 impl core::marker::UnsafeUnpin for siderust_pod_io::sp3::Sp3Record
 impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::sp3::Sp3Record
 impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::sp3::Sp3Record
+pub struct siderust_pod_io::sp3::Sp3Stream<R: std::io::Read>
+impl<R: std::io::Read> siderust_pod_io::sp3::Sp3Stream<R>
+pub fn siderust_pod_io::sp3::Sp3Stream<R>::header(&self) -> &[alloc::string::String]
+pub fn siderust_pod_io::sp3::Sp3Stream<R>::new(r: R) -> core::result::Result<Self, siderust_pod_io::sp3::Sp3Error>
+pub fn siderust_pod_io::sp3::Sp3Stream<R>::next_epoch(&mut self) -> core::result::Result<core::option::Option<siderust_pod_io::sp3::Sp3Epoch>, siderust_pod_io::sp3::Sp3Error>
+impl<R> core::marker::Freeze for siderust_pod_io::sp3::Sp3Stream<R> where R: core::marker::Freeze
+impl<R> core::marker::Send for siderust_pod_io::sp3::Sp3Stream<R> where R: core::marker::Send
+impl<R> core::marker::Sync for siderust_pod_io::sp3::Sp3Stream<R> where R: core::marker::Sync
+impl<R> core::marker::Unpin for siderust_pod_io::sp3::Sp3Stream<R> where R: core::marker::Unpin
+impl<R> core::marker::UnsafeUnpin for siderust_pod_io::sp3::Sp3Stream<R> where R: core::marker::UnsafeUnpin
+impl<R> core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::sp3::Sp3Stream<R> where R: core::panic::unwind_safe::RefUnwindSafe
+impl<R> core::panic::unwind_safe::UnwindSafe for siderust_pod_io::sp3::Sp3Stream<R> where R: core::panic::unwind_safe::UnwindSafe
 pub fn siderust_pod_io::sp3::read_sp3<R: std::io::Read>(r: R) -> core::result::Result<siderust_pod_io::sp3::Sp3Record, siderust_pod_io::sp3::Sp3Error>
 pub fn siderust_pod_io::sp3::write_sp3<W: std::io::Write>(w: &mut W, rec: &siderust_pod_io::sp3::Sp3Record) -> core::result::Result<(), siderust_pod_io::sp3::Sp3Error>
+pub enum siderust_pod_io::ParseMode
+pub siderust_pod_io::ParseMode::Permissive
+pub siderust_pod_io::ParseMode::Strict
+impl core::clone::Clone for siderust_pod_io::ParseMode
+pub fn siderust_pod_io::ParseMode::clone(&self) -> siderust_pod_io::ParseMode
+impl core::cmp::Eq for siderust_pod_io::ParseMode
+impl core::cmp::PartialEq for siderust_pod_io::ParseMode
+pub fn siderust_pod_io::ParseMode::eq(&self, other: &siderust_pod_io::ParseMode) -> bool
+impl core::default::Default for siderust_pod_io::ParseMode
+pub fn siderust_pod_io::ParseMode::default() -> siderust_pod_io::ParseMode
+impl core::fmt::Debug for siderust_pod_io::ParseMode
+pub fn siderust_pod_io::ParseMode::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_pod_io::ParseMode
+impl core::marker::StructuralPartialEq for siderust_pod_io::ParseMode
+impl core::marker::Freeze for siderust_pod_io::ParseMode
+impl core::marker::Send for siderust_pod_io::ParseMode
+impl core::marker::Sync for siderust_pod_io::ParseMode
+impl core::marker::Unpin for siderust_pod_io::ParseMode
+impl core::marker::UnsafeUnpin for siderust_pod_io::ParseMode
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::ParseMode
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::ParseMode
 pub enum siderust_pod_io::PodIoError
 pub siderust_pod_io::PodIoError::Format(alloc::string::String)
 pub siderust_pod_io::PodIoError::Io(std::io::error::Error)
+pub siderust_pod_io::PodIoError::Located
+pub siderust_pod_io::PodIoError::Located::location: siderust_pod_io::FileLocation
+pub siderust_pod_io::PodIoError::Located::message: alloc::string::String
+pub siderust_pod_io::PodIoError::Located::spec: &'static str
+impl siderust_pod_io::PodIoError
+pub fn siderust_pod_io::PodIoError::located<M: core::convert::Into<alloc::string::String>>(spec: &'static str, location: siderust_pod_io::FileLocation, message: M) -> Self
 impl core::convert::From<std::io::error::Error> for siderust_pod_io::PodIoError
 pub fn siderust_pod_io::PodIoError::from(source: std::io::error::Error) -> Self
 impl core::error::Error for siderust_pod_io::PodIoError
@@ -356,3 +741,29 @@ impl core::marker::Unpin for siderust_pod_io::PodIoError
 impl core::marker::UnsafeUnpin for siderust_pod_io::PodIoError
 impl !core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::PodIoError
 impl !core::panic::unwind_safe::UnwindSafe for siderust_pod_io::PodIoError
+pub struct siderust_pod_io::FileLocation
+pub siderust_pod_io::FileLocation::column: core::option::Option<usize>
+pub siderust_pod_io::FileLocation::line: core::option::Option<usize>
+pub siderust_pod_io::FileLocation::path: core::option::Option<std::path::PathBuf>
+impl siderust_pod_io::FileLocation
+pub fn siderust_pod_io::FileLocation::at_line(line: usize) -> Self
+pub fn siderust_pod_io::FileLocation::new(path: core::option::Option<std::path::PathBuf>, line: core::option::Option<usize>, column: core::option::Option<usize>) -> Self
+impl core::clone::Clone for siderust_pod_io::FileLocation
+pub fn siderust_pod_io::FileLocation::clone(&self) -> siderust_pod_io::FileLocation
+impl core::cmp::Eq for siderust_pod_io::FileLocation
+impl core::cmp::PartialEq for siderust_pod_io::FileLocation
+pub fn siderust_pod_io::FileLocation::eq(&self, other: &siderust_pod_io::FileLocation) -> bool
+impl core::default::Default for siderust_pod_io::FileLocation
+pub fn siderust_pod_io::FileLocation::default() -> siderust_pod_io::FileLocation
+impl core::fmt::Debug for siderust_pod_io::FileLocation
+pub fn siderust_pod_io::FileLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_pod_io::FileLocation
+pub fn siderust_pod_io::FileLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_pod_io::FileLocation
+impl core::marker::Freeze for siderust_pod_io::FileLocation
+impl core::marker::Send for siderust_pod_io::FileLocation
+impl core::marker::Sync for siderust_pod_io::FileLocation
+impl core::marker::Unpin for siderust_pod_io::FileLocation
+impl core::marker::UnsafeUnpin for siderust_pod_io::FileLocation
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_pod_io::FileLocation
+impl core::panic::unwind_safe::UnwindSafe for siderust_pod_io::FileLocation

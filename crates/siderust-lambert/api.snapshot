@@ -1,0 +1,117 @@
+pub mod siderust_lambert
+pub enum siderust_lambert::LambertBranch
+pub siderust_lambert::LambertBranch::Prograde
+pub siderust_lambert::LambertBranch::Retrograde
+impl core::clone::Clone for siderust_lambert::LambertBranch
+pub fn siderust_lambert::LambertBranch::clone(&self) -> siderust_lambert::LambertBranch
+impl core::cmp::Eq for siderust_lambert::LambertBranch
+impl core::cmp::PartialEq for siderust_lambert::LambertBranch
+pub fn siderust_lambert::LambertBranch::eq(&self, other: &siderust_lambert::LambertBranch) -> bool
+impl core::fmt::Debug for siderust_lambert::LambertBranch
+pub fn siderust_lambert::LambertBranch::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_lambert::LambertBranch
+impl core::marker::StructuralPartialEq for siderust_lambert::LambertBranch
+impl core::marker::Freeze for siderust_lambert::LambertBranch
+impl core::marker::Send for siderust_lambert::LambertBranch
+impl core::marker::Sync for siderust_lambert::LambertBranch
+impl core::marker::Unpin for siderust_lambert::LambertBranch
+impl core::marker::UnsafeUnpin for siderust_lambert::LambertBranch
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_lambert::LambertBranch
+impl core::panic::unwind_safe::UnwindSafe for siderust_lambert::LambertBranch
+pub enum siderust_lambert::LambertError
+pub siderust_lambert::LambertError::Collinear
+pub siderust_lambert::LambertError::DidNotConverge
+pub siderust_lambert::LambertError::DidNotConverge::residual: f64
+pub siderust_lambert::LambertError::NonPositiveMu(f64)
+pub siderust_lambert::LambertError::NonPositiveTof(f64)
+pub siderust_lambert::LambertError::RevolutionsExceedNMax
+pub siderust_lambert::LambertError::RevolutionsExceedNMax::max: u32
+pub siderust_lambert::LambertError::RevolutionsExceedNMax::requested: u32
+pub siderust_lambert::LambertError::ZeroPosition
+impl core::cmp::PartialEq for siderust_lambert::LambertError
+pub fn siderust_lambert::LambertError::eq(&self, other: &siderust_lambert::LambertError) -> bool
+impl core::error::Error for siderust_lambert::LambertError
+impl core::fmt::Debug for siderust_lambert::LambertError
+pub fn siderust_lambert::LambertError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for siderust_lambert::LambertError
+pub fn siderust_lambert::LambertError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for siderust_lambert::LambertError
+impl core::marker::Freeze for siderust_lambert::LambertError
+impl core::marker::Send for siderust_lambert::LambertError
+impl core::marker::Sync for siderust_lambert::LambertError
+impl core::marker::Unpin for siderust_lambert::LambertError
+impl core::marker::UnsafeUnpin for siderust_lambert::LambertError
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_lambert::LambertError
+impl core::panic::unwind_safe::UnwindSafe for siderust_lambert::LambertError
+pub enum siderust_lambert::NRevBranch
+pub siderust_lambert::NRevBranch::Left
+pub siderust_lambert::NRevBranch::Right
+impl core::clone::Clone for siderust_lambert::NRevBranch
+pub fn siderust_lambert::NRevBranch::clone(&self) -> siderust_lambert::NRevBranch
+impl core::cmp::Eq for siderust_lambert::NRevBranch
+impl core::cmp::PartialEq for siderust_lambert::NRevBranch
+pub fn siderust_lambert::NRevBranch::eq(&self, other: &siderust_lambert::NRevBranch) -> bool
+impl core::fmt::Debug for siderust_lambert::NRevBranch
+pub fn siderust_lambert::NRevBranch::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_lambert::NRevBranch
+impl core::marker::StructuralPartialEq for siderust_lambert::NRevBranch
+impl core::marker::Freeze for siderust_lambert::NRevBranch
+impl core::marker::Send for siderust_lambert::NRevBranch
+impl core::marker::Sync for siderust_lambert::NRevBranch
+impl core::marker::Unpin for siderust_lambert::NRevBranch
+impl core::marker::UnsafeUnpin for siderust_lambert::NRevBranch
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_lambert::NRevBranch
+impl core::panic::unwind_safe::UnwindSafe for siderust_lambert::NRevBranch
+pub struct siderust_lambert::LambertDiagnostics
+pub siderust_lambert::LambertDiagnostics::iterations: u32
+pub siderust_lambert::LambertDiagnostics::residual: f64
+pub siderust_lambert::LambertDiagnostics::revolutions: u32
+pub siderust_lambert::LambertDiagnostics::x: f64
+impl core::clone::Clone for siderust_lambert::LambertDiagnostics
+pub fn siderust_lambert::LambertDiagnostics::clone(&self) -> siderust_lambert::LambertDiagnostics
+impl core::fmt::Debug for siderust_lambert::LambertDiagnostics
+pub fn siderust_lambert::LambertDiagnostics::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_lambert::LambertDiagnostics
+impl core::marker::Freeze for siderust_lambert::LambertDiagnostics
+impl core::marker::Send for siderust_lambert::LambertDiagnostics
+impl core::marker::Sync for siderust_lambert::LambertDiagnostics
+impl core::marker::Unpin for siderust_lambert::LambertDiagnostics
+impl core::marker::UnsafeUnpin for siderust_lambert::LambertDiagnostics
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_lambert::LambertDiagnostics
+impl core::panic::unwind_safe::UnwindSafe for siderust_lambert::LambertDiagnostics
+pub struct siderust_lambert::LambertSolution
+pub siderust_lambert::LambertSolution::diagnostics: siderust_lambert::LambertDiagnostics
+pub siderust_lambert::LambertSolution::v1: [f64; 3]
+pub siderust_lambert::LambertSolution::v2: [f64; 3]
+impl core::clone::Clone for siderust_lambert::LambertSolution
+pub fn siderust_lambert::LambertSolution::clone(&self) -> siderust_lambert::LambertSolution
+impl core::fmt::Debug for siderust_lambert::LambertSolution
+pub fn siderust_lambert::LambertSolution::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for siderust_lambert::LambertSolution
+impl core::marker::Freeze for siderust_lambert::LambertSolution
+impl core::marker::Send for siderust_lambert::LambertSolution
+impl core::marker::Sync for siderust_lambert::LambertSolution
+impl core::marker::Unpin for siderust_lambert::LambertSolution
+impl core::marker::UnsafeUnpin for siderust_lambert::LambertSolution
+impl core::panic::unwind_safe::RefUnwindSafe for siderust_lambert::LambertSolution
+impl core::panic::unwind_safe::UnwindSafe for siderust_lambert::LambertSolution
+pub struct siderust_lambert::TypedLambertSolution<F: affn::frames::ReferenceFrame>
+pub siderust_lambert::TypedLambertSolution::diagnostics: siderust_lambert::LambertDiagnostics
+pub siderust_lambert::TypedLambertSolution::v1: affn::cartesian::vector::Velocity<F, qtty::dynamics::KmPerSecond>
+pub siderust_lambert::TypedLambertSolution::v2: affn::cartesian::vector::Velocity<F, qtty::dynamics::KmPerSecond>
+impl<F: core::clone::Clone + affn::frames::ReferenceFrame> core::clone::Clone for siderust_lambert::TypedLambertSolution<F>
+pub fn siderust_lambert::TypedLambertSolution<F>::clone(&self) -> siderust_lambert::TypedLambertSolution<F>
+impl<F: core::fmt::Debug + affn::frames::ReferenceFrame> core::fmt::Debug for siderust_lambert::TypedLambertSolution<F>
+pub fn siderust_lambert::TypedLambertSolution<F>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<F: core::marker::Copy + affn::frames::ReferenceFrame> core::marker::Copy for siderust_lambert::TypedLambertSolution<F>
+impl<F> core::marker::Freeze for siderust_lambert::TypedLambertSolution<F>
+impl<F> core::marker::Send for siderust_lambert::TypedLambertSolution<F> where F: core::marker::Send
+impl<F> core::marker::Sync for siderust_lambert::TypedLambertSolution<F> where F: core::marker::Sync
+impl<F> core::marker::Unpin for siderust_lambert::TypedLambertSolution<F> where F: core::marker::Unpin
+impl<F> core::marker::UnsafeUnpin for siderust_lambert::TypedLambertSolution<F>
+impl<F> core::panic::unwind_safe::RefUnwindSafe for siderust_lambert::TypedLambertSolution<F> where F: core::panic::unwind_safe::RefUnwindSafe
+impl<F> core::panic::unwind_safe::UnwindSafe for siderust_lambert::TypedLambertSolution<F> where F: core::panic::unwind_safe::UnwindSafe
+pub fn siderust_lambert::lambert<C, F>(r1: affn::cartesian::position::Position<C, F, qtty_core::units::length::Kilometer>, r2: affn::cartesian::position::Position<C, F, qtty_core::units::length::Kilometer>, tof: qtty::Second, mu: qtty::dynamics::GravitationalParameter, branch: siderust_lambert::LambertBranch) -> core::result::Result<siderust_lambert::TypedLambertSolution<F>, siderust_lambert::LambertError> where C: affn::centers::ReferenceCenter<Params = ()>, F: affn::frames::ReferenceFrame
+pub fn siderust_lambert::lambert_n_rev<C, F>(r1: affn::cartesian::position::Position<C, F, qtty_core::units::length::Kilometer>, r2: affn::cartesian::position::Position<C, F, qtty_core::units::length::Kilometer>, tof: qtty::Second, mu: qtty::dynamics::GravitationalParameter, branch: siderust_lambert::LambertBranch, revolutions: u32, side: siderust_lambert::NRevBranch) -> core::result::Result<siderust_lambert::TypedLambertSolution<F>, siderust_lambert::LambertError> where C: affn::centers::ReferenceCenter<Params = ()>, F: affn::frames::ReferenceFrame
+pub fn siderust_lambert::solve_lambert(r1: [f64; 3], r2: [f64; 3], tof_s: f64, mu: f64, branch: siderust_lambert::LambertBranch) -> core::result::Result<siderust_lambert::LambertSolution, siderust_lambert::LambertError>
+pub fn siderust_lambert::solve_lambert_n_rev(r1: [f64; 3], r2: [f64; 3], tof_s: f64, mu: f64, branch: siderust_lambert::LambertBranch, revolutions: u32, side: siderust_lambert::NRevBranch) -> core::result::Result<siderust_lambert::LambertSolution, siderust_lambert::LambertError>
