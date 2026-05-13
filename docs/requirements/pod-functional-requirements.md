@@ -9,7 +9,7 @@ Status legend: **Done**, **In progress**, **Planned**, **Deferred**.
 
 | ID         | Milestone               | Requirement                                                                                       | Status        |
 |------------|-------------------------|---------------------------------------------------------------------------------------------------|---------------|
-| FR-M0      | Workspace bootstrap     | `siderust-lambert` is a workspace member; baseline crates compile cleanly under workspace lints.  | Done          |
+| FR-M0      | Workspace bootstrap     | `siderust-pod` compiles cleanly; upstream crates (`siderust`, `affn`, `qtty`, `tempoch`) are the canonical source for general astrodynamics. | Done          |
 | FR-M1-01   | GNSS LEO batch          | Ingest SP3, RINEX OBS/NAV, ANTEX, EOP fixtures end-to-end.                                        | In progress   |
 | FR-M1-02   | GNSS LEO batch          | Batch WLS with float carrier ambiguities resolves a 24 h LEO arc.                                 | In progress   |
 | FR-M1-03   | GNSS LEO batch          | SP3 + OEM + manifest products written reproducibly.                                               | In progress   |
@@ -38,8 +38,8 @@ one or more milestones above.
 | FR-IO-07  | Read & write CCSDS OEM (KVN, single-segment write, multi-segment read).                                  | `siderust-pod-io`    | In progress   |
 | FR-IO-08  | Read ILRS CRD (record types 10 and 11).                                                                  | `siderust-pod-io`    | Planned (M3)  |
 | FR-IO-09  | Read ILRS CPF (record type 10).                                                                          | `siderust-pod-io`    | Planned (M3)  |
-| FR-IO-10  | Read TLE / 3LE / OMM (KVN, XML, JSON).                                                                   | `siderust-tle`       | Done          |
-| FR-IO-11  | Read DAF/SPK Type 2 and Type 3 segments.                                                                 | `siderust-spice`     | Done          |
+| FR-IO-10  | Read TLE / 3LE / OMM (KVN, XML, JSON).                                                                   | `siderust::astro::satellite::tle` | Done          |
+| FR-IO-11  | Read DAF/SPK Type 2 and Type 3 segments.                                                                 | `siderust::data::spk`     | Done          |
 | FR-IO-12  | Read BLQ ocean-loading coefficients.                                                                     | `siderust-pod-io`    | Deferred (Ph5)|
 
 ## Group: Force / dynamics models — `FR-DYN-*`

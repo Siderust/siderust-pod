@@ -36,7 +36,7 @@ use qtty::unit::Kilometer;
 use qtty::Day;
 use siderust::astro::dynamics::OrbitState;
 use siderust::coordinates::frames::GCRS;
-use crate::core::spacecraft::SpacecraftState;
+use siderust::astro::dynamics::state::SpacecraftState;
 use crate::io::oem::{write_oem, OemMetadata, OemState};
 use crate::io::sp3::{write_sp3, EarthCenter, Sp3Epoch, Sp3Position, Sp3Record};
 use crate::io::PodIoError;
@@ -187,8 +187,7 @@ pub fn write_oem_from_states<W: Write>(
 ///
 /// ```
 /// use siderust_pod::products::orbit::write_oem_from_spacecraft_states;
-/// use siderust_pod::core::spacecraft::SpacecraftState;
-/// use siderust::astro::dynamics::state::SpacecraftProperties;
+/// use siderust::astro::dynamics::state::{SpacecraftProperties, SpacecraftState};
 /// use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 /// use siderust::coordinates::frames::GCRS;
 /// use siderust::time::JulianDate;

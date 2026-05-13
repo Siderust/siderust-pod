@@ -22,7 +22,7 @@ binary SPK kernel; there is no separate `.bsp` format.
 
 ## Owning crate
 
-`siderust-spice`
+`siderust::data::spk`
 
 ## Supported SPK segment types
 

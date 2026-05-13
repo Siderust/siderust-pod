@@ -13,42 +13,42 @@ This file is the authoritative registry of every test fixture committed to the
 
 ---
 
-## siderust-tle
+## siderust (tle / satellite)
 
 | Path | Format | Source | License | Size | Last fetched | Notes |
 |---|---|---|---|---|---|---|
-| `crates/siderust-tle/test-data/tle/iss_zarya.3le` | 3LE | Synthesised (plausible ISS parameters) | N/A | < 1 KB | 2026-05-12 | Not a real-time TLE; epoch is notional |
-| `crates/siderust-tle/test-data/omm/iss_zarya.kvn` | OMM KVN | Synthesised | N/A | < 1 KB | 2026-05-12 | Matches `iss_zarya.3le` parameters |
-| `crates/siderust-tle/test-data/omm/iss_zarya.xml` | OMM XML | Synthesised | N/A | < 1 KB | 2026-05-12 | Matches `iss_zarya.3le` parameters |
-| `crates/siderust-tle/test-data/omm/iss_zarya.json` | OMM JSON | Synthesised | N/A | < 1 KB | 2026-05-12 | Matches `iss_zarya.3le` parameters |
-| `crates/siderust-tle/test-data/omm/celestrak_sample.json` | OMM JSON | Synthesised (CelesTrak schema) | N/A | < 2 KB | 2026-05-12 | Multi-object sample; not real CelesTrak data |
+| `test-data/tle/iss_zarya.3le` | 3LE | Synthesised (plausible ISS parameters) | N/A | < 1 KB | 2026-05-12 | Not a real-time TLE; epoch is notional |
+| `test-data/omm/iss_zarya.kvn` | OMM KVN | Synthesised | N/A | < 1 KB | 2026-05-12 | Matches `iss_zarya.3le` parameters |
+| `test-data/omm/iss_zarya.xml` | OMM XML | Synthesised | N/A | < 1 KB | 2026-05-12 | Matches `iss_zarya.3le` parameters |
+| `test-data/omm/iss_zarya.json` | OMM JSON | Synthesised | N/A | < 1 KB | 2026-05-12 | Matches `iss_zarya.3le` parameters |
+| `test-data/omm/celestrak_sample.json` | OMM JSON | Synthesised (CelesTrak schema) | N/A | < 2 KB | 2026-05-12 | Multi-object sample; not real CelesTrak data |
 
 ---
 
-## siderust-sgp4
+## siderust (sgp4)
 
 | Path | Format | Source | License | Size | Last fetched | Notes |
 |---|---|---|---|---|---|---|
-| `crates/siderust-sgp4/test-data/vallado_sgp4ver_subset.toml` | TOML (SGP4 reference) | Derived from Vallado `SGP4-VER.TLE` + `tcppver.out` (https://celestrak.org/software/vallado-sw.php) | Public domain (Vallado) | < 10 KB | 2026-05-12 | 6 satellites × 4 epochs; reference values extracted from `tcppver.out` |
+| `test-data/vallado_sgp4ver_subset.toml` | TOML (SGP4 reference) | Derived from Vallado `SGP4-VER.TLE` + `tcppver.out` (https://celestrak.org/software/vallado-sw.php) | Public domain (Vallado) | < 10 KB | 2026-05-12 | 6 satellites × 4 epochs; reference values extracted from `tcppver.out` |
 
 ---
 
-## siderust-spice
+## siderust (data / spk)
 
 | Path | Format | Source | License | Size | Last fetched | Notes |
 |---|---|---|---|---|---|---|
-| `crates/siderust-spice/test-data/de440_ref.json` | JSON (reference values) | Derived from JPL HORIZONS web service outputs | JPL open-data | < 5 KB | 2026-05-12 | Position reference for Earth, Moon, Mars at 10 epochs; used by `--features de440` validation gate |
+| `test-data/de440_ref.json` | JSON (reference values) | Derived from JPL HORIZONS web service outputs | JPL open-data | < 5 KB | 2026-05-12 | Position reference for Earth, Moon, Mars at 10 epochs; used by `--features de440` validation gate |
 
 ---
 
-## siderust-pod-io
+## siderust-pod (io)
 
 | Path | Format | Source | License | Size | Last fetched | Notes |
 |---|---|---|---|---|---|---|
-| `crates/siderust-pod-io/test-data/sp3/example.sp3` | SP3-d | Synthesised (IGS-compliant structure) | N/A | < 5 KB | 2026-05-12 | 3 GPS SVs, 2 epochs; round-trip fixture |
-| `crates/siderust-pod-io/test-data/rinex_obs/example_v3.rnx` | RINEX OBS v3 | Synthesised (IGS RINEX 3.05 schema) | N/A | < 5 KB | 2026-05-12 | GPS + Galileo; round-trip fixture |
-| `crates/siderust-pod-io/test-data/rinex_nav/example_gps_v3.rnx` | RINEX NAV v3 | Synthesised | N/A | < 3 KB | 2026-05-12 | GPS broadcast ephemeris; round-trip fixture |
-| `crates/siderust-pod-io/test-data/eop/C04_14_2022.eop` | IERS C04 | Synthesised (IERS EOP C04 schema) | N/A | < 2 KB | 2026-05-12 | 10 daily records; round-trip fixture |
+| `test-data/sp3/example.sp3` | SP3-d | Synthesised (IGS-compliant structure) | N/A | < 5 KB | 2026-05-12 | 3 GPS SVs, 2 epochs; round-trip fixture |
+| `test-data/rinex_obs/example_v3.rnx` | RINEX OBS v3 | Synthesised (IGS RINEX 3.05 schema) | N/A | < 5 KB | 2026-05-12 | GPS + Galileo; round-trip fixture |
+| `test-data/rinex_nav/example_gps_v3.rnx` | RINEX NAV v3 | Synthesised | N/A | < 3 KB | 2026-05-12 | GPS broadcast ephemeris; round-trip fixture |
+| `test-data/eop/C04_14_2022.eop` | IERS C04 | Synthesised (IERS EOP C04 schema) | N/A | < 2 KB | 2026-05-12 | 10 daily records; round-trip fixture |
 
 ### Large fixtures (not committed; env-var unlocked)
 

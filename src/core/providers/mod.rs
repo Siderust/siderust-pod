@@ -1,47 +1,18 @@
-//! Provider traits bridging POD code to public `siderust` services.
+//! Provider traits bridging POD code to external services.
 //!
-//! Per design §6.1 / §6.2 the POD layer interacts with five service
-//! categories at the boundary of the [`siderust`] kernel:
+//! These traits define the minimal interfaces that POD force models,
+//! observation models, and the estimator use to query Earth orientation,
+//! ephemerides, and frame transforms. Concrete implementations are supplied
+//! by the caller (SPICE, EOP files, siderust services, etc.).
 //!
-//! 1. [`EphemerisProvider`] — third-body / heliocentric ephemerides.
-//! 2. [`EarthOrientationProvider`] — UT1-UTC, polar motion.
-//! 3. [`FrameTransformProvider`] — inertial ↔ Earth-fixed rotations.
-//! 4. [`GravityFieldProvider`] — fully-normalised geopotential
-//!    coefficients (re-exported from [`siderust`] as the canonical
-//!    interface).
-//! 5. [`AtmosphereDensityProvider`] — neutral-atmosphere density for
-//!    drag (re-exported from [`siderust`]'s `DensityProvider`).
-//!
-//! These traits are deliberately minimal so that POD code never reaches
-//! into private `siderust` modules. Concrete implementations are typically
-//! thin wrappers around the public APIs of `siderust::astro::*`. The
-//! gravity- and atmosphere-side traits are *direct re-exports* from
-//! `siderust` because the canonical typed contracts already live there;
-//! mirroring them inside POD would create two parallel public surfaces
-//! that could drift apart.
-//!
-//! The remaining three traits ([`EphemerisProvider`],
-//! [`EarthOrientationProvider`], [`FrameTransformProvider`]) currently
-//! accept epochs as J2000-anchored `f64` seconds for compatibility with
-//! the in-flight `siderust-spice` adapter rewrite; the typed-`Time<S>`
-//! migration is tracked under that crate's productization phase.
-//!
-//! # Default adapters
-//!
-//! Lightweight default adapters that wrap public `siderust` services are
-//! provided in [`adapters`] for prototyping. Production POD pipelines
-//! typically build a richer context-aware adapter inside
-//! `siderust-pod-service`.
+//! Gravity and atmosphere traits live directly in
+//! [`siderust::astro::dynamics::gravity`] and
+//! [`siderust::astro::dynamics::atmosphere`]; import them from there.
 
-pub mod adapters;
-pub mod atmosphere;
 pub mod eop;
 pub mod ephemeris;
 pub mod frame_transform;
-pub mod gravity;
 
-pub use atmosphere::AtmosphereDensityProvider;
 pub use eop::EarthOrientationProvider;
 pub use ephemeris::EphemerisProvider;
 pub use frame_transform::FrameTransformProvider;
-pub use gravity::GravityFieldProvider;

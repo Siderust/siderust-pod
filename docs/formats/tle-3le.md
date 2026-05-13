@@ -22,11 +22,11 @@ used with the SGP4/SDP4 propagator. The CCSDS Orbit Mean-Elements Message
 
 ## Owning crate
 
-`siderust-tle`
+`siderust::astro::satellite::tle`
 
 ## Consumed by
 
-`siderust-sgp4` reads `siderust_tle::Tle` records and propagates them.
+`siderust::astro::satellite::sgp4` reads `Tle` records and propagates them.
 
 ## Supported subset
 

@@ -1,25 +1,18 @@
-//! # siderust-pod-core
+//! # siderust-pod core
 //!
-//! Core POD domain primitives that the rest of the POD workspace builds on.
+//! POD-specific domain primitives. Geometric and physical types from
+//! `siderust`, `affn`, `qtty`, and `tempoch` are used directly throughout
+//! the codebase; this module contains only what cannot be expressed by those
+//! upstream crates.
 //!
-//! ## Scope
+//! ## Contents
 //!
-//! This crate intentionally does **not** own numerical algorithms, file
-//! parsing, propagation, or estimation. Those live in the
-//! `siderust-pod-{dynamics,io,observations,estimation,qc,products}` crates.
-//!
-//! It owns:
-//!
-//! - the POD error taxonomy ([`error::PodError`]),
-//! - run-level provenance ([`manifest::RunManifest`], [`dataset::DatasetRef`]),
-//! - parameter typing for the estimator ([`parameter::ParameterKind`],
-//!   [`parameter::Parameter`], [`covariance::ParameterCovariance`]),
-//! - provider trait re-exports / adapters bridging POD code to public
-//!   `siderust` services ([`providers`]).
-//!
-//! Geometric primitives (RTN/LVLH/VNC, `StateCovariance`, `OrbitState`,
-//! `SpacecraftState`, finite-difference STM) live in `siderust` and are
-//! re-exported here for ergonomics — they are *not* redefined.
+//! - POD error taxonomy ([`error::PodError`])
+//! - Run-level provenance ([`manifest::RunManifest`], [`dataset::DatasetRef`])
+//! - Estimator parameter typing ([`parameter::ParameterKind`],
+//!   [`parameter::Parameter`], [`covariance::ParameterCovariance`])
+//! - Arc definitions ([`arc::ArcId`], [`arc::ArcDefinition`])
+//! - Provider traits bridging POD code to external services ([`providers`])
 
 #![forbid(unsafe_code)]
 
@@ -27,12 +20,9 @@ pub mod arc;
 pub mod covariance;
 pub mod dataset;
 pub mod error;
-pub mod frames;
 pub mod manifest;
 pub mod parameter;
 pub mod providers;
-pub mod spacecraft;
-pub mod state;
 
 pub use arc::{ArcDefinition, ArcId};
 pub use error::PodError;

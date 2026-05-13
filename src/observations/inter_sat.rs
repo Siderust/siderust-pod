@@ -27,9 +27,9 @@
 
 #[cfg(feature = "lisa")]
 mod inner {
-    use super::error::PodObservationsError;
-    use super::obs_trait::{CartesianState, ObsType, Observation};
-    use super::provider_bundle::ProviderBundle;
+    use crate::observations::error::PodObservationsError;
+    use crate::observations::obs_trait::{CartesianState, ObsType, Observation};
+    use crate::observations::provider_bundle::ProviderBundle;
     use siderust::time::JulianDate;
     use crate::core::providers::EphemerisProvider;
     use crate::io::lisa::{LisaEphemerisProvider, LisaSpacecraftId};

@@ -22,7 +22,7 @@ CelesTrak extensions documented at
 
 ## Owning crate
 
-`siderust-tle` (and re-exported from `siderust-pod-io` as a convenience
+`siderust::astro::satellite::tle` (and re-exported from `siderust-pod`
 when an OMM bundle is supplied as an alternative to a TLE file).
 
 ## Supported subset
