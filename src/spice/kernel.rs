@@ -8,7 +8,7 @@
 use std::collections::{HashMap, VecDeque};
 use std::path::Path;
 
-use siderust::data::daf::Daf;
+use siderust::formats::spice::daf::Daf;
 
 use super::error::SpiceError;
 use super::segment::{segment_for_summary, SpkSegment};

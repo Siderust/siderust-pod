@@ -33,7 +33,7 @@
 //! Velocity for Type 2 is `dPos/dtau / RADIUS` (in km/s).
 
 use super::error::SpiceError;
-use siderust::data::daf::{Daf, Summary};
+use siderust::formats::spice::daf::{Daf, Summary};
 
 /// A typed SPK segment. Currently restricted to Chebyshev variants.
 #[derive(Debug, Clone)]

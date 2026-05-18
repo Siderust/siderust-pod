@@ -2,11 +2,11 @@
 // Copyright (C) 2026 Vallés Puig, Ramon
 
 //! `siderust-spice` — DAF/SPK kernel reader and `SpiceEphemerisProvider`
-//! adapter on top of [`siderust::data::{daf, spk}`].
+//! adapter on top of [`siderust::formats::spice::{daf, spk}`].
 //!
 //! # Scope
 //!
-//! This crate fills the gap between the upstream `siderust::data::{daf, spk}`
+//! This crate fills the gap between the upstream `siderust::formats::spice::{daf, spk}`
 //! Type-2 reader and the production-grade SPK feature set required by POD.
 //! It re-exports the upstream DAF parser and Type-2 segment reader, and
 //! adds:
@@ -79,22 +79,22 @@ pub use segment::{segment_for_summary, ChebSegment, SpkSegment};
 
 /// Re-export of the upstream DAF container parser.
 ///
-/// `siderust::data::daf` provides a strict, panic-free DAF file parser
+/// `siderust::formats::spice::daf` provides a strict, panic-free DAF file parser
 /// that this crate uses as the foundation for SPK segment indexing. It
 /// is re-exported here so downstream consumers can manipulate raw DAF
 /// summaries without depending on `siderust` directly.
 pub mod daf {
-    pub use siderust::data::daf::{Daf, Summary};
+    pub use siderust::formats::spice::daf::{Daf, Summary};
 }
 
 /// Re-export of the upstream SPK Type 2 reader.
 ///
-/// The upstream `siderust::data::spk` module already exposes a
+/// The upstream `siderust::formats::spice::spk` module already exposes a
 /// production-quality Type 2 / Type 3 raw reader (`read_type2_segment`,
 /// `parse_bsp`) plus the standard NAIF body-id constants. They are
 /// re-exported here for callers that prefer the legacy entry points.
 pub mod spk {
-    pub use siderust::data::spk::{
+    pub use siderust::formats::spice::spk::{
         parse_bsp, read_type2_segment, BspSegments, SegmentData, EMB_CENTER, EMB_TARGET,
         MOON_CENTER, MOON_TARGET, SUN_CENTER, SUN_TARGET,
     };

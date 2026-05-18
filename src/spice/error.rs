@@ -96,10 +96,10 @@ pub enum SpiceError {
     },
 }
 
-impl From<siderust::data::DataError> for SpiceError {
-    fn from(err: siderust::data::DataError) -> Self {
+impl From<siderust::datasets::DatasetError> for SpiceError {
+    fn from(err: siderust::datasets::DatasetError) -> Self {
         match err {
-            siderust::data::DataError::Io(e) => SpiceError::Io(e),
+            siderust::datasets::DatasetError::Io(e) => SpiceError::Io(e),
             other => SpiceError::Parse {
                 message: format!("{other}"),
             },
@@ -135,13 +135,14 @@ mod tests {
     #[test]
     fn from_data_error_io_preserves_kind() {
         let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "x");
-        let e: SpiceError = siderust::data::DataError::Io(io_err).into();
+        let e: SpiceError = siderust::datasets::DatasetError::Io(io_err).into();
         assert!(matches!(e, SpiceError::Io(_)));
     }
 
     #[test]
-    fn from_data_error_parse_becomes_parse_variant() {
-        let e: SpiceError = siderust::data::DataError::Parse("bad".into()).into();
+    fn from_dataset_error_spice_becomes_parse_variant() {
+        let spice_err = siderust::formats::spice::SpiceError::Parse("bad".into());
+        let e: SpiceError = siderust::datasets::DatasetError::Spice(spice_err).into();
         assert!(matches!(e, SpiceError::Parse { .. }));
     }
 }

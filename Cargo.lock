@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "affn"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "affn-derive",
  "qtty 0.8.0",
@@ -12,7 +12,7 @@ dependencies = [
 
 [[package]]
 name = "affn-derive"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1437,6 +1437,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "qtty"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61c018436452aeeb42be95367e44877b9237508908ee2d0f0ea6c13bcb969dea"
+dependencies = [
+ "qtty-core 0.8.1",
+ "qtty-derive 0.8.1",
+]
+
+[[package]]
 name = "qtty-core"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1457,6 +1467,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "qtty-core"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e4049b4883c30d10d9febc7a24088c4a5690e0f9fbdb63d91ab679352040744"
+dependencies = [
+ "libm",
+ "qtty-derive 0.8.1",
+ "typenum",
+]
+
+[[package]]
 name = "qtty-derive"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1470,6 +1491,17 @@ dependencies = [
 [[package]]
 name = "qtty-derive"
 version = "0.8.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
+
+[[package]]
+name = "qtty-derive"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c3ddfe91f467976a8bd7cab95750e3ffab4eb1b2875bb939fd9466e02790300"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1730,7 +1762,7 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
 name = "siderust"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "affn",
  "anyhow",
@@ -1742,6 +1774,7 @@ dependencies = [
  "regex",
  "sha2 0.11.0",
  "tempoch",
+ "thiserror 2.0.18",
  "walkdir",
  "wide",
 ]
@@ -1772,7 +1805,7 @@ dependencies = [
  "sha2 0.10.9",
  "siderust",
  "tempoch",
- "thiserror",
+ "thiserror 1.0.69",
  "tokio",
  "toml 0.8.23",
  "tower",
@@ -1852,7 +1885,7 @@ dependencies = [
  "byteorder",
  "enum-as-inner",
  "libc",
- "thiserror",
+ "thiserror 1.0.69",
  "walkdir",
 ]
 
@@ -1864,14 +1897,14 @@ checksum = "591ef38edfb78ca4771ee32cf494cb8771944bee237a9b91fc9c1424ac4b777b"
 
 [[package]]
 name = "tempoch"
-version = "0.4.3"
+version = "0.6.0"
 dependencies = [
  "tempoch-core",
 ]
 
 [[package]]
 name = "tempoch-core"
-version = "0.4.3"
+version = "0.6.0"
 dependencies = [
  "affn",
  "chrono",
@@ -1881,9 +1914,10 @@ dependencies = [
 
 [[package]]
 name = "tempoch-time-data"
-version = "0.1.0"
+version = "0.1.3"
 dependencies = [
  "chrono",
+ "qtty 0.8.1",
 ]
 
 [[package]]
@@ -1901,7 +1935,16 @@ version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52"
 dependencies = [
- "thiserror-impl",
+ "thiserror-impl 1.0.69",
+]
+
+[[package]]
+name = "thiserror"
+version = "2.0.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4288b5bcbc7920c07a1149a35cf9590a2aa808e0bc1eafaade0b80947865fbc4"
+dependencies = [
+ "thiserror-impl 2.0.18",
 ]
 
 [[package]]
@@ -1909,6 +1952,17 @@ name = "thiserror-impl"
 version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "2.0.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ebc4ee7f67670e9b64d05fa4253e753e016c6c95ff35b89b7941d6b856dec1d5"
 dependencies = [
  "proc-macro2",
  "quote",

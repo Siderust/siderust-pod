@@ -56,10 +56,10 @@ parquet = ["dep:parquet"]
 # ── Baseline crates ───────────────────────────────────────────────────────────
 qtty-core = { version = "0.8", path = "../qtty/qtty-core" }
 qtty      = { version = "0.8", path = "../qtty/qtty", features = ["astro"] }
-tempoch   = { version = "0.4", path = "../tempoch/tempoch" }
+tempoch   = { version = "0.6", path = "../tempoch/tempoch" }
 affn      = { version = "0.7", path = "../affn", features = ["astro"] }
 cheby     = { version = "0.2", path = "../cheby" }
-siderust  = { version = "0.7", path = "../siderust" }
+siderust  = { version = "0.8", path = "../siderust" }
 
 # ── SGP4 propagation backend ──────────────────────────────────────────────────
 sgp4 = { version = "2.4", default-features = false, features = ["std"] }
