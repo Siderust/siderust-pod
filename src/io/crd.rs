@@ -485,8 +485,8 @@ fn parse_crd_impl(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::ParseMode;
+    use super::*;
 
     #[test]
     fn parses_minimal_crd() {
