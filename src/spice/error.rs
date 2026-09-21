@@ -96,6 +96,14 @@ pub enum SpiceError {
     },
 }
 
+impl From<siderust::formats::spice::SpiceError> for SpiceError {
+    fn from(err: siderust::formats::spice::SpiceError) -> Self {
+        match err {
+            siderust::formats::spice::SpiceError::Parse(message) => SpiceError::Parse { message },
+        }
+    }
+}
+
 impl From<siderust::datasets::DatasetError> for SpiceError {
     fn from(err: siderust::datasets::DatasetError) -> Self {
         match err {
