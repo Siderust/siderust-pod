@@ -23,7 +23,7 @@ All of these repositories are available under the [Siderust GitHub organisation]
 Run:
 
 ```bash
-cargo fmt --all -- --check
+cargo fmt -- --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --no-fail-fast
 cargo test --workspace --no-default-features --no-fail-fast
