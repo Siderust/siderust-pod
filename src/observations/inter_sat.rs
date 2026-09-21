@@ -43,7 +43,7 @@ mod inner {
 
     // Convert TT Julian date to approximate TDB seconds since J2000.0.
     fn jd_to_j2000_s(jd: JulianDate) -> f64 {
-        (jd.jd_value() - JD_J2000) * 86_400.0
+        (jd.value() - JD_J2000) * 86_400.0
     }
 
     /// Inter-satellite range observation between two LISA spacecraft.
@@ -119,7 +119,7 @@ mod inner {
             f.debug_struct("InterSatRangeObs")
                 .field("sc_a", &self.sc_a)
                 .field("sc_b", &self.sc_b)
-                .field("epoch_jd", &self.epoch.jd_value())
+                .field("epoch_jd", &self.epoch.value())
                 .field("measured_m", &self.measured_m)
                 .field("sigma", &self.sigma)
                 .finish()
