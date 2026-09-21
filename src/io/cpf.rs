@@ -508,8 +508,8 @@ fn build_epoch_from_mjd_sod(mjd_int: i64, sod: f64) -> Result<Time<UTC>, PodIoEr
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::ParseMode;
+    use super::*;
 
     const SAMPLE: &str = "\
 H1 CPF 2 HTS 2024 01 01 00 1\n\
