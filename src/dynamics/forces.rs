@@ -511,7 +511,7 @@ const R_EARTH_SHADOW_KM: f64 = 6_378.137;
 ///
 /// Formulae from Montenbruck & Gill, *Satellite Orbits*, Appendix A.
 fn sun_position_gcrs_km(jd: JulianDate) -> [f64; 3] {
-    let t: f64 = (jd.jd_value() - 2_451_545.0) / 36_525.0;
+    let t: f64 = (jd.value() - 2_451_545.0) / 36_525.0;
     let l0_deg: f64 = 280.460 + 36_000.771 * t;
     let m_deg: f64 = 357.529_1 + 35_999.050_3 * t;
     let m: f64 = m_deg.to_radians();
