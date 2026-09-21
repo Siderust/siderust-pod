@@ -8,9 +8,9 @@
 //! record format — callers always interact with the typed
 //! [`crate::tle::Tle`].
 
+use crate::tle::{Classification as TleClass, Tle};
 use chrono::Datelike;
 use sgp4::Elements;
-use crate::tle::{Classification as TleClass, Tle};
 
 use super::Sgp4Error;
 
