@@ -57,7 +57,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Siderust/siderust
-          ref: 9f74f651b0608141e2b096e56f1655c05373f2ba
+          ref: 8e694d9ba97ce736bac33945e935b87952a077bd
           path: siderust
 
       - name: Install Rust toolchain
