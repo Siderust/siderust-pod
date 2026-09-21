@@ -35,8 +35,8 @@ use siderust::astro::dynamics::{DynamicsContext, OrbitState, StateTransitionMatr
 use siderust::coordinates::frames::GCRS;
 use siderust::qtty::Second;
 
-use affn::matrix6::FrameMatrix6;
 use crate::dynamics::Integrator;
+use affn::matrix6::FrameMatrix6;
 
 use super::pod_error::PodDynamicsError;
 
@@ -297,11 +297,11 @@ impl VariationalPropagator {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::dynamics::Rk4Integrator;
     use siderust::astro::dynamics::forces::TwoBody;
     use siderust::astro::dynamics::{Position, Velocity};
     use siderust::coordinates::frames::GCRS;
     use siderust::time::JulianDate;
-    use crate::dynamics::Rk4Integrator;
 
     fn s0() -> OrbitState {
         OrbitState::new_at_jd(
