@@ -8,8 +8,8 @@ use qtty::angular::Degrees;
 use qtty_core::units::{angular::Turn, angular_rate::AngularRate, time::Day};
 use tempoch::{Time, UTC};
 
-use crate::tle::{Classification, InternationalDesignator, SatelliteNumber, Tle};
 use super::TleError;
+use crate::tle::{Classification, InternationalDesignator, SatelliteNumber, Tle};
 
 /// Validate the canonical TLE checksum (digits + minus signs, mod 10).
 ///
