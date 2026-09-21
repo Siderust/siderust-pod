@@ -186,7 +186,7 @@ impl Sgp4Propagator {
                 })?
             }
         };
-        let epoch_jd_utc = JulianDate::<UTC>::from(tle.epoch);
+        let epoch_jd_utc: JulianDate<UTC> = tle.epoch.to::<tempoch::JD>();
         Ok(Self {
             constants,
             elements,
