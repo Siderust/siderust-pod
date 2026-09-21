@@ -81,7 +81,7 @@ pub fn rtn_diff(estimated: &[OrbitState], reference: &[OrbitState]) -> Vec<RtnDi
             .expect("RTN frame from reference state");
         let d_rtn = frame.to_local(d_gcrs);
         out.push(RtnDiff {
-            jd_tt: e.epoch_jd().jd_value(),
+            jd_tt: e.epoch_jd().value(),
             r_m: d_rtn.x().value() * 1000.0,
             t_m: d_rtn.y().value() * 1000.0,
             n_m: d_rtn.z().value() * 1000.0,
