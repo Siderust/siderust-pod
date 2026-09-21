@@ -51,6 +51,8 @@ cd siderust-pod
 cargo test
 ```
 
+## Relationship with the Siderust ecosystem
+
 Foundational astrodynamics, typed quantities, time scales, frames, and reusable numerical mechanics live in the released Siderust ecosystem crates. `siderust-pod` focuses on precise orbit determination: estimation, observations, orbit products, quality control, and service orchestration. Some primitives first explored during POD development have since moved upstream and are consumed here through their public APIs.
 
 Validate and run the synthetic POD configuration:
