@@ -2,7 +2,7 @@
 #
 # The previous multi-crate workspace has been collapsed: every former
 # sub-crate is now a module inside this single library.  The
-# [workspace] block is kept only to let `target-sgp4-test/probe`
+# [workspace] block is kept only to let target-sgp4-test/probe
 # inherit its edition/version metadata.
 
 [package]
@@ -30,6 +30,14 @@ path = "src/bin/siderust-pod.rs"
 [[bin]]
 name = "siderust-pod-rest"
 path = "src/bin/siderust-pod-rest.rs"
+
+[[example]]
+name = "01_typed_two_body_propagation"
+path = "examples/01_typed_two_body_propagation.rs"
+
+[[example]]
+name = "02_short_arc_wls"
+path = "examples/02_short_arc_wls.rs"
 
 [[example]]
 name = "03_lambert_earth_to_mars"
@@ -85,23 +93,23 @@ hex  = "0.4"
 # ── Time ──────────────────────────────────────────────────────────────────────
 chrono = "0.4"
 
-# ── XML parsing ───────────────────────────────────────────────────────────────
+# ── XML parsing ────────────────────────────────────────────────────────────────
 quick-xml = "0.36"
 
-# ── HTTP / REST ───────────────────────────────────────────────────────────────
+# ── HTTP / REST ────────────────────────────────────────────────────────────────
 axum  = "0.7"
 tokio = { version = "1.39", features = ["macros", "rt-multi-thread"] }
 tower = "0.5"
 uuid  = { version = "1.10", features = ["v4"] }
 
-# ── CLI ───────────────────────────────────────────────────────────────────────
+# ── CLI ────────────────────────────────────────────────────────────────────────
 clap = { version = "4.5", features = ["derive"] }
 
-# ── Logging ───────────────────────────────────────────────────────────────────
+# ── Logging ────────────────────────────────────────────────────────────────────
 log        = "0.4"
 env_logger = "0.11"
 
-# ── Optional: Parquet residuals ───────────────────────────────────────────────
+# ── Optional: Parquet residuals ────────────────────────────────────────────────
 parquet = { version = "52", default-features = false, optional = true }
 
 [dev-dependencies]
