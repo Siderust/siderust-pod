@@ -29,6 +29,8 @@
 //! - Consultative Committee for Space Data Systems. (2010). Orbit Data
 //!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
 use super::pipeline::{ArcEpoch, GpsSatellite};
+use crate::observations::gnss::{CarrierPhaseObs, GnssCodeModel, PseudorangeObs};
+use crate::observations::model::MeasurementModel;
 use siderust::astro::dynamics::context::DynamicsContext;
 use siderust::astro::dynamics::forces::TwoBody;
 use siderust::astro::dynamics::integrators::rk4_propagate_series;
@@ -37,8 +39,6 @@ use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 use siderust::coordinates::frames::GCRS;
 use siderust::qtty::Second;
 use siderust::time::JulianDate;
-use crate::observations::gnss::{CarrierPhaseObs, GnssCodeModel, PseudorangeObs};
-use crate::observations::model::MeasurementModel;
 
 /// Configuration for a synthetic arc.
 #[derive(Debug, Clone)]
