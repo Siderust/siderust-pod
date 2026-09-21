@@ -14,8 +14,8 @@
 //! * tagging the resulting Cartesian arrays with their TEME / geocentric /
 //!   km / km·s⁻¹ types from `affn`, `siderust`, and `qtty`.
 
-use sgp4::{Constants, Elements, Geopotential, MinutesSinceEpoch};
 use crate::tle::Tle;
+use sgp4::{Constants, Elements, Geopotential, MinutesSinceEpoch};
 use tempoch::{JulianDate, UTC};
 
 use super::elements::tle_to_elements;
