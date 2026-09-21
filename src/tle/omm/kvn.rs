@@ -7,8 +7,8 @@ use qtty::angular::Degrees;
 use qtty_core::units::{angular::Turn, angular_rate::AngularRate, time::Day};
 
 use super::{format_epoch, parse_epoch, Omm};
-use crate::tle::{Classification, SatelliteNumber};
 use crate::tle::TleError;
+use crate::tle::{Classification, SatelliteNumber};
 
 /// Render an [`Omm`] to its KVN form.
 ///
