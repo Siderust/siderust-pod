@@ -2,28 +2,29 @@
 
 Thanks for contributing to `siderust-pod`.
 
-## Development layout
+## Development setup
 
-The project currently uses sibling path dependencies from the Siderust stack. A development checkout should look like:
+`siderust-pod` builds against released crates from the Siderust ecosystem. No sibling repository checkouts are required.
 
-```text
-siderust-stack/
-  affn/
-  cheby/
-  qtty/
-  siderust/
-  siderust-pod/
-  tempoch/
+A standard development setup is enough:
+
+```bash
+git clone https://github.com/Siderust/siderust-pod.git
+cd siderust-pod
+cargo test
 ```
 
-All of these repositories are available under the [Siderust GitHub organisation](https://github.com/Siderust).
+The main foundational dependencies are released versions of `siderust`, `principia`, `qtty`, `tempoch`, `affn`, and `cheby`.
+
+If a change requires unreleased functionality from one of those projects, do not add a local path or git dependency as a permanent workaround. Prefer opening or referencing the corresponding upstream change and keep this repository on released dependencies.
 
 ## Before opening a pull request
 
-Run:
+Run the same checks expected by CI:
 
 ```bash
 cargo fmt -- --check
+cargo check --workspace --all-targets --all-features
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --no-fail-fast
 cargo test --workspace --no-default-features --no-fail-fast
@@ -33,6 +34,8 @@ bash scripts/check_dep_graph.sh
 bash scripts/check_no_todos.sh
 ```
 
+Changes to dependency declarations should also preserve the standalone build: a fresh clone must not require neighbouring Siderust repositories, local `[patch]` overrides, or git dependency workarounds.
+
 ## Scientific and numerical changes
 
 Changes to orbital dynamics, estimation, reference-frame transformations, time handling, or file-format semantics should include:
@@ -41,6 +44,14 @@ Changes to orbital dynamics, estimation, reference-frame transformations, time h
 - tests against an independent reference, published example, or frozen fixture where practical;
 - units and reference frames made explicit at API boundaries;
 - a note in the pull request explaining any expected numerical tolerance.
+
+Avoid changing physical constants, time-scale semantics, frame conventions, estimator behaviour, or numerical tolerances as incidental cleanup.
+
+## Dependency boundaries
+
+Foundational astrodynamics and reusable mechanics belong in the upstream Siderust ecosystem when they are broadly applicable. `siderust-pod` should remain focused on precise orbit determination concerns such as observations, estimation, orbit products, quality control, and service orchestration.
+
+When functionality overlaps with upstream crates, prefer their released public APIs rather than maintaining duplicate foundational implementations here, provided POD-specific behaviour is preserved.
 
 ## API changes
 
