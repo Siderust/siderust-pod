@@ -30,16 +30,16 @@
 //!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
 //! - International GNSS Service. (2020). SP3-c / SP3-d Orbit Format
 //!   Specification.
+use crate::io::oem::{write_oem, OemMetadata, OemState};
+use crate::io::sp3::{write_sp3, EarthCenter, Sp3Epoch, Sp3Position, Sp3Record};
+use crate::io::PodIoError;
 use affn::cartesian;
 use qtty::time::Microseconds;
 use qtty::unit::Kilometer;
 use qtty::Day;
+use siderust::astro::dynamics::state::SpacecraftState;
 use siderust::astro::dynamics::OrbitState;
 use siderust::coordinates::frames::GCRS;
-use siderust::astro::dynamics::state::SpacecraftState;
-use crate::io::oem::{write_oem, OemMetadata, OemState};
-use crate::io::sp3::{write_sp3, EarthCenter, Sp3Epoch, Sp3Position, Sp3Record};
-use crate::io::PodIoError;
 use std::io::Write;
 use std::path::Path;
 use tempoch::{JulianDate, Time, TT, UTC};
@@ -246,7 +246,9 @@ impl Sp3ProductWriter {
     /// drop(w);
     /// ```
     pub fn new(sat_id: impl Into<String>) -> Self {
-        Self { sat_id: sat_id.into() }
+        Self {
+            sat_id: sat_id.into(),
+        }
     }
 
     /// Write an SP3 product to `path` from the given `SpacecraftState` slice.
@@ -312,7 +314,10 @@ impl OemProductWriter {
     /// drop(w);
     /// ```
     pub fn new(object_id: impl Into<String>, object_name: impl Into<String>) -> Self {
-        Self { object_id: object_id.into(), object_name: object_name.into() }
+        Self {
+            object_id: object_id.into(),
+            object_name: object_name.into(),
+        }
     }
 
     /// Write an OEM product to `path` from the given `SpacecraftState` slice.
@@ -367,7 +372,10 @@ mod tests {
     fn fake_spacecraft_states() -> Vec<SpacecraftState> {
         fake_orbit_states()
             .into_iter()
-            .map(|orbit| SpacecraftState { orbit, properties: SpacecraftProperties::demo_leo() })
+            .map(|orbit| SpacecraftState {
+                orbit,
+                properties: SpacecraftProperties::demo_leo(),
+            })
             .collect()
     }
 
@@ -404,7 +412,9 @@ mod tests {
         let dir = std::env::temp_dir();
         let path = dir.join("test_sp3_product_writer.sp3");
         let scs = fake_spacecraft_states();
-        Sp3ProductWriter::new("L01").write_from_states(&path, &scs).unwrap();
+        Sp3ProductWriter::new("L01")
+            .write_from_states(&path, &scs)
+            .unwrap();
         let text = std::fs::read_to_string(&path).unwrap();
         assert_eq!(text.lines().filter(|l| l.starts_with("PL01")).count(), 5);
         let _ = std::fs::remove_file(&path);
@@ -415,7 +425,9 @@ mod tests {
         let dir = std::env::temp_dir();
         let path = dir.join("test_oem_product_writer.oem");
         let scs = fake_spacecraft_states();
-        OemProductWriter::new("2024-001A", "MYSAT").write_from_states(&path, &scs).unwrap();
+        OemProductWriter::new("2024-001A", "MYSAT")
+            .write_from_states(&path, &scs)
+            .unwrap();
         let text = std::fs::read_to_string(&path).unwrap();
         assert!(text.contains("OBJECT_ID            = 2024-001A"));
         let _ = std::fs::remove_file(&path);
