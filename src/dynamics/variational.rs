@@ -18,7 +18,7 @@
 //! ```
 //!
 //! The caller supplies a closure that maps a perturbed parameter value to a
-//! freshly-built [`ForceModel`]. This keeps the harness completely
+//! freshly-built acceleration model. This keeps the harness completely
 //! force-model agnostic — drag scale, SRP scale, and empirical-acceleration
 //! amplitudes all reduce to "vary one scalar, rebuild the force, re-propagate".
 //!
@@ -30,10 +30,10 @@
 //! step `ε`; the test in `tests/` calls it twice (with `ε` and `ε/2`) and
 //! checks that the two estimates agree.
 
-use siderust::astro::dynamics::forces::ForceModel;
+use qtty::Second;
 use siderust::astro::dynamics::{DynamicsContext, OrbitState, StateTransitionMatrix};
 use siderust::coordinates::frames::GCRS;
-use siderust::qtty::Second;
+use siderust::pod::force::SiderustAccelerationModel;
 
 use crate::dynamics::Integrator;
 use affn::matrix6::FrameMatrix6;
@@ -108,8 +108,8 @@ pub struct ParamStmReport {
 /// use siderust::time::JulianDate;
 /// use siderust::qtty::Second;
 /// // Trivial parameter: scale GM (no estimable physical meaning, just a smoke test).
-/// let s0 = OrbitState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s0 = OrbitState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
 /// );
@@ -117,7 +117,7 @@ pub struct ParamStmReport {
 ///     &Rk4Integrator { step: Second::new(10.0) },
 ///     s0, Second::new(60.0), &DynamicsContext::empty(),
 ///     1.0, 1e-6,
-///     |_scale| TwoBody::earth(),
+///     |_scale| TwoBody::new(siderust::astro::dynamics::GM_EARTH),
 /// ).unwrap();
 /// assert!(col.0.iter().all(|v| v.is_finite()));
 /// ```
@@ -132,7 +132,7 @@ pub fn param_partials_central_diff<I, FM, B>(
 ) -> Result<ParamColumn, PodDynamicsError>
 where
     I: Integrator,
-    FM: ForceModel,
+    FM: SiderustAccelerationModel,
     B: FnMut(f64) -> FM,
 {
     if !epsilon.is_finite() || epsilon <= 0.0 {
@@ -177,13 +177,13 @@ where
 /// use siderust::time::JulianDate;
 /// use siderust_pod::dynamics::variational::{PropagatedArc, VariationalPropagator};
 ///
-/// let s0 = OrbitState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s0 = OrbitState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.545, 0.0),
 /// );
 /// let prop = VariationalPropagator { step: Second::new(30.0) };
-/// let arc = prop.propagate(&TwoBody::earth(), s0, 3, &DynamicsContext::empty()).unwrap();
+/// let arc = prop.propagate(&TwoBody::new(siderust::astro::dynamics::GM_EARTH), s0, 3, &DynamicsContext::empty()).unwrap();
 /// assert_eq!(arc.steps.len(), 3);
 /// // Cumulative STM at first step — diagonal must remain close to 1.
 /// let phi1 = arc.steps[0].1.as_array();
@@ -225,7 +225,7 @@ impl PropagatedArc {
 /// Propagates an orbit arc step-by-step, accumulating the state-transition
 /// matrix `Φ(tₖ, t₀)` at each step.
 ///
-/// Uses [`siderust::astro::dynamics::propagate_stm`] for each sub-step.
+/// Uses [`principia::propagate_stm`] for each sub-step.
 /// The cumulative STM is updated by left-multiplying the step STM:
 /// `Φ(tₖ₊₁, t₀) = Φ(tₖ₊₁, tₖ) · Φ(tₖ, t₀)`.
 ///
@@ -239,13 +239,13 @@ impl PropagatedArc {
 /// use siderust::time::JulianDate;
 /// use siderust_pod::dynamics::variational::VariationalPropagator;
 ///
-/// let s0 = OrbitState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s0 = OrbitState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.545, 0.0),
 /// );
 /// let prop = VariationalPropagator { step: Second::new(60.0) };
-/// let arc = prop.propagate(&TwoBody::earth(), s0, 5, &DynamicsContext::empty()).unwrap();
+/// let arc = prop.propagate(&TwoBody::new(siderust::astro::dynamics::GM_EARTH), s0, 5, &DynamicsContext::empty()).unwrap();
 /// assert_eq!(arc.len(), 5);
 /// assert!(arc.final_state().is_some());
 /// ```
@@ -275,16 +275,15 @@ impl VariationalPropagator {
         ctx: &DynamicsContext,
     ) -> Result<PropagatedArc, PodDynamicsError>
     where
-        FM: siderust::astro::dynamics::forces::ForceModel,
+        FM: SiderustAccelerationModel,
     {
         let mut state = initial;
         let mut phi_total: StateTransitionMatrix<GCRS> = FrameMatrix6::identity();
         let mut steps = Vec::with_capacity(n_steps);
 
         for _ in 0..n_steps {
-            let (new_state, phi_step) =
-                siderust::astro::dynamics::propagate_stm(force, state, self.step, ctx)
-                    .map_err(|e| PodDynamicsError::Dynamics(e.into()))?;
+            let (new_state, phi_step) = principia::propagate_stm(force, state, self.step, ctx)
+                .map_err(|e: principia::PrincipiaError| PodDynamicsError::Dynamics(e.into()))?;
             phi_total = phi_step * phi_total;
             steps.push((new_state, phi_total));
             state = new_state;
@@ -304,8 +303,8 @@ mod tests {
     use siderust::time::JulianDate;
 
     fn s0() -> OrbitState {
-        OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::<GCRS>::new(7_000.0, 0.0, 0.0),
             Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
         )
@@ -322,7 +321,7 @@ mod tests {
             &DynamicsContext::empty(),
             1.0,
             0.0,
-            |_| TwoBody::earth(),
+            |_| TwoBody::new(siderust::astro::dynamics::GM_EARTH),
         );
         assert!(matches!(r, Err(PodDynamicsError::InvalidParamStep(_))));
     }
@@ -338,7 +337,7 @@ mod tests {
             &DynamicsContext::empty(),
             1.0,
             1e-6,
-            |_| TwoBody::earth(),
+            |_| TwoBody::new(siderust::astro::dynamics::GM_EARTH),
         )
         .unwrap();
         assert!(col.0.iter().all(|v| v.abs() < 1e-12));
@@ -351,7 +350,12 @@ mod tests {
             step: Second::new(30.0),
         };
         let arc = prop
-            .propagate(&TwoBody::earth(), s, 4, &DynamicsContext::empty())
+            .propagate(
+                &TwoBody::new(siderust::astro::dynamics::GM_EARTH),
+                s,
+                4,
+                &DynamicsContext::empty(),
+            )
             .unwrap();
         assert_eq!(arc.len(), 4);
         assert!(!arc.is_empty());
@@ -366,7 +370,12 @@ mod tests {
             step: Second::new(1.0),
         };
         let arc = prop
-            .propagate(&TwoBody::earth(), s, 1, &DynamicsContext::empty())
+            .propagate(
+                &TwoBody::new(siderust::astro::dynamics::GM_EARTH),
+                s,
+                1,
+                &DynamicsContext::empty(),
+            )
             .unwrap();
         let phi = arc.steps[0].1.as_array();
         // For dt = 1 s the diagonal of the STM should be very close to 1.
@@ -386,7 +395,12 @@ mod tests {
             step: Second::new(60.0),
         };
         let arc = prop
-            .propagate(&TwoBody::earth(), s, 0, &DynamicsContext::empty())
+            .propagate(
+                &TwoBody::new(siderust::astro::dynamics::GM_EARTH),
+                s,
+                0,
+                &DynamicsContext::empty(),
+            )
             .unwrap();
         assert!(arc.is_empty());
         assert!(arc.final_state().is_none());

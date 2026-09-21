@@ -31,9 +31,9 @@
 use super::pipeline::{ArcEpoch, GpsSatellite};
 use crate::observations::gnss::{CarrierPhaseObs, GnssCodeModel, PseudorangeObs};
 use crate::observations::model::MeasurementModel;
+use principia::integrators::rk4_propagate_series;
 use siderust::astro::dynamics::context::DynamicsContext;
 use siderust::astro::dynamics::forces::TwoBody;
-use siderust::astro::dynamics::integrators::rk4_propagate_series;
 use siderust::astro::dynamics::state::VelocityUnit;
 use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 use siderust::coordinates::frames::GCRS;
@@ -68,8 +68,8 @@ impl Default for SyntheticArcConfig {
         let r0 = 6_378.137 + 500.0;
         let v0 = (398_600.441_8_f64 / r0).sqrt();
         Self {
-            truth_initial: OrbitState::new_at_jd(
-                JulianDate::new(2_451_545.0),
+            truth_initial: OrbitState::new(
+                JulianDate::new(2_451_545.0).to_j2000s(),
                 Position::new(r0, 0.0, 0.0),
                 Velocity::new(0.0, v0, 0.0),
             ),
@@ -149,7 +149,7 @@ impl Lcg {
 
 /// Generate the synthetic arc.
 pub fn generate(cfg: &SyntheticArcConfig) -> SyntheticArc {
-    let force = TwoBody::earth();
+    let force = TwoBody::new(siderust::astro::dynamics::GM_EARTH);
     let truth = rk4_propagate_series(
         &force,
         cfg.truth_initial,
@@ -170,7 +170,8 @@ pub fn generate(cfg: &SyntheticArcConfig) -> SyntheticArc {
         let mut code = Vec::new();
         let mut carrier = Vec::new();
         for sat in &gps_sats {
-            let (gps_pos, gps_vel) = gps_state_at(s.epoch_jd(), sat.slot, cfg.n_gps_sats);
+            let (gps_pos, gps_vel) =
+                gps_state_at(s.epoch.to::<tempoch::JD>(), sat.slot, cfg.n_gps_sats);
             // Use the analytic prediction at *truth* state and add noise +
             // truth clock bias to obtain the synthetic measurement.
             let geom = code_truth_m(s, gps_pos, gps_vel) + cfg.clock_bias_m;

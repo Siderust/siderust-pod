@@ -7,7 +7,7 @@
 //!
 //! * Upstream [`siderust::astro::dynamics::errors::DynamicsError`] for any
 //!   force-model / integrator / variational-equation failure.
-//! * [`crate::thrust::ManeuverError`] for finite-burn / thrust-arc input
+//! * [`crate::dynamics::thrust::ManeuverError`] for finite-burn / thrust-arc input
 //!   validation.
 //!
 //! Both upstream errors are funnelled here via [`From`] so consumer code
@@ -40,4 +40,17 @@ pub enum DynamicsError {
     /// Error originating from finite-burn / thrust-arc input validation.
     #[error(transparent)]
     Maneuver(#[from] ManeuverError),
+}
+
+impl From<principia::PrincipiaError> for DynamicsError {
+    fn from(err: principia::PrincipiaError) -> Self {
+        Self::Upstream(err.into())
+    }
+}
+
+impl From<principia::PropagationError> for DynamicsError {
+    fn from(err: principia::PropagationError) -> Self {
+        let upstream: siderust::astro::dynamics::errors::DynamicsError = err.into();
+        Self::Upstream(upstream)
+    }
 }

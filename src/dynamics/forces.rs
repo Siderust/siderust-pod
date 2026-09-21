@@ -38,7 +38,7 @@
 //!
 //! ```
 //! use std::sync::Arc;
-//! use siderust::astro::dynamics::atmosphere::ExponentialAtmosphere;
+//! use siderust::astro::dynamics::density::ExponentialAtmosphere;
 //! use siderust::qtty::{AreaToMass, DragCoefficient, SrpCoefficient};
 //! use siderust_pod::dynamics::forces::{
 //!     DragForce, ForceModelRegistry, J2PerturbationForce, TwoBodyForce,
@@ -58,13 +58,13 @@
 
 use std::sync::Arc;
 
-use siderust::astro::dynamics::atmosphere::DensityProvider;
 use siderust::astro::dynamics::context::DynamicsContextBuilder;
+use siderust::astro::dynamics::density::DensityProvider;
 use siderust::astro::dynamics::forces::{
-    DragForce as UpstreamDragForce, ForceModel as UpstreamForceModel, TwoBody, J2,
+    AccelerationModel as UpstreamForceModel, DragForce as UpstreamDragForce, TwoBody, J2,
 };
 use siderust::astro::dynamics::state::{Acceleration, AccelerationUnit, OrbitState};
-use siderust::astro::dynamics::DynamicsContext;
+use siderust::astro::dynamics::{DynamicsContext, EARTH_J2, GM_EARTH, R_EARTH};
 use siderust::coordinates::centers::Geocentric;
 use siderust::coordinates::frames::GCRS;
 use siderust::qtty::{AreaToMass, DragCoefficient, SrpCoefficient};
@@ -84,8 +84,8 @@ use siderust::time::JulianDate;
 /// use siderust::astro::dynamics::{Position, Velocity};
 /// use siderust::coordinates::frames::GCRS;
 /// use siderust::time::JulianDate;
-/// let _s: CartesianState = CartesianState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let _s: CartesianState = CartesianState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.545, 0.0),
 /// );
@@ -278,8 +278,8 @@ pub trait ForceModel: Send + Sync {
 /// use siderust::time::JulianDate;
 ///
 /// let f = TwoBodyForce::earth();
-/// let s = CartesianState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s = CartesianState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.545, 0.0),
 /// );
@@ -295,7 +295,7 @@ impl TwoBodyForce {
     /// Construct with Earth's standard gravitational parameter (GM = 398 600.4418 km³/s²).
     pub fn earth() -> Self {
         Self {
-            inner: TwoBody::earth(),
+            inner: TwoBody::new(GM_EARTH),
         }
     }
 }
@@ -349,8 +349,8 @@ impl ForceModel for TwoBodyForce {
 /// use siderust::time::JulianDate;
 ///
 /// let f = J2PerturbationForce::earth();
-/// let s = CartesianState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s = CartesianState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.545, 0.0),
 /// );
@@ -364,7 +364,9 @@ pub struct J2PerturbationForce {
 impl J2PerturbationForce {
     /// Construct with Earth's J2 = 1.0826257 × 10⁻³.
     pub fn earth() -> Self {
-        Self { inner: J2::earth() }
+        Self {
+            inner: J2::new(GM_EARTH, R_EARTH, EARTH_J2),
+        }
     }
 }
 
@@ -411,13 +413,13 @@ impl ForceModel for J2PerturbationForce {
 ///
 /// Partial derivatives are not provided (analytic drag Jacobians are
 /// force-model–specific and model-dependent; use the finite-difference
-/// harness in [`crate::variational`] when needed).
+/// harness in [`crate::dynamics::variational`] when needed).
 ///
 /// # Example
 ///
 /// ```
 /// use std::sync::Arc;
-/// use siderust::astro::dynamics::atmosphere::ExponentialAtmosphere;
+/// use siderust::astro::dynamics::density::ExponentialAtmosphere;
 /// use siderust::qtty::{AreaToMass, DragCoefficient};
 /// use siderust_pod::dynamics::forces::{CartesianState, DragForce, ForceModel};
 /// use siderust::astro::dynamics::{Position, Velocity};
@@ -429,8 +431,8 @@ impl ForceModel for J2PerturbationForce {
 ///     AreaToMass::new(0.01),
 ///     Arc::new(ExponentialAtmosphere::LEO_500KM),
 /// );
-/// let s = CartesianState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s = CartesianState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(6_871.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.612, 0.0),
 /// );
@@ -577,8 +579,8 @@ fn cylindrical_shadow_nu(r_sat: [f64; 3], r_sun: [f64; 3]) -> f64 {
 ///
 /// let f = SolarRadiationPressureForce::new(SrpCoefficient::new(1.5), AreaToMass::new(0.02));
 /// let jd = JulianDate::new(2_451_545.0);
-/// let s = CartesianState::new_at_jd(
-///     jd,
+/// let s = CartesianState::new(
+///     jd.to_j2000s(),
 ///     // Place satellite at x=+7000 km (same side as Sun in this epoch)
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.545, 0.0),
@@ -658,7 +660,7 @@ impl ForceModel for SolarRadiationPressureForce {
 ///
 /// Holds an ordered list of [`Box<dyn ForceModel>`] objects and evaluates
 /// the total acceleration and summed partial derivatives in a single call.
-/// Unlike the factory registry in [`crate::registry`] (which maps string
+/// Unlike the factory registry in [`crate::dynamics::registry`] (which maps string
 /// keys to factories), this registry holds live model instances ready to
 /// be evaluated against a state.
 ///
@@ -679,8 +681,8 @@ impl ForceModel for SolarRadiationPressureForce {
 /// assert_eq!(reg.len(), 2);
 /// assert!(reg.is_variational());
 ///
-/// let s = siderust_pod::dynamics::forces::CartesianState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s = siderust_pod::dynamics::forces::CartesianState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.545, 0.0),
 /// );
@@ -740,8 +742,8 @@ impl ForceModelRegistry {
     /// use siderust::time::JulianDate;
     ///
     /// let reg = ForceModelRegistry::new().push(Box::new(TwoBodyForce::earth()));
-    /// let s = siderust_pod::dynamics::forces::CartesianState::new_at_jd(
-    ///     JulianDate::new(2_451_545.0),
+    /// let s = siderust_pod::dynamics::forces::CartesianState::new(
+    ///     JulianDate::new(2_451_545.0).to_j2000s(),
     ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
     ///     Velocity::<GCRS>::new(0.0, 7.545, 0.0),
     /// );
@@ -769,8 +771,8 @@ impl ForceModelRegistry {
     /// use siderust::time::JulianDate;
     ///
     /// let reg = ForceModelRegistry::new().push(Box::new(TwoBodyForce::earth()));
-    /// let s = siderust_pod::dynamics::forces::CartesianState::new_at_jd(
-    ///     JulianDate::new(2_451_545.0),
+    /// let s = siderust_pod::dynamics::forces::CartesianState::new(
+    ///     JulianDate::new(2_451_545.0).to_j2000s(),
     ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
     ///     Velocity::<GCRS>::new(0.0, 7.545, 0.0),
     /// );
@@ -799,7 +801,7 @@ impl ForceModelRegistry {
 mod tests {
     use std::sync::Arc;
 
-    use siderust::astro::dynamics::atmosphere::ExponentialAtmosphere;
+    use siderust::astro::dynamics::density::ExponentialAtmosphere;
     use siderust::astro::dynamics::{Position, Velocity};
     use siderust::coordinates::frames::GCRS;
     use siderust::time::JulianDate;
@@ -807,8 +809,8 @@ mod tests {
     use super::*;
 
     fn leo_state() -> CartesianState {
-        CartesianState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        CartesianState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::<GCRS>::new(6_871.0, 0.0, 0.0),
             Velocity::<GCRS>::new(0.0, 7.612, 0.0),
         )
@@ -842,8 +844,8 @@ mod tests {
 
     #[test]
     fn j2_adds_out_of_plane_component() {
-        let s = CartesianState::new_at_jd(
-            jd_j2000(),
+        let s = CartesianState::new(
+            jd_j2000().to_j2000s(),
             // Off-equatorial position
             Position::<GCRS>::new(6_371.0, 0.0, 500.0),
             Velocity::<GCRS>::new(0.0, 7.612, 0.0),
@@ -875,8 +877,8 @@ mod tests {
             Arc::new(ExponentialAtmosphere::LEO_500KM),
         );
         // State at ~500 km altitude
-        let s = CartesianState::new_at_jd(
-            jd_j2000(),
+        let s = CartesianState::new(
+            jd_j2000().to_j2000s(),
             Position::<GCRS>::new(6_871.0, 0.0, 0.0),
             Velocity::<GCRS>::new(0.0, 7.612, 0.0),
         );

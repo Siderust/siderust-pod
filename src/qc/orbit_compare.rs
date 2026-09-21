@@ -81,7 +81,7 @@ pub fn rtn_diff(estimated: &[OrbitState], reference: &[OrbitState]) -> Vec<RtnDi
             .expect("RTN frame from reference state");
         let d_rtn = frame.to_local(d_gcrs);
         out.push(RtnDiff {
-            jd_tt: e.epoch_jd().value(),
+            jd_tt: e.epoch.to::<tempoch::JD>().value(),
             r_m: d_rtn.x().value() * 1000.0,
             t_m: d_rtn.y().value() * 1000.0,
             n_m: d_rtn.z().value() * 1000.0,
@@ -131,8 +131,8 @@ mod tests {
 
     #[test]
     fn rtn_zero_for_identical_orbits() {
-        let s = OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        let s = OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::new(7000.0, 0.0, 0.0),
             Velocity::new(0.0, 7.5, 0.0),
         );
@@ -146,13 +146,13 @@ mod tests {
 
     #[test]
     fn radial_offset_only_appears_in_r_component() {
-        let r = OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        let r = OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::new(7000.0, 0.0, 0.0),
             Velocity::new(0.0, 7.5, 0.0),
         );
-        let e = OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        let e = OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::new(7000.001, 0.0, 0.0),
             Velocity::new(0.0, 7.5, 0.0),
         );

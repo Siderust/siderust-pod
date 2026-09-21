@@ -18,7 +18,7 @@
 //!
 //! ## What this crate is *not*
 //!
-//! * It is not a TLE parser. Use [`siderust_tle`] for that.
+//! * It is not a TLE parser. Use [`crate::tle`] for that.
 //! * It does not perform TEME → ITRF / GCRF rotations. Use
 //!   `siderust::coordinates::transform::providers::frames_teme` once Earth
 //!   Orientation Parameters are supplied.

@@ -160,8 +160,8 @@ mod tests {
 
     #[test]
     fn predicts_two_way_range_at_rest() {
-        let s = OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        let s = OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::new(0.0, 0.0, 7378.137),
             Velocity::new(0.0, 0.0, 0.0),
         );
@@ -173,8 +173,8 @@ mod tests {
 
     #[test]
     fn partial_matches_finite_difference() {
-        let s = OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        let s = OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::new(7100.0, 200.0, 50.0),
             Velocity::new(0.5, 7.5, 0.1),
         );

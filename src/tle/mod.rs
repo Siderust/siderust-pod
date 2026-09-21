@@ -56,15 +56,16 @@
 #![forbid(unsafe_code)]
 
 mod builder;
+#[path = "tle.rs"]
+mod elements;
 mod error;
 pub mod omm;
 mod parse;
-mod tle;
 
 pub use builder::{format_tle, TleBuilder};
+pub use elements::{Classification, InternationalDesignator, SatelliteNumber, Tle};
 pub use error::TleError;
 pub use parse::{compute_tle_checksum, parse_3le, parse_tle, validate_tle_checksum};
-pub use tle::{Classification, InternationalDesignator, SatelliteNumber, Tle};
 
 #[cfg(test)]
 mod tests;

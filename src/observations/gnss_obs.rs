@@ -282,8 +282,8 @@ fn geometric_range_m(state: &CartesianState, sat_pos_km: Position<GCRS>) -> (f64
 /// use siderust::time::JulianDate;
 ///
 /// let epoch = JulianDate::new(2_451_545.0);
-/// let state: CartesianState = CartesianState::new_at_jd(
-///     epoch,
+/// let state: CartesianState = CartesianState::new(
+///     epoch.to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5, 0.0),
 /// );
@@ -416,8 +416,8 @@ impl Observation for GnssPseudorangeObs {
 /// use siderust::time::JulianDate;
 ///
 /// let epoch = JulianDate::new(2_451_545.0);
-/// let state: CartesianState = CartesianState::new_at_jd(
-///     epoch,
+/// let state: CartesianState = CartesianState::new(
+///     epoch.to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5, 0.0),
 /// );
@@ -549,8 +549,8 @@ mod tests {
     const EPOCH: fn() -> JulianDate = || JulianDate::new(2_451_545.0);
 
     fn leo_state() -> CartesianState {
-        CartesianState::new_at_jd(
-            EPOCH(),
+        CartesianState::new(
+            EPOCH().to_j2000s(),
             Position::<GCRS>::new(7_000.0, 0.0, 0.0),
             Velocity::<GCRS>::new(0.0, 7.5, 0.0),
         )

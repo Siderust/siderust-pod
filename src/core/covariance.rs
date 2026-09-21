@@ -4,10 +4,9 @@
 //! `siderust::astro::dynamics::covariance::StateCovariance` and is re-used
 //! directly. This module adds [`ParameterCovariance`] for the *full*
 //! estimator parameter vector, which mixes state, receiver clocks, biases,
-//! scales, and ambiguities (see [`crate::parameter::ParameterOrdering`]).
+//! scales, and ambiguities (see [`crate::core::parameter::ParameterOrdering`]).
 
 use crate::core::parameter::ParameterOrdering;
-#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// Symmetric covariance matrix over the full estimator parameter vector.
@@ -15,8 +14,7 @@ use serde::{Deserialize, Serialize};
 /// Stored row-major in `data` with `params.len()` rows and columns. Symmetry
 /// is *not* enforced at construction; callers should validate via
 /// [`ParameterCovariance::validate_symmetric`].
-#[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ParameterCovariance {
     /// Parameter ordering defining the row/column correspondence.
     pub params: ParameterOrdering,

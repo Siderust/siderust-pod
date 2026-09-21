@@ -213,7 +213,7 @@ mod tests {
         let epoch = JulianDate::new(2_451_545.0);
         let pos = Position::<GCRS>::new(7000.0, 0.0, 0.0);
         let vel = Velocity::<GCRS>::new(0.0, 7.5, 0.0);
-        OrbitState::new_at_jd(epoch, pos, vel)
+        OrbitState::new(epoch.to_j2000s(), pos, vel)
     }
 
     #[test]

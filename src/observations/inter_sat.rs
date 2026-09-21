@@ -68,7 +68,7 @@ mod inner {
     ///
     /// // In a real scenario, provider is built from OEM files.
     /// # fn doc_only() -> Result<(), Box<dyn std::error::Error>> {
-    /// let root = concat!(env!("CARGO_MANIFEST_DIR"), "/../siderust-pod-io/test-data/lisa");
+    /// let root = concat!(env!("CARGO_MANIFEST_DIR"), "/src/test-data/lisa");
     /// let load = |name: &str, sc: LisaSpacecraftId| {
     ///     let raw = std::fs::read_to_string(format!("{root}/{name}")).unwrap();
     ///     LisaOrbitReader::from_str(&raw, sc).unwrap()
@@ -80,8 +80,8 @@ mod inner {
     /// }));
     ///
     /// let epoch = JulianDate::new(2_451_545.0 + 1_139_702_400.0 / 86_400.0);
-    /// let state: CartesianState = CartesianState::new_at_jd(
-    ///     epoch,
+    /// let state: CartesianState = CartesianState::new(
+    ///     epoch.to_j2000s(),
     ///     Position::<GCRS>::new(0.0, 0.0, 0.0),
     ///     Velocity::<GCRS>::new(0.0, 0.0, 0.0),
     /// );

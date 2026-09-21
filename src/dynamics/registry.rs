@@ -5,7 +5,7 @@
 //!
 //! The POD service layer ingests a YAML/JSON config and needs to translate
 //! string keys (`"two_body"`, `"j2"`, `"drag"`, …) into concrete
-//! [`ForceModel`] instances. The registry centralises that mapping so that:
+//! acceleration-model instances. The registry centralises that mapping so that:
 //!
 //! * Built-in models (two-body, J2, geopotential, Sun/Moon third body,
 //!   cannonball SRP, drag, central-body relativity, constant/1-CPR/2-CPR
@@ -15,8 +15,8 @@
 //!
 //! Each factory implements the [`ForceModelFactory`] trait. A
 //! [`ForceModelSpec`] (`name + ForceModelParams`) is consumed by the
-//! registry to produce a heap-allocated `Box<dyn ForceModel>` ready for
-//! insertion into [`siderust::astro::dynamics::forces::CompositeForce`].
+//! registry to produce a heap-allocated model ready for insertion into a
+//! [`SiderustCompositeModel`].
 //!
 //! # Example
 //!
@@ -31,11 +31,13 @@
 
 use std::collections::BTreeMap;
 
-use siderust::astro::dynamics::atmosphere::DensityProvider;
+use siderust::astro::dynamics::density::DensityProvider;
 use siderust::astro::dynamics::forces::{
-    CannonballSrp, CentralBodyRelativity1Pn, CompositeForce, DragForce, EmpiricalAcceleration,
-    ForceModel, Geopotential, ShadowModel, ThirdBody, TwoBody, J2,
+    CannonballSrp, CentralBodyRelativity1Pn, Conical, Cylindrical, DragForce,
+    EmpiricalAcceleration, Geopotential, NoEclipse, ShadowModel, ThirdBody, TwoBody, J2,
 };
+use siderust::astro::dynamics::{EARTH_J2, GM_EARTH, R_EARTH};
+use siderust::pod::force::{DynSiderustForceModel, SiderustCompositeModel};
 use siderust::qtty::{AreaToMass, DragCoefficient, KmPerSecondsSquared, Second, SrpCoefficient};
 use siderust::time::JulianDate;
 
@@ -140,7 +142,10 @@ pub trait ForceModelFactory: Send + Sync {
     fn name(&self) -> &'static str;
 
     /// Construct an instance from the supplied parameters.
-    fn build(&self, params: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError>;
+    fn build(
+        &self,
+        params: &ForceModelParams,
+    ) -> Result<Box<DynSiderustForceModel>, PodDynamicsError>;
 }
 
 /// String-keyed force-model registry.
@@ -212,7 +217,7 @@ impl ForceModelRegistry {
         self.factories.keys().map(|s| s.as_str()).collect()
     }
 
-    /// Resolve a single spec into a boxed [`ForceModel`].
+    /// Resolve a single spec into a boxed acceleration model.
     ///
     /// # Errors
     ///
@@ -221,7 +226,7 @@ impl ForceModelRegistry {
     pub fn build_one(
         &self,
         spec: &ForceModelSpec,
-    ) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    ) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         let f = self
             .factories
             .get(&spec.name)
@@ -229,7 +234,7 @@ impl ForceModelRegistry {
         f.build(&spec.params)
     }
 
-    /// Resolve a batch of specs into a [`CompositeForce`] in declared order.
+    /// Resolve a batch of specs into a [`SiderustCompositeModel`] in declared order.
     ///
     /// # Example
     ///
@@ -245,8 +250,11 @@ impl ForceModelRegistry {
     /// ]).unwrap();
     /// assert_eq!(composite.len(), 2);
     /// ```
-    pub fn build(&self, specs: &[ForceModelSpec]) -> Result<CompositeForce, PodDynamicsError> {
-        let mut out = CompositeForce::empty();
+    pub fn build(
+        &self,
+        specs: &[ForceModelSpec],
+    ) -> Result<SiderustCompositeModel, PodDynamicsError> {
+        let mut out = SiderustCompositeModel::empty();
         for s in specs {
             out = out.push(self.build_one(s)?);
         }
@@ -261,8 +269,8 @@ impl ForceModelFactory for TwoBodyFactory {
     fn name(&self) -> &'static str {
         "two_body"
     }
-    fn build(&self, _p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
-        Ok(Box::new(TwoBody::earth()))
+    fn build(&self, _p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
+        Ok(Box::new(TwoBody::new(GM_EARTH)))
     }
 }
 
@@ -271,8 +279,8 @@ impl ForceModelFactory for J2Factory {
     fn name(&self) -> &'static str {
         "j2"
     }
-    fn build(&self, _p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
-        Ok(Box::new(J2::earth()))
+    fn build(&self, _p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
+        Ok(Box::new(J2::new(GM_EARTH, R_EARTH, EARTH_J2)))
     }
 }
 
@@ -281,7 +289,7 @@ impl ForceModelFactory for GeopotentialFactory {
     fn name(&self) -> &'static str {
         "geopotential"
     }
-    fn build(&self, p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         match p {
             ForceModelParams::Geopotential { degree, order } => {
                 Ok(Box::new(Geopotential::new(*degree, *order)))
@@ -299,7 +307,7 @@ impl ForceModelFactory for ThirdBodySunFactory {
     fn name(&self) -> &'static str {
         "third_body_sun"
     }
-    fn build(&self, _p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, _p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         Ok(Box::new(ThirdBody::new().with_sun()))
     }
 }
@@ -309,7 +317,7 @@ impl ForceModelFactory for ThirdBodyMoonFactory {
     fn name(&self) -> &'static str {
         "third_body_moon"
     }
-    fn build(&self, _p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, _p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         Ok(Box::new(ThirdBody::new().with_moon()))
     }
 }
@@ -319,7 +327,7 @@ impl ForceModelFactory for ThirdBodySunMoonFactory {
     fn name(&self) -> &'static str {
         "third_body_sun_moon"
     }
-    fn build(&self, _p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, _p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         Ok(Box::new(ThirdBody::sun_and_moon()))
     }
 }
@@ -329,7 +337,7 @@ impl ForceModelFactory for DragFactory {
     fn name(&self) -> &'static str {
         "drag"
     }
-    fn build(&self, p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         match p {
             ForceModelParams::Drag { cd, area_to_mass } => {
                 Ok(Box::new(DragForce::new(*cd, *area_to_mass)))
@@ -347,15 +355,26 @@ impl ForceModelFactory for SrpCannonballFactory {
     fn name(&self) -> &'static str {
         "srp_cannonball"
     }
-    fn build(&self, p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         match p {
             ForceModelParams::SrpCannonball {
                 cr,
                 area_to_mass,
                 shadow,
-            } => Ok(Box::new(
-                CannonballSrp::new(*cr, *area_to_mass).with_shadow(*shadow),
-            )),
+            } => {
+                let force: Box<DynSiderustForceModel> = match shadow {
+                    ShadowModel::None => {
+                        Box::new(CannonballSrp::<NoEclipse>::new(*cr, *area_to_mass))
+                    }
+                    ShadowModel::Cylindrical => {
+                        Box::new(CannonballSrp::<Cylindrical>::new(*cr, *area_to_mass))
+                    }
+                    ShadowModel::Conical => {
+                        Box::new(CannonballSrp::<Conical>::new(*cr, *area_to_mass))
+                    }
+                };
+                Ok(force)
+            }
             _ => Err(PodDynamicsError::InvalidParameters {
                 name: "srp_cannonball".into(),
                 reason: "expected ForceModelParams::SrpCannonball { cr, area_to_mass, shadow }",
@@ -369,7 +388,7 @@ impl ForceModelFactory for SrpBoxwingFactory {
     fn name(&self) -> &'static str {
         "srp_boxwing"
     }
-    fn build(&self, _p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, _p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         Err(PodDynamicsError::FeatureNotImplemented("srp_boxwing"))
     }
 }
@@ -379,7 +398,7 @@ impl ForceModelFactory for RelativityFactory {
     fn name(&self) -> &'static str {
         "relativity"
     }
-    fn build(&self, _p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, _p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         Ok(Box::new(CentralBodyRelativity1Pn::earth()))
     }
 }
@@ -389,7 +408,7 @@ impl ForceModelFactory for EmpiricalConstantFactory {
     fn name(&self) -> &'static str {
         "empirical_constant"
     }
-    fn build(&self, p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         match p {
             ForceModelParams::EmpiricalConstant {
                 radial,
@@ -413,7 +432,7 @@ fn build_periodic(
     expected: PeriodicHarmonic,
     label: &'static str,
     p: &ForceModelParams,
-) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
     match p {
         ForceModelParams::EmpiricalPeriodic {
             harmonic,
@@ -436,7 +455,7 @@ impl ForceModelFactory for Empirical1CprFactory {
     fn name(&self) -> &'static str {
         "empirical_1cpr"
     }
-    fn build(&self, p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         build_periodic(PeriodicHarmonic::OncePerRev, "empirical_1cpr", p)
     }
 }
@@ -446,17 +465,17 @@ impl ForceModelFactory for Empirical2CprFactory {
     fn name(&self) -> &'static str {
         "empirical_2cpr"
     }
-    fn build(&self, p: &ForceModelParams) -> Result<Box<dyn ForceModel>, PodDynamicsError> {
+    fn build(&self, p: &ForceModelParams) -> Result<Box<DynSiderustForceModel>, PodDynamicsError> {
         build_periodic(PeriodicHarmonic::TwicePerRev, "empirical_2cpr", p)
     }
 }
 
 /// Lightweight type alias for atmosphere density providers consumable by the
-/// [`DragFactory`] indirectly through [`siderust::astro::dynamics::context::DynamicsContext`].
+/// the drag factory indirectly through [`siderust::astro::dynamics::context::DynamicsContext`].
 ///
 /// Built-in models such as
-/// [`siderust::astro::dynamics::atmosphere::ExponentialAtmosphere`] and
-/// [`siderust::astro::dynamics::atmosphere::Nrlmsise00LiteApprox`] implement
+/// [`siderust::astro::dynamics::density::ExponentialAtmosphere`] and
+/// [`siderust::astro::dynamics::density::Nrlmsise00LiteApprox`] implement
 /// this trait directly, and downstream crates can plug in MSIS-86, JB2008, …
 /// by implementing [`DensityProvider`].
 pub type AtmosphereDensityProvider = dyn DensityProvider + Send + Sync;

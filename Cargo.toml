@@ -7,7 +7,7 @@
 
 [package]
 name         = "siderust-pod"
-version      = "0.0.0"
+version      = "0.1.0"
 edition      = "2021"
 rust-version = "1.82"
 authors      = ["Siderust authors"]
@@ -41,8 +41,8 @@ path = "examples/04_sgp4_from_tle.rs"
 
 [features]
 default = ["serde"]
-## Serde Serialize/Deserialize impls on core POD types.
-serde   = ["dep:serde", "dep:serde_json"]
+## Compatibility feature; serialization support is always available.
+serde   = []
 ## DORIS RINEX observation parser in the io module.
 doris   = []
 ## LISA inter-satellite range observation model.
@@ -54,12 +54,13 @@ parquet = ["dep:parquet"]
 
 [dependencies]
 # ── Baseline crates ───────────────────────────────────────────────────────────
-qtty-core = { version = "0.8", path = "../qtty/qtty-core" }
-qtty      = { version = "0.8", path = "../qtty/qtty", features = ["astro"] }
-tempoch   = { version = "0.6", path = "../tempoch/tempoch" }
-affn      = { version = "0.7", path = "../affn", features = ["astro"] }
-cheby     = { version = "0.2", path = "../cheby" }
-siderust  = { version = "0.8", path = "../siderust" }
+qtty-core = "0.8"
+qtty      = { version = "0.8", features = ["astro"] }
+tempoch   = "0.6"
+affn      = { version = "0.8", features = ["astro"] }
+cheby     = "0.4"
+siderust  = { version = "0.11", features = ["pod"] }
+principia = "0.2"
 
 # ── SGP4 propagation backend ──────────────────────────────────────────────────
 sgp4 = { version = "2.4", default-features = false, features = ["std"] }
@@ -68,8 +69,8 @@ sgp4 = { version = "2.4", default-features = false, features = ["std"] }
 faer = { version = "0.22", default-features = false, features = ["std", "linalg"] }
 
 # ── Serialisation ─────────────────────────────────────────────────────────────
-serde      = { version = "1.0", features = ["derive"], optional = true }
-serde_json = { version = "1.0", optional = true }
+serde      = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 # serde_yaml is always required (used unconditionally in the service module).
 serde_yaml = "0.9"
 
@@ -115,7 +116,7 @@ resolver = "2"
 members  = ["target-sgp4-test/probe"]
 
 [workspace.package]
-version      = "0.0.0"
+version      = "0.1.0"
 edition      = "2021"
 rust-version = "1.82"
 authors      = ["Siderust authors"]
@@ -139,18 +140,6 @@ print_stdout  = "warn"
 
 [workspace.lints.rustdoc]
 broken_intra_doc_links = "deny"
-
-# ── Redirect transitive crates.io pulls to the local path checkouts ───────────
-[patch.crates-io]
-qtty-core    = { path = "../qtty/qtty-core" }
-tempoch-core = { path = "../tempoch/tempoch-core" }
-qtty         = { path = "../qtty/qtty" }
-tempoch      = { path = "../tempoch/tempoch" }
-affn         = { path = "../affn" }
-siderust     = { path = "../siderust" }
-
-[patch."https://github.com/Siderust/affn.git"]
-affn = { path = "../affn" }
 
 [profile.release]
 opt-level     = 3

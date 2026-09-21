@@ -6,12 +6,10 @@
 //! so that downstream code (covariance ordering, residual reports, manifest
 //! dumps) preserves semantic meaning.
 
-#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// Semantic kind of a single estimated parameter.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ParameterKind {
     /// X component of Cartesian position at a reference epoch.
     StatePositionX,
@@ -60,8 +58,7 @@ pub enum ParameterKind {
 }
 
 /// One slot in the estimator's parameter vector.
-#[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Parameter {
     /// Semantic kind of this parameter.
     pub kind: ParameterKind,
@@ -73,8 +70,7 @@ pub struct Parameter {
 
 /// Total parameter ordering for a run; the estimator must use this to lay
 /// out residual rows and design columns.
-#[derive(Debug, Clone, PartialEq, Default)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 pub struct ParameterOrdering {
     /// List of parameters in the order used by the estimator.
     pub params: Vec<Parameter>,

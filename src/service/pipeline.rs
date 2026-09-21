@@ -33,10 +33,11 @@
 //!   Messages, CCSDS 502.0-B-2 / 502.0-B-3.
 use super::manifest::{canonical_json, DatasetRef, RunManifest};
 use super::synth::SyntheticArc;
+use principia::integrators::rk4_propagate_series;
 use siderust::astro::dynamics::context::DynamicsContext;
-use siderust::astro::dynamics::forces::{CompositeForce, ForceModel, TwoBody, J2};
-use siderust::astro::dynamics::integrators::rk4_propagate_series;
-use siderust::astro::dynamics::{OrbitState, Position, Velocity};
+use siderust::astro::dynamics::forces::{TwoBody, J2};
+use siderust::astro::dynamics::{OrbitState, Position, Velocity, EARTH_J2, GM_EARTH, R_EARTH};
+use siderust::pod::force::{SiderustAccelerationModel, SiderustCompositeModel};
 // `finite_diff_stm_series` is upstream-deprecated in favour of the
 // variational `propagate_stm`, but the latter only returns Φ at the final
 // epoch. Batch least-squares assembly here needs Φ at every measurement
@@ -55,8 +56,7 @@ use crate::products::{
     write_oem_from_states, write_qc_json, write_residuals_csv, write_sp3_from_states, ResidualRow,
 };
 use crate::qc::ResidualsByGroup;
-#[allow(deprecated)]
-use siderust::astro::dynamics::finite_diff_stm_series;
+use principia::finite_diff_stm_series;
 use siderust::qtty::Second;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -262,10 +262,10 @@ pub fn run_synth(
     })
 }
 
-fn build_force(enable_j2: bool) -> CompositeForce {
-    let mut f = CompositeForce::empty().push(Box::new(TwoBody::earth()));
+fn build_force(enable_j2: bool) -> SiderustCompositeModel {
+    let mut f = SiderustCompositeModel::empty().push(Box::new(TwoBody::new(GM_EARTH)));
     if enable_j2 {
-        f = f.push(Box::new(J2::earth()));
+        f = f.push(Box::new(J2::new(GM_EARTH, R_EARTH, EARTH_J2)));
     }
     f
 }
@@ -274,11 +274,12 @@ fn step_size(arc: &SyntheticArc) -> f64 {
     if arc.truth_states.len() < 2 {
         return 30.0;
     }
-    let dt_jd = arc.truth_states[1].epoch_jd().value() - arc.truth_states[0].epoch_jd().value();
+    let dt_jd = arc.truth_states[1].epoch.to::<tempoch::JD>().value()
+        - arc.truth_states[0].epoch.to::<tempoch::JD>().value();
     dt_jd * 86_400.0
 }
 
-fn assemble_normal_equations<F: ForceModel>(
+fn assemble_normal_equations<F: SiderustAccelerationModel>(
     arc: &SyntheticArc,
     params: &[f64],
     dt_s: f64,
@@ -316,7 +317,7 @@ fn assemble_normal_equations<F: ForceModel>(
 
     for ep in &arc.epochs {
         let s = &states[ep.state_index];
-        let phi_mat = stms[ep.state_index].to_row_major();
+        let phi_mat = *stms[ep.state_index].as_array();
         let phi = &phi_mat;
         for (_sat, obs) in &ep.code {
             let model = crate::observations::gnss::GnssCodeModel {
@@ -383,7 +384,7 @@ fn postfit_residuals(
             };
             let p = model.predict(s, extras);
             out.push(ResidualRow {
-                jd_tt: s.epoch_jd().value(),
+                jd_tt: s.epoch.to::<tempoch::JD>().value(),
                 kind: format!("code-{}", sat.id),
                 measured_m: obs.measured_m,
                 predicted_m: p.value,
@@ -399,7 +400,7 @@ fn postfit_residuals(
             };
             let p = model.predict(s, extras);
             out.push(ResidualRow {
-                jd_tt: s.epoch_jd().value(),
+                jd_tt: s.epoch.to::<tempoch::JD>().value(),
                 kind: format!("phase-{}", sat.id),
                 measured_m: obs.measured_m,
                 predicted_m: p.value,

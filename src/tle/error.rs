@@ -121,7 +121,7 @@ pub enum TleError {
     /// An OMM JSON document failed to deserialize.
     #[error("OMM JSON error: {0}")]
     OmmJson(String),
-    /// A [`crate::TleBuilder`] is missing a mandatory field.
+    /// A [`crate::tle::TleBuilder`] is missing a mandatory field.
     #[error("TleBuilder is missing required field {0:?}")]
     BuilderMissingField(&'static str),
 }

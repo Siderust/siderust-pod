@@ -1,30 +1,23 @@
 #!/usr/bin/env bash
-# Enforce the dependency-direction rules for siderust-pod.
-# Fails (exit 1) if any forbidden edge appears in a foundational crate's
-# [dependencies] table.
-#
-# Lightweight implementation: greps Cargo.toml dependency lines.
-# Not a full toml parser; intentional, to avoid extra build deps.
+# Enforce the standalone dependency rules for siderust-pod.
 
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-fail=0
+if grep -En '^[[:space:]]*[A-Za-z0-9_-]+[[:space:]]*=.*\{[^}]*(path|git)[[:space:]]*=' \
+  Cargo.toml target-sgp4-test/probe/Cargo.toml; then
+  echo "Dependency-graph check found a path or git dependency."
+  exit 1
+fi
 
-# Foundational upstream crates MUST NOT depend on siderust-pod.
-for crate_dir in qtty tempoch affn cheby siderust; do
-  toml="../$crate_dir/Cargo.toml"
-  if [[ -f "$toml" ]]; then
-    if grep -E "^\s*siderust-pod\b" "$toml" >/dev/null; then
-      echo "FORBIDDEN edge: foundational crate $crate_dir depends on siderust-pod ($toml)"
-      fail=1
-    fi
-  fi
-done
+source_null_count="$(cargo metadata --locked --format-version 1 | grep -o '"source":null' | wc -l)"
+if [[ "$source_null_count" -ne 2 ]]; then
+  echo "Dependency-graph check found an unexpected non-registry package."
+  exit 1
+fi
 
-if [[ "$fail" == "1" ]]; then
-  echo
+if ! cargo tree --locked -p siderust-pod | grep -q '^siderust-pod v'; then
   echo "Dependency-graph check FAILED."
   exit 1
 fi

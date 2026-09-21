@@ -10,7 +10,6 @@
 //! not have to disambiguate which time scale `start`/`stop` are expressed
 //! in. Conversions from UTC inputs happen at the IO boundary.
 
-#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 use qtty::Second;
@@ -29,8 +28,7 @@ use tempoch::{Time, TT};
 /// let id = ArcId::new("LEO-2026-05-11");
 /// assert_eq!(id.as_str(), "LEO-2026-05-11");
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct ArcId(String);
 
 impl ArcId {
@@ -73,7 +71,7 @@ impl std::fmt::Display for ArcId {
 /// before constructing an [`ArcDefinition`].
 ///
 /// `step_hint` is *advisory* — propagators may pick a different step. It
-/// is preserved in the [`crate::manifest::RunManifest`] so reruns can
+/// is preserved in the [`crate::core::manifest::RunManifest`] so reruns can
 /// reproduce the original hint exactly.
 ///
 /// # Examples

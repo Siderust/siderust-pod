@@ -25,8 +25,8 @@ use super::provider_bundle::ProviderBundle;
 /// use siderust::coordinates::frames::GCRS;
 /// use siderust::time::JulianDate;
 ///
-/// let state: CartesianState = CartesianState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let state: CartesianState = CartesianState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5, 0.0),
 /// );
@@ -79,7 +79,7 @@ pub struct PhaseResidual {
     pub cycles: f64,
 }
 
-/// Type-erased residual for use in heterogeneous [`crate::batch::ObservationBatch`]
+/// Type-erased residual for use in heterogeneous [`crate::observations::batch::ObservationBatch`]
 /// collections.
 ///
 /// # Examples
@@ -147,8 +147,8 @@ impl From<PhaseResidual> for ObsResidual {
 ///     fn epoch(&self) -> JulianDate { JulianDate::new(2_451_545.0) }
 ///     fn sigma(&self) -> f64 { 1.0 }
 /// }
-/// let state: CartesianState = CartesianState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let state: CartesianState = CartesianState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5, 0.0),
 /// );
@@ -182,7 +182,7 @@ pub trait Observation: Send + Sync {
 // ─── Object-safe erasure ─────────────────────────────────────────────────────
 
 /// Object-safe version of [`Observation`] used inside
-/// [`crate::batch::ObservationBatch`].
+/// [`crate::observations::batch::ObservationBatch`].
 ///
 /// This trait is blanket-implemented for every `T: Observation` whose
 /// `Residual` type can be converted into [`ObsResidual`].
