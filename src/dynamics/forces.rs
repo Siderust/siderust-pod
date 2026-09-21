@@ -517,7 +517,7 @@ fn sun_position_gcrs_km(jd: JulianDate) -> [f64; 3] {
     let m: f64 = m_deg.to_radians();
     let lam_deg: f64 = l0_deg + 1.914_666 * m.sin() + 0.019_994 * (2.0 * m).sin();
     let lam: f64 = lam_deg.to_radians();
-    let eps: f64 = (23.439_4 - 0.013_0 * t).to_radians();
+    let eps: f64 = (23.439_4_f64 - 0.013_0 * t).to_radians();
     [
         AU_KM * lam.cos(),
         AU_KM * eps.cos() * lam.sin(),
