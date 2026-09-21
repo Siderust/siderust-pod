@@ -9,13 +9,9 @@ crate (independent versioning).
 
 ### Workspace
 
-* Moved sibling reusable crates `siderust-dynamics`, `siderust-sgp4`,
-  `siderust-spice`, `siderust-tle`, and `siderust-lambert` into
-  `siderust-pod/crates/`. They are now full members of this workspace
-  and consume `qtty`/`tempoch`/`affn`/`siderust` via the shared
-  `[workspace.dependencies]` and `[patch.crates-io]` redirections.
-  No public-API change; their previous standalone crate roots under
-  `rust/` were removed.
+* Consolidated the former multi-crate implementation into the current
+  `siderust-pod` package and migrated its Siderust ecosystem dependencies to
+  released crates.io versions.
 * Added a `[workspace.lints]` table (`unsafe_code = forbid`,
   `missing_docs = deny`, `clippy::all = deny`,
   `clippy::{todo,unimplemented,dbg_macro} = deny`,

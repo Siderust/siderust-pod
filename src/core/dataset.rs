@@ -2,7 +2,6 @@
 
 use std::path::{Path, PathBuf};
 
-#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 use sha2::{Digest, Sha256};
@@ -11,9 +10,8 @@ use sha2::{Digest, Sha256};
 ///
 /// A `DatasetRef` records the canonical path, an opaque kind tag (e.g.
 /// `"sp3"`, `"rinex_obs"`, `"qc_json"`), the byte length, and the SHA-256
-/// content hash. It is the building block of [`crate::manifest::RunManifest`].
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+/// content hash. It is the building block of [`crate::core::manifest::RunManifest`].
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DatasetRef {
     /// Path to the dataset file.
     pub path: PathBuf,

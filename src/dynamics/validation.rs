@@ -4,7 +4,7 @@
 //! STM finite-difference validation harness.
 //!
 //! The variational STM produced by
-//! [`siderust::astro::dynamics::variational::propagate_stm`] is the
+//! [`principia::propagate_stm`] is the
 //! production code path. This module wraps the canonical
 //! "perturb-propagate-compare" validation that asserts
 //! `Φ · δy₀ ≈ y(t; y₀ + δy₀) − y(t; y₀)` to within a tight tolerance.
@@ -16,14 +16,13 @@
 //! linearisation, and `< 1e-7` is reached comfortably (typically `< 1e-8`).
 //!
 //! The function is force-model-agnostic: pass [`siderust::astro::dynamics::forces::TwoBody`],
-//! [`siderust::astro::dynamics::forces::J2`], or any [`ForceModel`] whose
-//! analytic [`ForceModel::partials`] are wired up.
+//! [`siderust::astro::dynamics::forces::J2`], or any acceleration model whose
+//! analytic partials are wired up.
 
-use siderust::astro::dynamics::forces::ForceModel;
-use siderust::astro::dynamics::integrators::rk4_propagate;
-use siderust::astro::dynamics::variational::propagate_stm;
+use principia::{propagate_stm, rk4_propagate};
+use qtty::Second;
 use siderust::astro::dynamics::{DynamicsContext, OrbitState};
-use siderust::qtty::Second;
+use siderust::pod::force::SiderustAccelerationModel;
 
 use super::error::DynamicsError;
 
@@ -33,7 +32,7 @@ use super::error::DynamicsError;
 /// Protocol:
 ///
 /// 1. Compute `Φ` over `dt` using
-///    [`siderust::astro::dynamics::variational::propagate_stm`].
+///    [`principia::propagate_stm`].
 /// 2. Propagate `state` and `state + δy₀` forward by `dt` with RK4 at
 ///    `step` sub-step.
 /// 3. Compare `y(perturb) − y(nominal)` (the *finite-difference* truth) to
@@ -52,20 +51,20 @@ use super::error::DynamicsError;
 /// use siderust::time::JulianDate;
 /// use siderust::qtty::Second;
 ///
-/// let s0 = OrbitState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s0 = OrbitState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
 /// );
 /// let err = max_rel_stm_predict_error(
-///     &TwoBody::earth(), s0,
+///     &TwoBody::new(siderust::astro::dynamics::GM_EARTH), s0,
 ///     Second::new(60.0), Second::new(0.6),
 ///     [1e-3, 0.0, 0.0, 0.0, 0.0, 0.0],
 ///     &DynamicsContext::empty(),
 /// ).unwrap();
 /// assert!(err < 1e-7, "STM predict error {err:.3e} exceeds 1e-7");
 /// ```
-pub fn max_rel_stm_predict_error<FM: ForceModel>(
+pub fn max_rel_stm_predict_error<FM: SiderustAccelerationModel>(
     force: &FM,
     state: OrbitState,
     dt: Second,
@@ -81,8 +80,8 @@ pub fn max_rel_stm_predict_error<FM: ForceModel>(
     let (_, phi) = propagate_stm(force, state, dt, ctx)?;
     let phi_arr = *phi.as_array();
 
-    let nominal = rk4_propagate(force, state, h, n_steps, ctx)?;
-    let perturbed = rk4_propagate(force, perturb_state(&state, &delta_y0), h, n_steps, ctx)?;
+    let nominal = rk4_propagate(force, state, h, dt, ctx)?;
+    let perturbed = rk4_propagate(force, perturb_state(&state, &delta_y0), h, dt, ctx)?;
 
     let n = state_vec(&nominal);
     let p = state_vec(&perturbed);
@@ -161,8 +160,8 @@ mod tests {
     use siderust::time::JulianDate;
 
     fn s0() -> OrbitState {
-        OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::<GCRS>::new(7_000.0, 0.0, 0.0),
             Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
         )
@@ -171,7 +170,7 @@ mod tests {
     #[test]
     fn two_body_variational_matches_finite_diff() {
         let err = max_rel_stm_predict_error(
-            &TwoBody::earth(),
+            &TwoBody::new(siderust::astro::dynamics::GM_EARTH),
             s0(),
             Second::new(60.0),
             Second::new(0.6),
@@ -188,7 +187,11 @@ mod tests {
     #[test]
     fn j2_variational_matches_finite_diff() {
         let err = max_rel_stm_predict_error(
-            &J2::earth(),
+            &J2::new(
+                siderust::astro::dynamics::GM_EARTH,
+                siderust::astro::dynamics::R_EARTH,
+                siderust::astro::dynamics::EARTH_J2,
+            ),
             s0(),
             Second::new(60.0),
             Second::new(0.6),

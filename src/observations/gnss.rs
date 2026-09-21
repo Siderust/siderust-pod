@@ -180,8 +180,8 @@ mod tests {
 
     #[test]
     fn pseudorange_partials_match_finite_difference() {
-        let state = OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        let state = OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::new(7000.0, 0.0, 0.0),
             Velocity::new(0.0, 7.5, 0.0),
         );

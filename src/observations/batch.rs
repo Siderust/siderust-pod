@@ -93,8 +93,8 @@ impl ObservationBatch {
     /// }
     ///
     /// let epoch = JulianDate::new(2_451_545.0);
-    /// let state: CartesianState = CartesianState::new_at_jd(
-    ///     epoch,
+    /// let state: CartesianState = CartesianState::new(
+    ///     epoch.to_j2000s(),
     ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
     ///     Velocity::<GCRS>::new(0.0, 7.5, 0.0),
     /// );
@@ -179,8 +179,8 @@ mod tests {
     }
 
     fn make_state(epoch: JulianDate) -> CartesianState {
-        CartesianState::new_at_jd(
-            epoch,
+        CartesianState::new(
+            epoch.to_j2000s(),
             Position::<GCRS>::new(7_000.0, 0.0, 0.0),
             Velocity::<GCRS>::new(0.0, 7.5, 0.0),
         )

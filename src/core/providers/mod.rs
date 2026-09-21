@@ -7,7 +7,7 @@
 //!
 //! Gravity and atmosphere traits live directly in
 //! [`siderust::astro::dynamics::gravity`] and
-//! [`siderust::astro::dynamics::atmosphere`]; import them from there.
+//! [`siderust::astro::dynamics::density`]; import them from there.
 
 pub mod eop;
 pub mod ephemeris;

@@ -20,7 +20,7 @@
 //! detailed Sims-Flanagan or Pontryagin solver (which lives elsewhere).
 //!
 //! For thrust-direction modelling and the per-step acceleration vector, see
-//! the [`crate::thrust`] module.
+//! the [`crate::dynamics::thrust`] module.
 
 use super::thrust::{mass_flow_rate, ManeuverError, ThrustArc, G0_M_PER_S2};
 

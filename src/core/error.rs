@@ -22,8 +22,7 @@ pub enum PodError {
     #[error(transparent)]
     Io(#[from] std::io::Error),
 
-    /// JSON serialisation/deserialisation error (only when `serde` feature is on).
-    #[cfg(feature = "serde")]
+    /// JSON serialisation/deserialisation error.
     #[error(transparent)]
     Json(#[from] serde_json::Error),
 }

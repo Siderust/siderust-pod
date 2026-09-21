@@ -5,7 +5,7 @@
 //!
 //! [`ForceModelConfig`] is the high-level "which force families are on?"
 //! description that the POD service / CLI consumes. It maps to the
-//! lower-level [`crate::registry::ForceModelSpec`] vector via
+//! lower-level [`crate::dynamics::registry::ForceModelSpec`] vector via
 //! [`ForceModelConfig::to_specs`], which is then materialised by
 //! [`crate::dynamics::registry::ForceModelRegistry`].
 //!

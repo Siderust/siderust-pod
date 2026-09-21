@@ -162,7 +162,7 @@ Milestones are numbered M0–M7. Each lists *goal*, *crates touched*, *concrete 
   - Replace root `Cargo.toml` with a `[workspace]` (no `[package]`), `members = ["crates/*"]`, `resolver = "2"`.
   - `cargo new --lib crates/siderust-pod-{core,dynamics,io,observations,estimation,qc,products,service}` and `cargo new crates/siderust-pod-cli`.
   - Per-crate `Cargo.toml`: AGPL-3.0, version `0.0.0`, `repository`/`license`/`readme` fields, MSRV pin (latest stable −1).
-  - Add `siderust = "0.7"`, `qtty = "0.7"`, `tempoch = "0.4"`, `affn = "0.7"`, `cheby = "0.2"` as workspace dependencies (path = `../siderust`, etc., during local dev; published versions in CI matrix).
+  - Add the Siderust ecosystem crates as released registry dependencies.
   - In `pod-core`: define provider traits (`EphemerisProvider`, `EarthOrientationProvider`, `FrameTransformProvider`, `GravityFieldProvider`, `AtmosphereDensityProvider`) with default impls that wrap public `siderust` APIs.
   - `scripts/check_dep_graph.sh` enforcing §2.3.
   - `.github/workflows/ci.yml`: `fmt`, `clippy -- -D warnings`, `test --workspace`, `check_dep_graph.sh`, `cargo deny check`, `cargo doc --no-deps`.

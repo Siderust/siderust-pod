@@ -12,7 +12,7 @@
 //!
 //! All three round-trip through the same in-memory [`Omm`] record. Use
 //! [`Omm::from_tle`] / [`Omm::to_tle`] to convert from/to the classic
-//! 2LE/3LE [`crate::Tle`] representation.
+//! 2LE/3LE [`crate::tle::Tle`] representation.
 
 pub mod json;
 pub mod kvn;
@@ -86,8 +86,8 @@ impl Omm {
     /// Build an OMM record from a parsed [`Tle`].
     ///
     /// `OBJECT_NAME` falls back to the catalog id rendering when the TLE
-    /// has no name (i.e. parsed via [`crate::parse_tle`] rather than
-    /// [`crate::parse_3le`]). `OBJECT_ID` is reconstructed from the
+    /// has no name (i.e. parsed via [`crate::tle::parse_tle`] rather than
+    /// [`crate::tle::parse_3le`]). `OBJECT_ID` is reconstructed from the
     /// 6-character TLE international designator into the canonical OMM
     /// `YYYY-NNNP` shape (with the 2-digit launch year expanded using the
     /// same 1957/2000 cutover as the TLE epoch).

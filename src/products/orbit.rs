@@ -57,8 +57,8 @@ use super::error::PodProductsError;
 /// use siderust::time::JulianDate;
 ///
 /// let states: Vec<OrbitState> = (0..3).map(|i| {
-///     OrbitState::new_at_jd(
-///         JulianDate::new(2_451_545.0 + i as f64 * 30.0 / 86_400.0),
+///     OrbitState::new(
+///         JulianDate::new(2_451_545.0 + i as f64 * 30.0 / 86_400.0).to_j2000s(),
 ///         Position::<GCRS>::new(7000.0, 0.0, 0.0),
 ///         Velocity::<GCRS>::new(0.0, 7.5, 0.0),
 ///     )
@@ -95,10 +95,11 @@ pub fn write_sp3_from_states<W: Write>(
         .map(|s| {
             // Bridge the two tempoch versions (siderust uses crates.io tempoch,
             // siderust-pod-io uses the local path version) via the raw f64 JD.
-            let epoch_utc: Time<UTC> = JulianDate::<TT>::try_new(Day::new(s.epoch_jd().value()))
-                .expect("OrbitState epoch must be finite")
-                .to_j2000s()
-                .to_scale::<UTC>();
+            let epoch_utc: Time<UTC> =
+                JulianDate::<TT>::try_new(Day::new(s.epoch.to::<tempoch::JD>().value()))
+                    .expect("OrbitState epoch must be finite")
+                    .to_j2000s()
+                    .to_scale::<UTC>();
             Sp3Epoch {
                 time: epoch_utc,
                 positions: vec![Sp3Position {
@@ -133,8 +134,8 @@ pub fn write_sp3_from_states<W: Write>(
 /// use siderust::time::JulianDate;
 ///
 /// let states: Vec<OrbitState> = (0..3).map(|i| {
-///     OrbitState::new_at_jd(
-///         JulianDate::new(2_451_545.0 + i as f64 * 30.0 / 86_400.0),
+///     OrbitState::new(
+///         JulianDate::new(2_451_545.0 + i as f64 * 30.0 / 86_400.0).to_j2000s(),
 ///         Position::<GCRS>::new(7000.0, 0.0, 0.0),
 ///         Velocity::<GCRS>::new(0.0, 7.5, 0.0),
 ///     )
@@ -161,7 +162,7 @@ pub fn write_oem_from_states<W: Write>(
         .iter()
         .map(|s| {
             OemState::new(
-                s.epoch_jd().value(),
+                s.epoch.to::<tempoch::JD>().value(),
                 [
                     s.position.x().value(),
                     s.position.y().value(),
@@ -192,8 +193,8 @@ pub fn write_oem_from_states<W: Write>(
 /// use siderust::coordinates::frames::GCRS;
 /// use siderust::time::JulianDate;
 ///
-/// let orbit = OrbitState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let orbit = OrbitState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5, 0.0),
 /// );
@@ -360,8 +361,8 @@ mod tests {
     fn fake_orbit_states() -> Vec<OrbitState> {
         (0..5)
             .map(|i| {
-                OrbitState::new_at_jd(
-                    JulianDate::new(2_451_545.0 + i as f64 * 30.0 / 86_400.0),
+                OrbitState::new(
+                    JulianDate::new(2_451_545.0 + i as f64 * 30.0 / 86_400.0).to_j2000s(),
                     Position::<GCRS>::new(7000.0 + i as f64, 0.0, 0.0),
                     Velocity::<GCRS>::new(0.0, 7.5, 0.0),
                 )

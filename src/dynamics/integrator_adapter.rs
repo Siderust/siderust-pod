@@ -12,9 +12,9 @@
 //! No new integrator math is invented here — every call delegates to the
 //! upstream propagator.
 
-use siderust::astro::dynamics::forces::ForceModel;
+use qtty::Second;
 use siderust::astro::dynamics::{DynamicsContext, OrbitState, SpacecraftState};
-use siderust::qtty::Second;
+use siderust::pod::force::SiderustAccelerationModel;
 
 use crate::dynamics::Integrator;
 
@@ -34,14 +34,14 @@ use super::pod_error::PodDynamicsError;
 /// use siderust::time::JulianDate;
 /// use siderust::qtty::Second;
 ///
-/// let s0 = OrbitState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s0 = OrbitState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
 /// );
 /// let s1 = propagate_orbit(
 ///     &Rk4Integrator { step: Second::new(10.0) },
-///     &TwoBody::earth(), s0, Second::new(60.0), &DynamicsContext::empty(),
+///     &TwoBody::new(siderust::astro::dynamics::GM_EARTH), s0, Second::new(60.0), &DynamicsContext::empty(),
 /// ).unwrap();
 /// assert!((s1.epoch - s0.epoch).value() > 0.0);
 /// ```
@@ -54,7 +54,7 @@ pub fn propagate_orbit<I, F>(
 ) -> Result<OrbitState, PodDynamicsError>
 where
     I: Integrator,
-    F: ForceModel,
+    F: SiderustAccelerationModel,
 {
     Ok(integrator.propagate(force, state, dt, ctx)?)
 }
@@ -78,15 +78,15 @@ where
 /// use siderust::time::JulianDate;
 /// use siderust::qtty::Second;
 ///
-/// let orbit = OrbitState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let orbit = OrbitState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
 /// );
 /// let sc = SpacecraftState { orbit, properties: SpacecraftProperties::demo_leo() };
 /// let sc1 = propagate_spacecraft(
 ///     &Rk4Integrator { step: Second::new(10.0) },
-///     &TwoBody::earth(), sc, Second::new(60.0), &DynamicsContext::empty(),
+///     &TwoBody::new(siderust::astro::dynamics::GM_EARTH), sc, Second::new(60.0), &DynamicsContext::empty(),
 /// ).unwrap();
 /// assert_eq!(sc1.properties, sc.properties);
 /// ```
@@ -99,7 +99,7 @@ pub fn propagate_spacecraft<I, F>(
 ) -> Result<SpacecraftState, PodDynamicsError>
 where
     I: Integrator,
-    F: ForceModel,
+    F: SiderustAccelerationModel,
 {
     let orbit = integrator.propagate(force, state.orbit, dt, ctx)?;
     Ok(SpacecraftState {
@@ -118,8 +118,8 @@ mod tests {
     use siderust::time::JulianDate;
 
     fn s0() -> OrbitState {
-        OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::<GCRS>::new(7_000.0, 0.0, 0.0),
             Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
         )
@@ -132,7 +132,7 @@ mod tests {
         };
         let s1 = propagate_orbit(
             &integ,
-            &TwoBody::earth(),
+            &TwoBody::new(siderust::astro::dynamics::GM_EARTH),
             s0(),
             Second::new(60.0),
             &DynamicsContext::empty(),

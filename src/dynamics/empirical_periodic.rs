@@ -28,14 +28,16 @@
 //! a_GCRS(t) = R_{GCRS←RTN}(state) · [a_R, a_T, a_N]
 //! ```
 
+use principia::PrincipiaError;
+use qtty::{KmPerSecondsSquared, Second};
 use siderust::astro::dynamics::context::DynamicsContext;
-use siderust::astro::dynamics::errors::DynamicsError;
-use siderust::astro::dynamics::forces::ForceModel;
+use siderust::astro::dynamics::forces::AccelerationModel;
 use siderust::astro::dynamics::frames::{LocalOrbitalFrame, RTN};
 use siderust::astro::dynamics::state::{Acceleration, AccelerationUnit, OrbitState};
+use siderust::coordinates::centers::Geocentric;
 use siderust::coordinates::frames::GCRS;
-use siderust::qtty::{KmPerSecondsSquared, Second};
 use siderust::time::JulianDate;
+use tempoch::{JD, TT};
 
 /// Harmonic order of the periodic empirical acceleration.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -137,34 +139,24 @@ impl EmpiricalPeriodicAcceleration {
     }
 }
 
-impl ForceModel for EmpiricalPeriodicAcceleration {
+impl AccelerationModel<DynamicsContext, TT, Geocentric, GCRS> for EmpiricalPeriodicAcceleration {
+    fn name(&self) -> &'static str {
+        "empirical_periodic"
+    }
+
     fn acceleration(
         &self,
         s: &OrbitState,
         _ctx: &DynamicsContext,
-    ) -> Result<Acceleration<GCRS, AccelerationUnit>, DynamicsError> {
-        let theta = self.phase(s.epoch_jd());
+    ) -> Result<Acceleration<GCRS, AccelerationUnit>, PrincipiaError> {
+        let theta = self.phase(s.epoch.to::<JD>());
         let (sin_t, cos_t) = theta.sin_cos();
         let a_rtn = [
             self.r_cos.value() * cos_t + self.r_sin.value() * sin_t,
             self.t_cos.value() * cos_t + self.t_sin.value() * sin_t,
             self.n_cos.value() * cos_t + self.n_sin.value() * sin_t,
         ];
-        let rtn_frame = LocalOrbitalFrame::<RTN>::try_from_state(s).map_err(|e| {
-            DynamicsError::DegenerateGeometry {
-                reason: match e {
-                    siderust::astro::dynamics::errors::LocalFrameError::ZeroPositionMagnitude => {
-                        "zero position magnitude — RTN frame undefined"
-                    }
-                    siderust::astro::dynamics::errors::LocalFrameError::ZeroVelocityMagnitude => {
-                        "zero velocity magnitude — RTN frame undefined"
-                    }
-                    siderust::astro::dynamics::errors::LocalFrameError::PositionAndVelocityParallel => {
-                        "position and velocity parallel — RTN frame undefined"
-                    }
-                },
-            }
-        })?;
+        let rtn_frame = LocalOrbitalFrame::<RTN>::try_from_state(s)?;
         let a_gcrs = rtn_frame.rotation_inverse().apply_array(a_rtn);
         Ok(Acceleration::<GCRS, AccelerationUnit>::new(
             a_gcrs[0], a_gcrs[1], a_gcrs[2],
@@ -179,8 +171,8 @@ mod tests {
     use siderust::coordinates::frames::GCRS;
 
     fn s0() -> OrbitState {
-        OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::<GCRS>::new(7_000.0, 0.0, 0.0),
             Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
         )

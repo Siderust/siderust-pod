@@ -85,7 +85,7 @@ fn main() -> anyhow::Result<()> {
             println!(
                 "OK: ran {} steps, final epoch JD={}, manifest at {}",
                 report.n_steps,
-                report.final_state.epoch_jd().jd_value(),
+                report.final_state.epoch.to::<tempoch::JD>().value(),
                 report.manifest_path.display()
             );
         }

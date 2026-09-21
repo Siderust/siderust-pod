@@ -6,9 +6,8 @@
 //!
 //! ## Why
 //!
-//! Upstream [`siderust::astro::dynamics::integrators`] exposes
-//! [`siderust::astro::dynamics::integrators::FixedStepper`] and
-//! [`siderust::astro::dynamics::integrators::AdaptiveStepper`] as two
+//! Upstream [`principia`] exposes [`principia::Stepper`] and
+//! [`principia::AdaptiveStepper`] as two
 //! *different* traits, because RK4 needs a fixed sub-step and the adaptive
 //! Hairer-style integrators carry a tolerance configuration. That distinction
 //! matters at the algorithm boundary, but most callers — POD batch windows,
@@ -22,10 +21,10 @@
 //! upstream [`siderust::astro::dynamics::errors::DynamicsError`] through the
 //! crate-local [`DynamicsError`].
 
-use siderust::astro::dynamics::forces::ForceModel;
-use siderust::astro::dynamics::integrators::{dop853_propagate, dopri5_propagate, rk4_propagate};
+use principia::{dop853_propagate, dopri5_propagate, rk4_propagate, IntegratorTolerances};
+use qtty::Second;
 use siderust::astro::dynamics::{DynamicsContext, OrbitState};
-use siderust::qtty::{IntegratorTolerances, Second};
+use siderust::pod::force::SiderustAccelerationModel;
 
 use super::error::DynamicsError;
 
@@ -42,22 +41,23 @@ use super::error::DynamicsError;
 ///                          DynamicsContext, TwoBody};
 /// use siderust::coordinates::frames::GCRS;
 /// use siderust::time::JulianDate;
-/// use siderust::qtty::{IntegratorTolerances, Second};
+/// use principia::IntegratorTolerances;
+/// use qtty::Second;
 ///
-/// let s0 = OrbitState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s0 = OrbitState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
 /// );
 /// let integ = Dop853Integrator {
 ///     tolerances: IntegratorTolerances::uniform(1e-9, 1e-6, 1e-9),
 /// };
-/// let s1 = integ.propagate(&TwoBody::earth(), s0, Second::new(60.0), &DynamicsContext::empty()).unwrap();
+/// let s1 = integ.propagate(&TwoBody::new(siderust::astro::dynamics::GM_EARTH), s0, Second::new(60.0), &DynamicsContext::empty()).unwrap();
 /// assert!((s1.epoch - s0.epoch).value() > 0.0);
 /// ```
 pub trait Integrator {
     /// Propagate `state` by `dt` seconds under `force` and `ctx`.
-    fn propagate<FM: ForceModel>(
+    fn propagate<FM: SiderustAccelerationModel>(
         &self,
         force: &FM,
         state: OrbitState,
@@ -68,7 +68,7 @@ pub trait Integrator {
 
 /// Fixed-step classical Runge-Kutta 4th-order integrator.
 ///
-/// Uses [`siderust::astro::dynamics::integrators::rk4_propagate`] under the
+/// Uses [`principia::rk4_propagate`] under the
 /// hood. The configured `step` is treated as a magnitude; the wrapper
 /// computes `n_steps = ceil(|dt| / step)` so the *effective* sub-step never
 /// exceeds `step` in absolute value. Forward propagation is supported (RK4
@@ -83,13 +83,13 @@ pub trait Integrator {
 /// use siderust::time::JulianDate;
 /// use siderust::qtty::Second;
 ///
-/// let s0 = OrbitState::new_at_jd(
-///     JulianDate::new(2_451_545.0),
+/// let s0 = OrbitState::new(
+///     JulianDate::new(2_451_545.0).to_j2000s(),
 ///     Position::<GCRS>::new(7_000.0, 0.0, 0.0),
 ///     Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
 /// );
 /// let integ = Rk4Integrator { step: Second::new(10.0) };
-/// let s1 = integ.propagate(&TwoBody::earth(), s0, Second::new(60.0), &DynamicsContext::empty()).unwrap();
+/// let s1 = integ.propagate(&TwoBody::new(siderust::astro::dynamics::GM_EARTH), s0, Second::new(60.0), &DynamicsContext::empty()).unwrap();
 /// assert!((s1.epoch - s0.epoch).value() > 0.0);
 /// ```
 #[derive(Debug, Clone, Copy)]
@@ -99,7 +99,7 @@ pub struct Rk4Integrator {
 }
 
 impl Integrator for Rk4Integrator {
-    fn propagate<FM: ForceModel>(
+    fn propagate<FM: SiderustAccelerationModel>(
         &self,
         force: &FM,
         state: OrbitState,
@@ -120,13 +120,13 @@ impl Integrator for Rk4Integrator {
         }
         let n_steps = (dt_s.abs() / step).ceil().max(1.0) as usize;
         let h = Second::new(dt_s / n_steps as f64);
-        Ok(rk4_propagate(force, state, h, n_steps, ctx)?)
+        Ok(rk4_propagate(force, state, h, dt, ctx)?)
     }
 }
 
 /// Adaptive Dormand-Prince 5(4) integrator (DOPRI5).
 ///
-/// Wraps [`siderust::astro::dynamics::integrators::dopri5_propagate`].
+/// Wraps [`principia::dopri5_propagate`].
 /// Suitable for general-purpose LEO/MEO propagation when 5th-order accuracy
 /// is enough.
 ///
@@ -146,7 +146,7 @@ pub struct Dopri5Integrator {
 }
 
 impl Integrator for Dopri5Integrator {
-    fn propagate<FM: ForceModel>(
+    fn propagate<FM: SiderustAccelerationModel>(
         &self,
         force: &FM,
         state: OrbitState,
@@ -159,7 +159,7 @@ impl Integrator for Dopri5Integrator {
 
 /// Adaptive Hairer DOP853 8th-order integrator.
 ///
-/// Wraps [`siderust::astro::dynamics::integrators::dop853_propagate`]. This
+/// Wraps [`principia::dop853_propagate`]. This
 /// is the high-precision choice for POD batch windows and finite-burn
 /// integration where 1e-9 relative tolerance is the working point.
 ///
@@ -179,7 +179,7 @@ pub struct Dop853Integrator {
 }
 
 impl Integrator for Dop853Integrator {
-    fn propagate<FM: ForceModel>(
+    fn propagate<FM: SiderustAccelerationModel>(
         &self,
         force: &FM,
         state: OrbitState,
@@ -199,8 +199,8 @@ mod tests {
     use siderust::time::JulianDate;
 
     fn s0() -> OrbitState {
-        OrbitState::new_at_jd(
-            JulianDate::new(2_451_545.0),
+        OrbitState::new(
+            JulianDate::new(2_451_545.0).to_j2000s(),
             Position::<GCRS>::new(7_000.0, 0.0, 0.0),
             Velocity::<GCRS>::new(0.0, 7.5450, 0.0),
         )
@@ -213,7 +213,7 @@ mod tests {
         };
         let s = integ
             .propagate(
-                &TwoBody::earth(),
+                &TwoBody::new(siderust::astro::dynamics::GM_EARTH),
                 s0(),
                 Second::new(0.0),
                 &DynamicsContext::empty(),
@@ -229,7 +229,7 @@ mod tests {
             step: Second::new(0.0),
         };
         let r = integ.propagate(
-            &TwoBody::earth(),
+            &TwoBody::new(siderust::astro::dynamics::GM_EARTH),
             s0(),
             Second::new(60.0),
             &DynamicsContext::empty(),
@@ -248,10 +248,20 @@ mod tests {
         let dt = Second::new(120.0);
         let ctx = DynamicsContext::empty();
         let a = Dop853Integrator { tolerances: tol }
-            .propagate(&TwoBody::earth(), s0(), dt, &ctx)
+            .propagate(
+                &TwoBody::new(siderust::astro::dynamics::GM_EARTH),
+                s0(),
+                dt,
+                &ctx,
+            )
             .unwrap();
         let b = Dopri5Integrator { tolerances: tol }
-            .propagate(&TwoBody::earth(), s0(), dt, &ctx)
+            .propagate(
+                &TwoBody::new(siderust::astro::dynamics::GM_EARTH),
+                s0(),
+                dt,
+                &ctx,
+            )
             .unwrap();
         let dx = (a.position.x().value() - b.position.x().value()).abs();
         let dy = (a.position.y().value() - b.position.y().value()).abs();

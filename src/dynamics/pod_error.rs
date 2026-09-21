@@ -8,7 +8,7 @@
 //! * Upstream [`crate::dynamics::DynamicsError`] for any integrator,
 //!   variational, or force-model failure surfaced through the typed adapter.
 //! * Registry / configuration validation errors raised by
-//!   [`crate::registry::ForceModelRegistry`] and friends.
+//!   [`crate::dynamics::registry::ForceModelRegistry`] and friends.
 //! * Process-noise input validation.
 //! * Explicit *feature-not-implemented* signal for stubs that the registry
 //!   recognises by name but cannot yet build (e.g. boxwing SRP).

@@ -8,12 +8,10 @@
 
 use super::dataset::DatasetRef;
 
-#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// Reproducible record of a single POD run.
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RunManifest {
     /// Free-form identifier (e.g. UUID) for the run.
     pub run_id: String,
@@ -40,7 +38,6 @@ impl RunManifest {
     }
 
     /// Serialize to a deterministic pretty-printed JSON string.
-    #[cfg(feature = "serde")]
     pub fn to_json_pretty(&self) -> Result<String, serde_json::Error> {
         let mut clone = self.clone();
         clone.canonicalize();
@@ -53,14 +50,12 @@ impl RunManifest {
 /// The schema lives next to this source file under `schema/run_manifest.v1.json`
 /// and is included verbatim at build time so the crate ships a single source
 /// of truth without filesystem access at runtime.
-#[cfg(feature = "serde")]
 pub const RUN_MANIFEST_SCHEMA_V1: &str = include_str!("../schema/run_manifest.v1.json");
 
 /// Embedded JSON-Schema (draft-07) for a v1 QC report (`qc.v1`).
-#[cfg(feature = "serde")]
 pub const QC_SCHEMA_V1: &str = include_str!("../schema/qc.v1.json");
 
-#[cfg(all(test, feature = "serde"))]
+#[cfg(test)]
 mod tests {
     use super::*;
     use std::path::PathBuf;

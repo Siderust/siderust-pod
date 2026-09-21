@@ -14,51 +14,9 @@ env:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: siderust-pod
-
     steps:
       - name: Checkout siderust-pod
         uses: actions/checkout@v4
-        with:
-          path: siderust-pod
-
-      # siderust-pod is currently developed against sibling path dependencies.
-      - name: Checkout qtty
-        uses: actions/checkout@v4
-        with:
-          repository: Siderust/qtty
-          ref: 19ea35a0f8cae063e174c0466bf6fd4c26921e01
-          path: qtty
-
-      - name: Checkout tempoch
-        uses: actions/checkout@v4
-        with:
-          repository: Siderust/tempoch
-          ref: 4393188784733f5de271ad001d659b741ca7c91d
-          path: tempoch
-
-      - name: Checkout affn
-        uses: actions/checkout@v4
-        with:
-          repository: Siderust/affn
-          ref: v0.7.1
-          path: affn
-
-      - name: Checkout cheby
-        uses: actions/checkout@v4
-        with:
-          repository: Siderust/cheby
-          ref: v0.2.0
-          path: cheby
-
-      - name: Checkout siderust
-        uses: actions/checkout@v4
-        with:
-          repository: Siderust/siderust
-          ref: 8e694d9ba97ce736bac33945e935b87952a077bd
-          path: siderust
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -67,6 +25,9 @@ jobs:
 
       - name: Format
         run: cargo fmt -- --check
+
+      - name: Check
+        run: cargo check --workspace --all-targets --all-features
 
       - name: Clippy
         run: cargo clippy --workspace --all-targets --all-features -- -D warnings

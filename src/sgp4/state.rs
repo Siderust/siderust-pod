@@ -91,7 +91,7 @@ impl TemeState {
     ///     Utc.with_ymd_and_hms(2000, 1, 1, 12, 0, 0).unwrap(),
     /// )
     /// .unwrap();
-    /// let jd = JulianDate::<UTC>::from(t);
+    /// let jd = t.to::<tempoch::JD>();
     /// let s = TemeState::from_arrays(
     ///     jd,
     ///     [7000.0, 0.0, 0.0],

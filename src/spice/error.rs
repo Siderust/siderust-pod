@@ -77,7 +77,7 @@ pub enum SpiceError {
     /// (Chebyshev position+velocity). Types 9 / 13 (Lagrange equal- and
     /// unequal-step interpolation) and the higher Types are not
     /// implemented; the parser still indexes them so callers can detect
-    /// their presence via [`crate::SpkKernel::segments`], but a state
+    /// their presence via [`crate::spice::SpkKernel::segments`], but a state
     /// query that resolves to such a segment fails with this error.
     #[error("SPICE kernel: SPK Type {data_type} is not implemented")]
     UnsupportedDataType {
@@ -99,17 +99,34 @@ pub enum SpiceError {
 impl From<siderust::formats::spice::SpiceError> for SpiceError {
     fn from(err: siderust::formats::spice::SpiceError) -> Self {
         match err {
-            siderust::formats::spice::SpiceError::Parse(message) => SpiceError::Parse { message },
-        }
-    }
-}
-
-impl From<siderust::datasets::DatasetError> for SpiceError {
-    fn from(err: siderust::datasets::DatasetError) -> Self {
-        match err {
-            siderust::datasets::DatasetError::Io(e) => SpiceError::Io(e),
+            siderust::formats::spice::SpiceError::Io(error) => SpiceError::Io(error),
+            siderust::formats::spice::SpiceError::Parse { message } => {
+                SpiceError::Parse { message }
+            }
+            siderust::formats::spice::SpiceError::OutOfCoverage {
+                target,
+                center,
+                epoch_tdb_seconds,
+                start_tdb_seconds,
+                end_tdb_seconds,
+            } => SpiceError::OutOfCoverage {
+                target,
+                center,
+                epoch_tdb_seconds,
+                start_tdb_seconds,
+                end_tdb_seconds,
+            },
+            siderust::formats::spice::SpiceError::NoChain { target, center } => {
+                SpiceError::NoChain { target, center }
+            }
+            siderust::formats::spice::SpiceError::UnsupportedDataType { data_type } => {
+                SpiceError::UnsupportedDataType { data_type }
+            }
+            siderust::formats::spice::SpiceError::Corrupted { message } => {
+                SpiceError::Corrupted { message }
+            }
             other => SpiceError::Parse {
-                message: format!("{other}"),
+                message: other.to_string(),
             },
         }
     }
@@ -138,19 +155,5 @@ mod tests {
     fn unsupported_data_type_message_contains_code() {
         let e = SpiceError::UnsupportedDataType { data_type: 13 };
         assert!(format!("{e}").contains("Type 13"));
-    }
-
-    #[test]
-    fn from_data_error_io_preserves_kind() {
-        let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "x");
-        let e: SpiceError = siderust::datasets::DatasetError::Io(io_err).into();
-        assert!(matches!(e, SpiceError::Io(_)));
-    }
-
-    #[test]
-    fn from_dataset_error_spice_becomes_parse_variant() {
-        let spice_err = siderust::formats::spice::SpiceError::Parse("bad".into());
-        let e: SpiceError = siderust::datasets::DatasetError::Spice(spice_err).into();
-        assert!(matches!(e, SpiceError::Parse { .. }));
     }
 }

@@ -5,7 +5,7 @@
 
 **Precise Orbit Determination and orbit-analysis tooling in Rust.**
 
-`siderust-pod` is an engineering-oriented toolkit for orbit propagation, observation modelling, state estimation, orbit-product handling, and quality control. It builds on the wider [Siderust](https://github.com/Siderust) stack and aims to keep physical units, reference frames, time scales, and estimation primitives explicit in the type system.
+`siderust-pod` is an engineering-oriented toolkit for orbit propagation, observation modelling, state estimation, orbit-product handling, and quality control. It builds on released crates from the wider [Siderust](https://github.com/Siderust) ecosystem and aims to keep physical units, reference frames, time scales, and estimation primitives explicit in the type system.
 
 > **Status: engineering preview (pre-1.0).**
 > The synthetic end-to-end POD path is usable for development and validation. Real-data workflows and the REST surface are still evolving. This project is not yet intended for flight-critical or safety-critical operational use.
@@ -45,21 +45,13 @@ src/
 
 ## Quick start
 
-The Siderust repositories are currently developed side-by-side and `siderust-pod` uses local path dependencies. Clone the stack into sibling directories:
-
 ```bash
-mkdir siderust-stack && cd siderust-stack
-
-git clone https://github.com/Siderust/qtty.git
-git clone https://github.com/Siderust/tempoch.git
-git clone https://github.com/Siderust/affn.git
-git clone https://github.com/Siderust/cheby.git
-git clone https://github.com/Siderust/siderust.git
 git clone https://github.com/Siderust/siderust-pod.git
-
 cd siderust-pod
-cargo test --workspace
+cargo test
 ```
+
+Foundational astrodynamics, typed quantities, time scales, frames, and reusable numerical mechanics live in the released Siderust ecosystem crates. `siderust-pod` focuses on precise orbit determination: estimation, observations, orbit products, quality control, and service orchestration. Some primitives first explored during POD development have since moved upstream and are consumed here through their public APIs.
 
 Validate and run the synthetic POD configuration:
 
@@ -93,6 +85,7 @@ Run the main checks locally with:
 
 ```bash
 cargo fmt -- --check
+cargo check --workspace --all-targets --all-features
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --no-fail-fast
 cargo test --workspace --no-default-features --no-fail-fast
