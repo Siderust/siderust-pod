@@ -274,8 +274,7 @@ fn step_size(arc: &SyntheticArc) -> f64 {
     if arc.truth_states.len() < 2 {
         return 30.0;
     }
-    let dt_jd =
-        arc.truth_states[1].epoch_jd().value() - arc.truth_states[0].epoch_jd().value();
+    let dt_jd = arc.truth_states[1].epoch_jd().value() - arc.truth_states[0].epoch_jd().value();
     dt_jd * 86_400.0
 }
 
