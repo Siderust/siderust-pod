@@ -62,14 +62,16 @@ cargo run --bin siderust-pod -- validate-config examples/configs/leo_gnss_mvp1.y
 cargo run --bin siderust-pod -- run examples/configs/leo_gnss_mvp1.yaml
 ```
 
-Two standalone orbit-mechanics examples are also included:
+Four focused Rust examples cover typed propagation, estimation, Lambert transfer, and SGP4:
 
 ```bash
+cargo run --example 01_typed_two_body_propagation
+cargo run --example 02_short_arc_wls
 cargo run --example 03_lambert_earth_to_mars
 cargo run --example 04_sgp4_from_tle
 ```
 
-See [examples/README.md](examples/README.md) for details.
+See [examples/README.md](examples/README.md) for the purpose of each example and the typed-API conventions they follow.
 
 ## Design principles
 
