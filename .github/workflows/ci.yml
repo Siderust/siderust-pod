@@ -29,14 +29,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Siderust/qtty
-          ref: v0.8.0
+          ref: 19ea35a0f8cae063e174c0466bf6fd4c26921e01
           path: qtty
 
       - name: Checkout tempoch
         uses: actions/checkout@v4
         with:
           repository: Siderust/tempoch
-          ref: v0.6.0
+          ref: 4393188784733f5de271ad001d659b741ca7c91d
           path: tempoch
 
       - name: Checkout affn
@@ -57,7 +57,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Siderust/siderust
-          ref: v0.8.0
+          ref: 752677f7dd7ccee0b72d75619d843b476578d60e
           path: siderust
 
       - name: Install Rust toolchain
