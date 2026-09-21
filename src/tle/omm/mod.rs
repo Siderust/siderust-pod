@@ -23,8 +23,8 @@ use qtty::angular::Degrees;
 use qtty_core::units::{angular::Turn, angular_rate::AngularRate, time::Day};
 use tempoch::{Time, UTC};
 
-use crate::tle::{Classification, InternationalDesignator, SatelliteNumber, Tle};
 use crate::tle::TleError;
+use crate::tle::{Classification, InternationalDesignator, SatelliteNumber, Tle};
 
 /// Strongly-typed OMM record.
 ///

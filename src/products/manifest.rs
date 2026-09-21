@@ -122,7 +122,10 @@ mod tests {
         ManifestWriter::write(&mut buf, &sample_manifest()).unwrap();
         let text = String::from_utf8(buf).unwrap();
         let v: serde_json::Value = serde_json::from_str(&text).unwrap();
-        assert_eq!(v["run_id"].as_str().unwrap(), "00000000-0000-0000-0000-000000000000");
+        assert_eq!(
+            v["run_id"].as_str().unwrap(),
+            "00000000-0000-0000-0000-000000000000"
+        );
     }
 
     #[test]
@@ -146,8 +149,15 @@ mod tests {
         let mut buf = Vec::new();
         ManifestWriter::write(&mut buf, &sample_manifest()).unwrap();
         let text = String::from_utf8(buf).unwrap();
-        for field in ["run_id", "tool_version", "config_sha256", "inputs", "outputs",
-                      "started_at", "finished_at"] {
+        for field in [
+            "run_id",
+            "tool_version",
+            "config_sha256",
+            "inputs",
+            "outputs",
+            "started_at",
+            "finished_at",
+        ] {
             assert!(text.contains(field), "missing field: {field}");
         }
     }

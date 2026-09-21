@@ -179,7 +179,10 @@ impl<W: Write> ResidualCsvWriter<W> {
     /// assert!(String::from_utf8(buf).unwrap().starts_with("epoch_jd_tt,"));
     /// ```
     pub fn new(mut writer: W) -> Result<Self, PodProductsError> {
-        writeln!(writer, "epoch_jd_tt,obs_type,satellite,residual_m,sigma_m,rejected")?;
+        writeln!(
+            writer,
+            "epoch_jd_tt,obs_type,satellite,residual_m,sigma_m,rejected"
+        )?;
         writer.flush()?;
         Ok(Self { writer })
     }
@@ -265,7 +268,10 @@ mod tests {
         let mut buf = Vec::<u8>::new();
         ResidualCsvWriter::new(&mut buf).unwrap();
         let text = String::from_utf8(buf).unwrap();
-        assert_eq!(text.trim(), "epoch_jd_tt,obs_type,satellite,residual_m,sigma_m,rejected");
+        assert_eq!(
+            text.trim(),
+            "epoch_jd_tt,obs_type,satellite,residual_m,sigma_m,rejected"
+        );
     }
 
     #[test]
@@ -302,6 +308,9 @@ mod tests {
         })
         .unwrap();
         let text = String::from_utf8(buf).unwrap();
-        assert!(text.contains(",true"), "rejected=true must appear in output");
+        assert!(
+            text.contains(",true"),
+            "rejected=true must appear in output"
+        );
     }
 }

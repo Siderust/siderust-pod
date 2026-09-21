@@ -111,11 +111,11 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::dynamics::Rk4Integrator;
     use siderust::astro::dynamics::forces::TwoBody;
     use siderust::astro::dynamics::{Position, Velocity};
     use siderust::coordinates::frames::GCRS;
     use siderust::time::JulianDate;
-    use crate::dynamics::Rk4Integrator;
 
     fn s0() -> OrbitState {
         OrbitState::new_at_jd(

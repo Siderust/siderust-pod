@@ -82,7 +82,10 @@ impl<W: Write + Seek + Send> ResidualParquetWriter<W> {
     /// let _w = ResidualParquetWriter::new(Cursor::new(Vec::<u8>::new()));
     /// ```
     pub fn new(output: W) -> Self {
-        Self { records: Vec::new(), output }
+        Self {
+            records: Vec::new(),
+            output,
+        }
     }
 
     /// Buffer one record for later writing.
@@ -150,15 +153,12 @@ impl<W: Write + Seek + Send> ResidualParquetWriter<W> {
             REQUIRED BOOLEAN rejected;
         }";
 
-        let schema = parse_message_type(SCHEMA)
-            .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
+        let schema =
+            parse_message_type(SCHEMA).map_err(|e| PodProductsError::Parquet(e.to_string()))?;
         let props = WriterProperties::builder().build();
-        let mut file_writer = SerializedFileWriter::new(
-            self.output,
-            Arc::new(schema),
-            Arc::new(props),
-        )
-        .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
+        let mut file_writer =
+            SerializedFileWriter::new(self.output, Arc::new(schema), Arc::new(props))
+                .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
 
         {
             let mut rg = file_writer
@@ -175,7 +175,8 @@ impl<W: Write + Seek + Send> ResidualParquetWriter<W> {
                 cw.typed::<DoubleType>()
                     .write_batch(&vals, None, None)
                     .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
-                cw.close().map_err(|e| PodProductsError::Parquet(e.to_string()))?;
+                cw.close()
+                    .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
             }
 
             // obs_type — BYTE_ARRAY/UTF8
@@ -192,7 +193,8 @@ impl<W: Write + Seek + Send> ResidualParquetWriter<W> {
                 cw.typed::<ByteArrayType>()
                     .write_batch(&vals, None, None)
                     .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
-                cw.close().map_err(|e| PodProductsError::Parquet(e.to_string()))?;
+                cw.close()
+                    .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
             }
 
             // satellite — BYTE_ARRAY/UTF8
@@ -209,7 +211,8 @@ impl<W: Write + Seek + Send> ResidualParquetWriter<W> {
                 cw.typed::<ByteArrayType>()
                     .write_batch(&vals, None, None)
                     .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
-                cw.close().map_err(|e| PodProductsError::Parquet(e.to_string()))?;
+                cw.close()
+                    .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
             }
 
             // residual_m — DOUBLE
@@ -222,7 +225,8 @@ impl<W: Write + Seek + Send> ResidualParquetWriter<W> {
                 cw.typed::<DoubleType>()
                     .write_batch(&vals, None, None)
                     .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
-                cw.close().map_err(|e| PodProductsError::Parquet(e.to_string()))?;
+                cw.close()
+                    .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
             }
 
             // sigma_m — DOUBLE
@@ -235,7 +239,8 @@ impl<W: Write + Seek + Send> ResidualParquetWriter<W> {
                 cw.typed::<DoubleType>()
                     .write_batch(&vals, None, None)
                     .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
-                cw.close().map_err(|e| PodProductsError::Parquet(e.to_string()))?;
+                cw.close()
+                    .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
             }
 
             // rejected — BOOLEAN
@@ -248,10 +253,12 @@ impl<W: Write + Seek + Send> ResidualParquetWriter<W> {
                 cw.typed::<BoolType>()
                     .write_batch(&vals, None, None)
                     .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
-                cw.close().map_err(|e| PodProductsError::Parquet(e.to_string()))?;
+                cw.close()
+                    .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
             }
 
-            rg.close().map_err(|e| PodProductsError::Parquet(e.to_string()))?;
+            rg.close()
+                .map_err(|e| PodProductsError::Parquet(e.to_string()))?;
         }
 
         let output = file_writer
@@ -286,7 +293,11 @@ mod tests {
         let cursor = w.finish().unwrap();
         let bytes = cursor.into_inner();
         assert_eq!(&bytes[..4], b"PAR1", "Parquet magic bytes not found");
-        assert_eq!(bytes.last_chunk::<4>().unwrap(), b"PAR1", "Parquet footer not found");
+        assert_eq!(
+            bytes.last_chunk::<4>().unwrap(),
+            b"PAR1",
+            "Parquet footer not found"
+        );
     }
 
     #[test]

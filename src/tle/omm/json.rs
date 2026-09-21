@@ -8,8 +8,8 @@ use qtty_core::units::{angular::Turn, angular_rate::AngularRate, time::Day};
 use serde::{Deserialize, Serialize};
 
 use super::{format_epoch, parse_epoch, Omm};
-use crate::tle::{Classification, SatelliteNumber};
 use crate::tle::TleError;
+use crate::tle::{Classification, SatelliteNumber};
 
 /// Render an [`Omm`] (or a slice of them) to Celestrak-style JSON.
 ///

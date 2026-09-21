@@ -27,12 +27,12 @@
 
 #[cfg(feature = "lisa")]
 mod inner {
+    use crate::core::providers::EphemerisProvider;
+    use crate::io::lisa::{LisaEphemerisProvider, LisaSpacecraftId};
     use crate::observations::error::PodObservationsError;
     use crate::observations::obs_trait::{CartesianState, ObsType, Observation};
     use crate::observations::provider_bundle::ProviderBundle;
     use siderust::time::JulianDate;
-    use crate::core::providers::EphemerisProvider;
-    use crate::io::lisa::{LisaEphemerisProvider, LisaSpacecraftId};
     use std::sync::Arc;
 
     /// Speed of light in km/s.

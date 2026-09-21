@@ -14,12 +14,12 @@
 use std::marker::PhantomData;
 use std::sync::Arc;
 
+use crate::core::providers::EphemerisProvider;
 use affn::cartesian::Position;
 use qtty::unit::Kilometer;
 use qtty::Quantity;
 use siderust::coordinates::centers::ReferenceCenter;
 use siderust::coordinates::frames::ICRS;
-use crate::core::providers::EphemerisProvider;
 use tempoch::{EncodedTime, J2000s, Time, TDB};
 
 use super::error::SpiceError;

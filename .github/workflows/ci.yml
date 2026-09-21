@@ -1,65 +1,100 @@
 name: ci
+
 on:
   push:
     branches: [main]
   pull_request:
+
 permissions:
   contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
-  build-test:
+  quality:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: rust/siderust-pod
+        working-directory: siderust-pod
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - name: Checkout siderust-pod
+        uses: actions/checkout@v4
+        with:
+          path: siderust-pod
+
+      # siderust-pod is currently developed against sibling path dependencies.
+      - name: Checkout qtty
+        uses: actions/checkout@v4
+        with:
+          repository: Siderust/qtty
+          ref: 19ea35a0f8cae063e174c0466bf6fd4c26921e01
+          path: qtty
+
+      - name: Checkout tempoch
+        uses: actions/checkout@v4
+        with:
+          repository: Siderust/tempoch
+          ref: 4393188784733f5de271ad001d659b741ca7c91d
+          path: tempoch
+
+      - name: Checkout affn
+        uses: actions/checkout@v4
+        with:
+          repository: Siderust/affn
+          ref: v0.7.1
+          path: affn
+
+      - name: Checkout cheby
+        uses: actions/checkout@v4
+        with:
+          repository: Siderust/cheby
+          ref: v0.2.0
+          path: cheby
+
+      - name: Checkout siderust
+        uses: actions/checkout@v4
+        with:
+          repository: Siderust/siderust
+          ref: 8e694d9ba97ce736bac33945e935b87952a077bd
+          path: siderust
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - name: fmt
-        run: cargo fmt --all -- --check
-      - name: clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings
-      - name: test (default features)
+
+      - name: Format
+        run: cargo fmt -- --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Test default features
         run: cargo test --workspace --no-fail-fast
-      - name: test (no default features)
+
+      - name: Test without default features
         run: cargo test --workspace --no-default-features --no-fail-fast
-      - name: test (all features)
+
+      - name: Test all features
         run: cargo test --workspace --all-features --no-fail-fast
-      - name: dep-graph
+
+      - name: Dependency direction
         run: bash scripts/check_dep_graph.sh
-      - name: todo-sweep
+
+      - name: Source hygiene
         run: bash scripts/check_no_todos.sh
-      - name: doc
+
+      - name: Documentation
         run: cargo doc --workspace --no-deps
         env:
           RUSTDOCFLAGS: -D rustdoc::broken-intra-doc-links
 
-  public-api:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: rust/siderust-pod
-    continue-on-error: true   # advisory until 1.0; baselines tracked under crates/*/api.snapshot
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@nightly
-      - name: install cargo-public-api
-        run: cargo install --locked cargo-public-api || true
-      - name: snapshot diff
-        run: bash scripts/snapshot_public_api.sh
+      - name: Install cargo-deny
+        run: cargo install --locked cargo-deny
+        continue-on-error: true
 
-  supply-chain:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: rust/siderust-pod
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: install cargo-deny
-        run: cargo install --locked cargo-deny || true
-      - name: cargo deny
+      - name: Supply-chain audit
         run: cargo deny --all-features check
-        continue-on-error: true   # advisory-only until M11 hardens the policy
-
+        continue-on-error: true

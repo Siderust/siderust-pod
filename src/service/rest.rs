@@ -34,15 +34,13 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
+use crate::service::{generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity};
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
-use crate::service::{
-    generate, run_synth, OrbitState, Position, SyntheticArcConfig, Velocity,
-};
 use uuid::Uuid;
 
 /// Job status snapshot.
