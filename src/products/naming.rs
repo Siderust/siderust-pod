@@ -295,7 +295,9 @@ pub fn sp3_lfn(
     span: &str,
     sample: &str,
 ) -> PathBuf {
-    igs_lfn(ac, version, campaign, year, doy, hour, minute, span, sample, "ORB", "SP3")
+    igs_lfn(
+        ac, version, campaign, year, doy, hour, minute, span, sample, "ORB", "SP3",
+    )
 }
 
 /// Build an IGS clock product filename.
@@ -325,7 +327,9 @@ pub fn clk_filename(
     span: &str,
     sample: &str,
 ) -> PathBuf {
-    igs_lfn(ac, version, campaign, year, doy, hour, minute, span, sample, "CLK", "CLK")
+    igs_lfn(
+        ac, version, campaign, year, doy, hour, minute, span, sample, "CLK", "CLK",
+    )
 }
 
 /// Build an IGS RINEX observation filename.
@@ -356,7 +360,9 @@ pub fn rnx_obs_filename(
     span: &str,
     sample: &str,
 ) -> PathBuf {
-    igs_lfn(ac, version, campaign, year, doy, hour, minute, span, sample, "MO", "rnx")
+    igs_lfn(
+        ac, version, campaign, year, doy, hour, minute, span, sample, "MO", "rnx",
+    )
 }
 
 #[cfg(test)]
@@ -365,7 +371,9 @@ mod tests {
 
     #[test]
     fn igs_lfn_format_matches_spec() {
-        let p = igs_lfn("IGS", '0', "OPSFIN", 2024, 1, 0, 0, "01D", "15M", "ORB", "SP3");
+        let p = igs_lfn(
+            "IGS", '0', "OPSFIN", 2024, 1, 0, 0, "01D", "15M", "ORB", "SP3",
+        );
         assert_eq!(
             p.to_str().unwrap(),
             "IGS0OPSFIN_20240010000_01D_15M_ORB.SP3"
@@ -375,7 +383,9 @@ mod tests {
     #[test]
     fn sp3_lfn_matches_igs_lfn() {
         let a = sp3_lfn("GFZ", '0', "OPSRAP", 2024, 32, 12, 0, "01D", "05M");
-        let b = igs_lfn("GFZ", '0', "OPSRAP", 2024, 32, 12, 0, "01D", "05M", "ORB", "SP3");
+        let b = igs_lfn(
+            "GFZ", '0', "OPSRAP", 2024, 32, 12, 0, "01D", "05M", "ORB", "SP3",
+        );
         assert_eq!(a, b);
     }
 
@@ -392,7 +402,13 @@ mod tests {
     #[test]
     fn sp3_filename_velocity_type() {
         let date = NaiveDate::from_ymd_opt(2024, 1, 1).unwrap();
-        let p = sp3_filename("GFZ", date, Sp3FileType::PositionVelocity, 30, Sp3Version::C);
+        let p = sp3_filename(
+            "GFZ",
+            date,
+            Sp3FileType::PositionVelocity,
+            30,
+            Sp3Version::C,
+        );
         let s = p.to_str().unwrap();
         assert!(s.contains("OBV"), "expected OBV file-type tag, got {s}");
         assert!(s.contains("30S"), "expected 30S sample rate, got {s}");
@@ -431,7 +447,10 @@ mod tests {
     #[test]
     fn doy_zero_padded() {
         let p = sp3_lfn("IGS", '0', "OPSFIN", 2024, 7, 0, 0, "01D", "15M");
-        assert!(p.to_str().unwrap().contains("2024007"), "DOY must be zero-padded to 3 digits");
+        assert!(
+            p.to_str().unwrap().contains("2024007"),
+            "DOY must be zero-padded to 3 digits"
+        );
     }
 
     #[test]
