@@ -17,8 +17,8 @@ use qtty_core::units::{angular::Turn, angular_rate::AngularRate, time::Day};
 use tempoch::{Time, UTC};
 
 use super::parse::compute_tle_checksum;
-use crate::tle::{Classification, InternationalDesignator, SatelliteNumber, Tle};
 use super::TleError;
+use crate::tle::{Classification, InternationalDesignator, SatelliteNumber, Tle};
 
 /// Typed builder for [`Tle`].
 ///
