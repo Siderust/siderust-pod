@@ -110,7 +110,7 @@ fn gps_state_at(
     let n_mean = (mu / (r * r * r)).sqrt(); // rad/s
     let theta0 = 2.0 * std::f64::consts::PI * (slot as f64) / (n as f64);
     let inc: f64 = if slot % 2 == 0 { 0.95 } else { 1.05 }; // ~55°
-    let dt = (jd.jd_value() - 2_451_545.0) * 86_400.0;
+    let dt = (jd.value() - 2_451_545.0) * 86_400.0;
     let theta = theta0 + n_mean * dt;
     let cos_t = theta.cos();
     let sin_t = theta.sin();
@@ -170,7 +170,7 @@ pub fn generate(cfg: &SyntheticArcConfig) -> SyntheticArc {
         let mut code = Vec::new();
         let mut carrier = Vec::new();
         for sat in &gps_sats {
-            let (gps_pos, gps_vel) = gps_state_at(s.epoch.into(), sat.slot, cfg.n_gps_sats);
+            let (gps_pos, gps_vel) = gps_state_at(s.epoch_jd(), sat.slot, cfg.n_gps_sats);
             // Use the analytic prediction at *truth* state and add noise +
             // truth clock bias to obtain the synthetic measurement.
             let geom = code_truth_m(s, gps_pos, gps_vel) + cfg.clock_bias_m;
