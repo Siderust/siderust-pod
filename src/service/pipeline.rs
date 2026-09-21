@@ -274,8 +274,7 @@ fn step_size(arc: &SyntheticArc) -> f64 {
     if arc.truth_states.len() < 2 {
         return 30.0;
     }
-    let dt_jd =
-        arc.truth_states[1].epoch_jd().jd_value() - arc.truth_states[0].epoch_jd().jd_value();
+    let dt_jd = arc.truth_states[1].epoch_jd().value() - arc.truth_states[0].epoch_jd().value();
     dt_jd * 86_400.0
 }
 
@@ -384,7 +383,7 @@ fn postfit_residuals(
             };
             let p = model.predict(s, extras);
             out.push(ResidualRow {
-                jd_tt: s.epoch_jd().jd_value(),
+                jd_tt: s.epoch_jd().value(),
                 kind: format!("code-{}", sat.id),
                 measured_m: obs.measured_m,
                 predicted_m: p.value,
@@ -400,7 +399,7 @@ fn postfit_residuals(
             };
             let p = model.predict(s, extras);
             out.push(ResidualRow {
-                jd_tt: s.epoch_jd().jd_value(),
+                jd_tt: s.epoch_jd().value(),
                 kind: format!("phase-{}", sat.id),
                 measured_m: obs.measured_m,
                 predicted_m: p.value,

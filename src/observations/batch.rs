@@ -143,7 +143,7 @@ impl Default for ObservationBatch {
 /// Epochs match within 0.5 µs (≈ 5.8e-12 JD days).
 fn epochs_match(a: JulianDate, b: JulianDate) -> bool {
     const TOL_DAYS: f64 = 5.8e-12;
-    (a.jd_value() - b.jd_value()).abs() < TOL_DAYS
+    (a.value() - b.value()).abs() < TOL_DAYS
 }
 
 #[cfg(test)]

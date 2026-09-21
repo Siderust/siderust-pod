@@ -126,7 +126,7 @@ impl EmpiricalPeriodicAcceleration {
     }
 
     fn phase(&self, epoch: JulianDate) -> f64 {
-        let dt_days = epoch.jd_value() - self.epoch_ref.jd_value();
+        let dt_days = epoch.value() - self.epoch_ref.value();
         let dt_s = dt_days * 86_400.0;
         let t = self.period.value();
         if t <= 0.0 || !t.is_finite() {
@@ -223,7 +223,7 @@ mod tests {
         let dt_quarter = 5400.0 / 4.0;
         let epoch = JulianDate::new(2_451_545.0 + dt_quarter / 86_400.0);
         let mut s = s0();
-        s.epoch = epoch.to_time();
+        s.epoch = epoch.to_j2000s();
         let a1 = f1.acceleration(&s, &DynamicsContext::empty()).unwrap();
         let a2 = f2.acceleration(&s, &DynamicsContext::empty()).unwrap();
         let mag1 = (a1.x().value().powi(2) + a1.y().value().powi(2)).sqrt();

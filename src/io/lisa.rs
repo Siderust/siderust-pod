@@ -667,6 +667,6 @@ fn j2000_seconds_to_jd(s: f64) -> f64 {
 /// Returns [`PodIoError::Format`] if `jd` is not finite or the conversion fails.
 fn jd_to_time_tdb(jd: f64) -> Result<Time<TDB>, PodIoError> {
     JulianDate::<TDB>::try_new(Day::new(jd))
-        .map(|enc| enc.to_time())
+        .map(|enc| enc.to_j2000s())
         .map_err(|e| PodIoError::Format(format!("lisa: cannot convert JD {jd} to TDB Time: {e}")))
 }

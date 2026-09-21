@@ -83,8 +83,8 @@ impl std::fmt::Display for ArcId {
 /// use tempoch::{J2000Seconds, TT};
 /// use qtty::Second;
 ///
-/// let start = J2000Seconds::<TT>::try_new(Second::new(0.0)).unwrap().to_time();
-/// let stop  = J2000Seconds::<TT>::try_new(Second::new(86_400.0)).unwrap().to_time();
+/// let start = J2000Seconds::<TT>::try_new(Second::new(0.0)).unwrap().to_j2000s();
+/// let stop  = J2000Seconds::<TT>::try_new(Second::new(86_400.0)).unwrap().to_j2000s();
 /// let arc = ArcDefinition {
 ///     id: ArcId::new("demo"),
 ///     start,
@@ -120,8 +120,8 @@ impl ArcDefinition {
     /// use qtty::Second;
     /// let arc = ArcDefinition {
     ///     id: ArcId::new("a"),
-    ///     start: J2000Seconds::<TT>::try_new(Second::new(0.0)).unwrap().to_time(),
-    ///     stop:  J2000Seconds::<TT>::try_new(Second::new(86_400.0)).unwrap().to_time(),
+    ///     start: J2000Seconds::<TT>::try_new(Second::new(0.0)).unwrap().to_j2000s(),
+    ///     stop:  J2000Seconds::<TT>::try_new(Second::new(86_400.0)).unwrap().to_j2000s(),
     ///     step_hint: None,
     /// };
     /// assert!((arc.duration().value() - 86_400.0).abs() < 1e-6);
@@ -140,8 +140,8 @@ impl ArcDefinition {
     /// use qtty::Second;
     /// let arc = ArcDefinition {
     ///     id: ArcId::new("a"),
-    ///     start: J2000Seconds::<TT>::try_new(Second::new(0.0)).unwrap().to_time(),
-    ///     stop:  J2000Seconds::<TT>::try_new(Second::new(86_400.0)).unwrap().to_time(),
+    ///     start: J2000Seconds::<TT>::try_new(Second::new(0.0)).unwrap().to_j2000s(),
+    ///     stop:  J2000Seconds::<TT>::try_new(Second::new(86_400.0)).unwrap().to_j2000s(),
     ///     step_hint: None,
     /// };
     /// assert!(arc.is_valid());
@@ -159,7 +159,7 @@ mod tests {
     fn at(secs: f64) -> Time<TT> {
         J2000Seconds::<TT>::try_new(Second::new(secs))
             .unwrap()
-            .to_time()
+            .to_j2000s()
     }
 
     #[test]

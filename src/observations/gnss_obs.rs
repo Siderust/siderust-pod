@@ -371,7 +371,7 @@ impl Observation for GnssPseudorangeObs {
             }
         };
 
-        let epoch_jd = self.epoch.jd_value();
+        let epoch_jd = self.epoch.value();
         let dt_r = providers.receiver_clock_m();
         let dt_s = providers.gnss_satellite_clock_m(&self.prn, epoch_jd);
 
@@ -503,7 +503,7 @@ impl Observation for GnssCarrierPhaseObs {
             }
         };
 
-        let epoch_jd = self.epoch.jd_value();
+        let epoch_jd = self.epoch.value();
         let dt_r = providers.receiver_clock_m();
         let dt_s = providers.gnss_satellite_clock_m(&self.prn, epoch_jd);
 

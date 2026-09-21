@@ -95,9 +95,9 @@ pub fn write_sp3_from_states<W: Write>(
         .map(|s| {
             // Bridge the two tempoch versions (siderust uses crates.io tempoch,
             // siderust-pod-io uses the local path version) via the raw f64 JD.
-            let epoch_utc: Time<UTC> = JulianDate::<TT>::try_new(Day::new(s.epoch_jd().jd_value()))
+            let epoch_utc: Time<UTC> = JulianDate::<TT>::try_new(Day::new(s.epoch_jd().value()))
                 .expect("OrbitState epoch must be finite")
-                .to_time()
+                .to_j2000s()
                 .to_scale::<UTC>();
             Sp3Epoch {
                 time: epoch_utc,
@@ -161,7 +161,7 @@ pub fn write_oem_from_states<W: Write>(
         .iter()
         .map(|s| {
             OemState::new(
-                s.epoch_jd().jd_value(),
+                s.epoch_jd().value(),
                 [
                     s.position.x().value(),
                     s.position.y().value(),
