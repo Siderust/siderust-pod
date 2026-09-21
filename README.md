@@ -1,69 +1,115 @@
 # siderust-pod
 
-Modular, type-safe Precise Orbit Determination (POD) workspace built on
-top of the [siderust](../siderust) astronomy stack.
+[![CI](https://github.com/Siderust/siderust-pod/actions/workflows/ci.yml/badge.svg)](https://github.com/Siderust/siderust-pod/actions/workflows/ci.yml)
+[![License: AGPL-3.0-or-later](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue.svg)](LICENSE)
 
-> **Status:** pre-1.0. The synthetic-arc end-to-end pipeline (M0–M7) is
-> green on every commit; real GNSS ingestion (SP3, RINEX OBS, RINEX
-> NAV, ANTEX → estimator) is scheduled for milestone M9. See
-> `plan.md` §13 for the post-M7 audit and the M8–M12 remediation
-> roadmap.
+**Precise Orbit Determination and orbit-analysis tooling in Rust.**
 
-## Workspace layout
+`siderust-pod` is an engineering-oriented toolkit for orbit propagation, observation modelling, state estimation, orbit-product handling, and quality control. It builds on the wider [Siderust](https://github.com/Siderust) stack and aims to keep physical units, reference frames, time scales, and estimation primitives explicit in the type system.
 
-```
-crates/
-  siderust-pod-dynamics/      forces (two-body, J2, third-body, SRP, drag), integrators, STM
-  siderust-pod-io/            SP3 / RINEX OBS+NAV / ANTEX / EOP / CRD / CPF / OEM (MVP subsets)
-  siderust-pod-observations/  GNSS code+carrier, SLR range, corrections
-  siderust-pod-estimation/    weighted least-squares + EKF (faer-backed)
-  siderust-pod-qc/            residual statistics, RTN/RIC compare, JSON/HTML reports
-  siderust-pod-products/      SP3/OEM/residual writers, manifest packaging
-  siderust-pod-service/       config loader, pipeline runner, artifact layout
-  siderust-pod-cli/           thin CLI over the service crate
-  siderust-pod-rest/          axum-based REST surface (early; unauthenticated)
+> **Status: engineering preview (pre-1.0).**
+> The synthetic end-to-end POD path is usable for development and validation. Real-data workflows and the REST surface are still evolving. This project is not yet intended for flight-critical or safety-critical operational use.
+
+## What is implemented
+
+| Area | Current scope |
+| --- | --- |
+| Orbit dynamics | Two-body, J2, third-body gravity, solar-radiation pressure, atmospheric drag, numerical integration, STM support |
+| Orbit mechanics | Lambert solver, TLE/3LE/OMM handling, SGP4/SDP4 propagation, SPICE ephemerides |
+| Observations | GNSS code/carrier and SLR building blocks; optional LISA-oriented models |
+| Estimation | Weighted least squares, Gauss-Newton and EKF components |
+| Formats | SP3, RINEX, ANTEX, EOP, CRD, CPF and CCSDS OEM support at the currently implemented subsets |
+| Products & QC | Residuals, orbit products, manifests, comparison/QC utilities |
+| Interfaces | Rust library, command-line interface, experimental Axum REST API |
+
+The project deliberately separates orbital physics, observations, estimation, I/O, quality control, and service orchestration so each layer can be tested and evolved independently.
+
+## Repository structure
+
+```text
+src/
+  core/          Domain primitives, parameters, covariance and providers
+  dynamics/      Force models, integration and state transition machinery
+  estimation/    Batch and sequential estimators
+  io/            Space/geodesy format readers and writers
+  observations/  Measurement models and corrections
+  products/      Orbit and residual products
+  qc/            Validation and quality-control tooling
+  service/       Configuration-driven pipeline orchestration
+  lambert/       Lambert solver
+  sgp4/          SGP4 integration
+  spice/         SPICE helpers/providers
+  tle/           TLE/3LE/OMM handling
+  bin/           CLI and experimental REST entry points
 ```
 
 ## Quick start
 
-```bash
-# Run the synthetic-arc MVP-1 pipeline:
-cargo run -p siderust-pod-cli -- run examples/configs/leo_gnss_mvp1.yaml
+The Siderust repositories are currently developed side-by-side and `siderust-pod` uses local path dependencies. Clone the stack into sibling directories:
 
-# Inspect the resulting manifest:
-cargo run -p siderust-pod-cli -- inspect-manifest \
-    examples/configs/leo_gnss_mvp1.out/run.manifest.json
+```bash
+mkdir siderust-stack && cd siderust-stack
+
+git clone https://github.com/Siderust/qtty.git
+git clone https://github.com/Siderust/tempoch.git
+git clone https://github.com/Siderust/affn.git
+git clone https://github.com/Siderust/cheby.git
+git clone https://github.com/Siderust/siderust.git
+git clone https://github.com/Siderust/siderust-pod.git
+
+cd siderust-pod
+cargo test --workspace
 ```
 
-## Dependencies on upstream crates
+Validate and run the synthetic POD configuration:
 
-`siderust-pod-*` depends on the following foundational crates which are
-**read-only** to this workspace:
+```bash
+cargo run --bin siderust-pod -- validate-config examples/configs/leo_gnss_mvp1.yaml
+cargo run --bin siderust-pod -- run examples/configs/leo_gnss_mvp1.yaml
+```
 
-* [`qtty`](../qtty) — typed physical quantities and units.
-* [`tempoch`](../tempoch) — astronomical time scales, EOP, leap seconds.
-* [`affn`](../affn) — typed positions, vectors, frames, conics.
-* [`cheby`](../cheby) — Chebyshev approximation and interpolation.
-* [`siderust`](../siderust) — astronomy, ephemerides, observatories.
+Two standalone orbit-mechanics examples are also included:
 
-Modifications to those crates are out of scope for `siderust-pod` and
-require a separate branch + ADR.
+```bash
+cargo run --example 03_lambert_earth_to_mars
+cargo run --example 04_sgp4_from_tle
+```
+
+See [examples/README.md](examples/README.md) for details.
+
+## Design principles
+
+- **Type safety for physical quantities.** Units, epochs, frames and states should be difficult to mix accidentally.
+- **Traceable numerical behaviour.** Scientific algorithms should have explicit assumptions and validation tests.
+- **Separation of concerns.** Dynamics, observations, estimation, formats and orchestration remain independently testable.
+- **No unsafe Rust.** The library forbids `unsafe_code`.
+- **Standards-oriented interoperability.** Common astrodynamics and geodesy formats are treated as first-class interfaces.
 
 ## Validation
 
+The CI pipeline checks formatting, Clippy, tests across feature combinations, documentation, dependency direction, and source hygiene.
+
+Run the main checks locally with:
+
 ```bash
 cargo fmt --all -- --check
-cargo clippy --workspace --all-targets -- -D warnings
-cargo test --workspace
-scripts/check_dep_graph.sh
-cargo deny check          # licence + advisory gating (CI)
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --no-fail-fast
+cargo test --workspace --no-default-features --no-fail-fast
+cargo test --workspace --all-features --no-fail-fast
+cargo doc --workspace --no-deps
+bash scripts/check_dep_graph.sh
+bash scripts/check_no_todos.sh
 ```
+
+## Contributing
+
+Contributions, validation cases and format-compatibility reports are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+For security issues, see [SECURITY.md](SECURITY.md). For support and commercial-licensing enquiries, see [SUPPORT.md](SUPPORT.md).
 
 ## License
 
-AGPL-3.0-or-later. See [LICENSE](LICENSE). Commercial-licence enquiries:
-see [SUPPORT.md](SUPPORT.md).
+`siderust-pod` is available under **AGPL-3.0-or-later**. See [LICENSE](LICENSE).
 
-## Security
-
-See [SECURITY.md](SECURITY.md).
+Commercial licensing can be discussed separately; see [SUPPORT.md](SUPPORT.md).
