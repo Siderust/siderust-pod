@@ -2,36 +2,24 @@
 
 ## Reporting a vulnerability
 
-Please report security vulnerabilities **privately** by emailing
-`security@siderust.org` (or, if you do not have a corporate email
-configured for the project, by opening a private security advisory on
-the GitHub repository).
+Please report security vulnerabilities privately using a GitHub private security advisory for this repository or by emailing `security@siderust.org`.
 
-Please **do not** open public issues or pull requests for security
-vulnerabilities. We will acknowledge your report within 5 working days
-and will coordinate a disclosure timeline with you.
+Do **not** open a public issue or pull request for a vulnerability.
 
 ## Supported versions
 
-Until siderust-pod reaches `1.0.0`, only the latest minor version on
-`main` is supported.
+Until `siderust-pod` reaches 1.0, security fixes target the latest state of the `main` branch.
 
 ## Scope
 
-In scope:
+Security-sensitive areas include:
 
-* `siderust-pod-cli` / `siderust-pod-rest` binaries.
-* Parsing of any externally-supplied file format (SP3, RINEX, ANTEX,
-  CRD, CPF, EOP, configuration YAML).
-* Any deserialisation entry point reachable from the REST surface.
+- the `siderust-pod` CLI and experimental REST server;
+- parsers for externally supplied files such as SP3, RINEX, ANTEX, CRD, CPF, EOP and YAML configuration;
+- deserialisation and file-system entry points reachable through the service layer.
 
-Out of scope:
+Vulnerabilities in the foundational Siderust crates should be reported in the corresponding upstream repository.
 
-* Vulnerabilities in upstream foundational crates (`qtty`, `tempoch`,
-  `affn`, `cheby`, `siderust`). Please report those upstream.
+## REST hardening status
 
-## Hardening status
-
-The REST surface is currently *unauthenticated* (audit finding M-01).
-Do not expose `siderust-pod-rest` to untrusted networks until milestone
-M11 lands the bearer-token authentication and rate-limiting work.
+The REST interface is experimental and currently unauthenticated. Bind it only to trusted/local interfaces and do not expose it directly to an untrusted network.
