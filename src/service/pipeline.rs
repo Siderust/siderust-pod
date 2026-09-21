@@ -45,9 +45,6 @@ use siderust::astro::dynamics::{OrbitState, Position, Velocity};
 // equivalent ... retained for validation workflows that need the STM at
 // every intermediate step"). Switching to per-step `propagate_stm` calls
 // would re-do the same 12 perturbation propagations per epoch.
-#[allow(deprecated)]
-use siderust::astro::dynamics::finite_diff_stm_series;
-use siderust::qtty::Second;
 use crate::estimation::{
     gauss_newton, NonlinearError, NonlinearOptions, NonlinearReport, NormalEquations,
 };
@@ -58,6 +55,9 @@ use crate::products::{
     write_oem_from_states, write_qc_json, write_residuals_csv, write_sp3_from_states, ResidualRow,
 };
 use crate::qc::ResidualsByGroup;
+#[allow(deprecated)]
+use siderust::astro::dynamics::finite_diff_stm_series;
+use siderust::qtty::Second;
 use std::fs;
 use std::path::{Path, PathBuf};
 use thiserror::Error;
@@ -298,9 +298,7 @@ fn assemble_normal_equations<F: ForceModel>(
         n_steps,
         &DynamicsContext::empty(),
     )
-    .map_err(|e| {
-        crate::estimation::WlsSolverError::other(format!("propagation failed: {e:?}"))
-    })?;
+    .map_err(|e| crate::estimation::WlsSolverError::other(format!("propagation failed: {e:?}")))?;
     let stms = {
         #[allow(deprecated)]
         finite_diff_stm_series(
